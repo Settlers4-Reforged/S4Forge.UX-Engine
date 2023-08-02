@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Forge.UX</RootNamespace>
+    <PlatformTarget>x86</PlatformTarget>
+    <BaseOutputPath>$(SolutionDir)BUILD\Engines\UX</BaseOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	<LangVersion>9.0</LangVersion>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Forge\S4Forge.csproj">
+		<HintPath>S4Forge.nasi</HintPath>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="UI\Prefabs\Buttons\" />
+  </ItemGroup>
+
+</Project>
