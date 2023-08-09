@@ -27,7 +27,9 @@ namespace Forge.UX.UI.Elements.Grouping.Layout {
             Relayout();
         }
 
-        public void Relayout() {
+        public override void Relayout() {
+            base.Relayout();
+
             Vector2 offset = Vector2.Zero;
             foreach (UIElement element in Elements) {
                 Vector2 elementSize = element.Size * direction;
