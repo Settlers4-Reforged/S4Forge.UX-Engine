@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 
 namespace Forge.UX.UI.Elements.Grouping.Display {
-    internal class UIWindow : UIDisplay<UIWindow> {
+    public sealed class UIWindow : UIDisplay<UIWindow> {
 
         public override bool PositionAbsolute => true;
 
