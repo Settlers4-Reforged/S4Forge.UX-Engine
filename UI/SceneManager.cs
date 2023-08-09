@@ -37,7 +37,7 @@ namespace Forge.UX.UI {
         static void InputScene() {
             UIElement? currentHoverElement = null;
 
-            void HandleMouse(UIElement element, SceneGraphState state) {
+            void HandleMouseHover(UIElement element, SceneGraphState state) {
                 if (element.IgnoresMouse)
                     return;
 
@@ -61,7 +61,7 @@ namespace Forge.UX.UI {
                 }
             }
 
-            TraverseScene(HandleMouse, HandleMouse, (g) => g.IgnoresMouse);
+            TraverseScene(HandleMouseHover, HandleMouseHover, (g) => g.IgnoresMouse);
 
             void HandleInput(UIElement element, SceneGraphState state) {
                 element.Input(state);
