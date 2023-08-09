@@ -1,22 +1,25 @@
 ﻿using Forge.UX.UI.Components;
+using Forge.UX.UI.Elements.Grouping.Layout;
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Forge.UX.UI.Elements.Grouping.Display {
     public sealed class UIWindow : UIDisplay<UIWindow> {
-
-        public override bool PositionAbsolute => true;
-
         /// <summary>
         /// Whether the window should stay open when the S4 menu changes
         /// </summary>
         public bool PersistMenus { get; set; } = true;
 
         public UIWindow() {
+            PositionMode = (PositioningMode.Absolute, PositioningMode.Absolute);
+
             Components = new List<IUIComponent>() { new NineSliceTextureComponent(null!, 0, 0, 0, 0) };
         }
 
         public UIWindow(NineSliceTextureComponent backgroundTexture) {
+            PositionMode = (PositioningMode.Absolute, PositioningMode.Absolute);
+
             Components = new List<IUIComponent>() { backgroundTexture };
         }
 
@@ -28,11 +31,11 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
             throw new System.NotImplementedException();
         }
 
-        public virtual void OnOpen() {
+        public void OnOpen() {
 
         }
 
-        public virtual void OnClose() {
+        public void OnClose() {
 
         }
     }
