@@ -3,9 +3,9 @@
 namespace Forge.UX.Rendering {
     [Flags]
     public enum Effects {
-        None = 2 ^ 0,
-        GrayScale = 2 ^ 1,
-        Highlight = 2 ^ 2,
+        None = 0,
+        GrayScale = 1,
+        Highlight = 1 << 1,
     }
 
 
