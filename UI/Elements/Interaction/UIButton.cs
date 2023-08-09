@@ -40,14 +40,12 @@ namespace Forge.UX.UI.Elements.Interaction {
         private readonly List<IUIComponent> components;
         public override List<IUIComponent> Components {
             get {
-                TextureComponent tex = textureComponent;
-
                 switch (holdStatus) {
                     case State.Down:
-                        tex.Texture = ButtonHeldTexture!;
+                        textureComponent.Texture = ButtonHeldTexture!;
                         break;
                     case State.Up:
-                        tex.Texture = ButtonTexture!;
+                        textureComponent.Texture = ButtonTexture!;
                         break;
                 }
 
@@ -83,9 +81,8 @@ namespace Forge.UX.UI.Elements.Interaction {
         private State holdStatus = State.Up;
 
         public Action<UIElement>? OnInteract { get; set; }
+        public Action<UIElement>? OnHover { get; set; }
         #endregion
-
-
 
         public void DefaultTextures() {
             DefaultButtonTexture ??= TextureCollectionManager.Get(0, 0);
@@ -106,28 +103,29 @@ namespace Forge.UX.UI.Elements.Interaction {
             };
         }
 
-        internal override void OnMouseClickDown(int mb) {
+        private void SetState(State newState) {
+            if (enabled) {
+                holdStatus = newState;
+            }
+        }
+
+        public override void OnMouseClickDown(int mb) {
             SetState(State.Down);
         }
 
-        internal override void OnMouseClickUp(int mb) {
+        public override void OnMouseClickUp(int mb) {
             OnInteract?.Invoke(this);
             SetState(State.Up);
         }
 
-        internal override void OnMouseEnter() {
+        public override void OnMouseEnter() {
             Effects |= Effects.Highlight;
+            OnHover?.Invoke(this);
         }
 
-        internal override void OnMouseLeave() {
+        public override void OnMouseLeave() {
             Effects &= ~Effects.Highlight;
             SetState(State.Up);
-        }
-
-        internal void SetState(State newState) {
-            if (enabled) {
-                holdStatus = newState;
-            }
         }
     }
 }
