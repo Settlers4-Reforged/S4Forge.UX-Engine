@@ -1,0 +1,19 @@
+﻿<S4Window id="forge_ux_demo" width="500" height="500" x="50" y="50" draggable="true">
+	<Stack>
+		<Header>Forge UX Demo</Header>
+		<Group height="200" width="100%">
+			<RadioButtonGroup>
+				<Header variant="small">Radio Buttons</Header>
+				<Stack width="50%">
+					<RadioButton>Test 1</RadioButton>
+					<RadioButton>Test 2</RadioButton>
+				</Stack>
+				<Stack x="50%" width="50%">
+					<RadioButton>Test 3</RadioButton>
+					<RadioButton>Test 4</RadioButton>
+				</Stack>
+			</RadioButtonGroup>
+		</Group>
+		<Button id="accept_button">Accept</Button>
+	</Stack>
+</S4Window>
