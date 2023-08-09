@@ -28,10 +28,14 @@ namespace Forge.UX.UI.Elements.Grouping.Layout {
         }
 
         public void Relayout() {
-            int i = 0;
+            Vector2 offset = Vector2.Zero;
             foreach (UIElement element in Elements) {
-                element.Position = direction * rowHeight * i;
-                i++;
+                Vector2 elementSize = element.Size * direction;
+                float height = elementSize.X + elementSize.Y;
+                height = height > rowHeight ? height : rowHeight;
+
+                offset += direction * height;
+                element.Position = offset;
             }
         }
     }
