@@ -19,14 +19,14 @@ namespace Forge.UX.UI.Prefabs {
         public RelativeProperty Width = new(nameof(Width), "Width of the element");
         public RelativeProperty Height = new(nameof(Height), "Height of the element");
 
-        public Property<bool> PositionAbsolute = new(nameof(PositionAbsolute), "Whether the position is relative to group space (false) or screen space (true)");
+        public Property<bool> PositionAbsolute = new(nameof(PositionAbsolute), "Whether the position is relative to group space (false) or screen space (true)", false);
 
-        public Property<bool> IgnoreMouse = new(nameof(IgnoreMouse), "Whether to ignore mouse inputs - affects children");
+        public Property<bool> IgnoreMouse = new(nameof(IgnoreMouse), "Whether to ignore mouse inputs - affects children", false);
 
-        public Property<int> ZIndex = new(nameof(ZIndex), "Z-Index of element");
+        public Property<int> ZIndex = new(nameof(ZIndex), "Z-Index of element", 0);
 
         protected void ApplyPropertyValues(UIElement element) {
-            UIElement.PositioningMode posMode = PositionAbsolute.Value ? UIElement.PositioningMode.Absolute : UIElement.PositioningMode.Normal;
+            UIElement.PositioningMode posMode = PositionAbsolute ? UIElement.PositioningMode.Absolute : UIElement.PositioningMode.Normal;
 
             element.PositionMode = (
                 posMode | (X.IsRelative ? UIElement.PositioningMode.Relative : UIElement.PositioningMode.Normal),
@@ -38,12 +38,12 @@ namespace Forge.UX.UI.Prefabs {
                 posMode | (Height.IsRelative ? UIElement.PositioningMode.Relative : UIElement.PositioningMode.Normal)
             );
 
-            element.Position = new Vector2(X.Value, Y.Value);
-            element.Size = new Vector2(Width.Value, Height.Value);
+            element.Position = new Vector2(X, Y);
+            element.Size = new Vector2(Width, Height);
 
-            element.IgnoresMouse = IgnoreMouse.Value;
+            element.IgnoresMouse = IgnoreMouse;
 
-            element.ZIndex = ZIndex.Value;
+            element.ZIndex = ZIndex;
         }
 
         #endregion

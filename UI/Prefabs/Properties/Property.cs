@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Properties {
-    public class Property<T> : IProperty, IErrorHandler {
+    public class Property<T> : IProperty {
         #region Error Handling
         private string? lastError = null;
 
@@ -37,6 +37,10 @@ namespace Forge.UX.UI.Prefabs.Properties {
             return true;
         }
 
+        public static implicit operator T?(Property<T> t) {
+            return t.Value ?? t.Default;
+        }
+
         protected Property() {
 
         }
@@ -44,6 +48,12 @@ namespace Forge.UX.UI.Prefabs.Properties {
         public Property(string name, string description) {
             Name = name;
             Description = description;
+        }
+
+        public Property(string name, string description, T defaultValue) {
+            Name = name;
+            Description = description;
+            Default = defaultValue;
         }
     }
 }
