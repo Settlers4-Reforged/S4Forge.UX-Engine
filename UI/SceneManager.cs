@@ -68,7 +68,26 @@ namespace Forge.UX.UI {
             }
 
             TraverseScene(HandleInput, HandleInput);
+
+            // Handle Mouse click events:
+            Keys[] keys = { Keys.LButton, Keys.MButton, Keys.RButton };
+
+            int k = 0;
+            foreach (Keys key in keys) {
+                if (InputManager.IsKeyDown(key)) {
+                    currentHoverElement?.OnMouseClickDown(k);
+                }
+
+                if (InputManager.IsKeyUp(key)) {
+                    currentHoverElement?.OnMouseClickUp(k);
+                }
+
+                k++;
+            }
+
         }
+
+
         static void RenderScene() {
             TraverseScene(RenderComponents, RenderComponents, true);
         }
