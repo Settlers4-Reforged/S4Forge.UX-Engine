@@ -2,6 +2,7 @@
 using Forge.UX.Rendering;
 using Forge.UX.UI.Components;
 
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -11,28 +12,50 @@ namespace Forge.UX.UI.Elements {
         public virtual string Id { get; set; } = string.Empty;
         public virtual Vector2 Size { get; set; }
 
-        public Vector2 Position;
-        public virtual bool PositionAbsolute { get; set; } = false;
+        public virtual Vector2 Position { get; set; }
+        /// <summary>
+        /// Whether the element is positioned in screen space coordinates, or relative to its group parent or relative to the screen size
+        /// </summary>
+        public virtual (PositioningMode x, PositioningMode y) PositionMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
+
+        /// <summary>
+        /// Whether the element is sized in screen space coordinates, or relative to its group parent or relative to the screen size
+        /// </summary>
+        public virtual (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
 
         ///<summary>The lower the further behind: 0 &lt; 100 &lt; 1000</summary>
         public int ZIndex = 0;
 
         public bool IsMouseHover;
 
-        ///<summary>Prevents mouse hover or click inputs from being captured from this element<br/>
-        /// Will ignore all child elements when true for group</summary>
+        /// <summary>
+        /// Prevents mouse hover or click inputs from being captured from this element<br/>
+        /// Will ignore all child elements when true for group
+        /// </summary>
         public bool IgnoresMouse = false;
 
-        internal virtual void OnMouseClickDown(int mb) { }
-        internal virtual void OnMouseClickUp(int mb) { }
+        public virtual void OnMouseClickDown(int mb) { }
+        public virtual void OnMouseClickUp(int mb) { }
+        public virtual void OnMouseScroll(float scroll) { }
 
-        internal virtual void OnMouseEnter() { }
-        internal virtual void OnMouseLeave() { }
+        public virtual void OnMouseEnter() { }
+        public virtual void OnMouseLeave() { }
 
         public virtual void Input(SceneGraphState state) { }
 
         public Effects Effects { get; set; }
 
         public virtual List<IUIComponent> Components { get; protected set; } = new List<IUIComponent>();
+
+        [Flags]
+        public enum PositioningMode {
+            Normal = 0,
+            /// <summary>Absolute in screen coordinates</summary>
+            Absolute = 1 << 0,
+            /// <summary>relative to the parent group size - all values should be between 0..1</summary>
+            Relative = 1 << 1,
+            /// <summary>relative to the screen - all values should be between 0..1</summary>
+            AbsoluteRelative = Absolute | Relative,
+        }
     }
 }

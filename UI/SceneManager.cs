@@ -136,6 +136,7 @@ namespace Forge.UX.UI {
 
     public struct SceneGraphState {
         public Vector2 CurrentPosition { get; private set; }
+        public Vector2 CurrentContainerSize { get; private set; }
         public Vector2 CurrentScale { get; private set; } //Unused ATM
         public Vector4 ClippingRect { get; private set; }
 
@@ -143,15 +144,16 @@ namespace Forge.UX.UI {
 
         public bool DebugActive { get; private set; }
 
-        public SceneGraphState(Vector2 currentPosition, Vector2 currentScale, Vector4 clippingRect, int depth) {
+        public SceneGraphState(Vector2 currentPosition, Vector2 currentContainerSize, Vector2 currentScale, Vector4 clippingRect, int depth) {
             CurrentPosition = currentPosition;
+            CurrentContainerSize = currentContainerSize;
             CurrentScale = currentScale;
             ClippingRect = clippingRect;
             Depth = depth;
             DebugActive = false;
         }
         public SceneGraphState Clone() {
-            return new SceneGraphState(CurrentPosition, CurrentScale, ClippingRect, Depth) { DebugActive = this.DebugActive };
+            return new SceneGraphState(CurrentPosition, CurrentContainerSize, CurrentScale, ClippingRect, Depth) { DebugActive = this.DebugActive };
         }
 
         public SceneGraphState ApplyGroup(UIGroup group) {
@@ -159,11 +161,8 @@ namespace Forge.UX.UI {
 
             next.Depth++;
 
-            if (group.PositionAbsolute) {
-                next.CurrentPosition = group.Position;
-            } else {
-                next.CurrentPosition += group.Position;
-            }
+            next.CurrentPosition = ApplyPositionMode(group.Position, group.PositionMode);
+            next.CurrentContainerSize = ApplyPositionMode(group.Size, group.SizeMode);
 
             if (group.ClipContent) {
                 next.ClippingRect = new Vector4(group.Position, group.Size.X, group.Size.Y);
@@ -175,15 +174,48 @@ namespace Forge.UX.UI {
         public static SceneGraphState Default() {
             Vector2 screenSize = UXEngine.R.GetScreenSize();
 
-            return new SceneGraphState(Vector2.Zero, Vector2.One, new Vector4(0, 0, screenSize.X, screenSize.Y), 0);
+            return new SceneGraphState(Vector2.Zero, Vector2.Zero, Vector2.One, new Vector4(0, 0, screenSize.X, screenSize.Y), 0);
         }
 
+        /// <summary>
+        /// Translates the 
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
         public (Vector2 position, Vector2 size) TranslateElement(UIElement element) {
-            if (element.PositionAbsolute) {
-                return (element.Position, element.Size);
-            } else {
-                return (CurrentPosition + element.Position, CurrentScale * element.Size);
+            Vector2 elementSize = element.Size;
+            Vector2 elementPos = element.Position;
+
+            elementSize = ApplyPositionMode(elementSize, element.SizeMode);
+            elementPos = ApplyPositionMode(elementPos, element.PositionMode);
+
+            return (elementPos, elementSize);
+        }
+
+
+        private Vector2 ApplyPositionMode(Vector2 target, (UIElement.PositioningMode x, UIElement.PositioningMode y) mode) {
+            Vector2 currentContainerSize = CurrentContainerSize;
+
+            Vector2 ApplyModeToAxis(UIElement.PositioningMode mode, Vector2 axisValue) {
+                Vector2 output = Vector2.Zero;
+                if (mode.HasFlag(UIElement.PositioningMode.Absolute)) {
+                    output = axisValue;
+                    if (mode.HasFlag(UIElement.PositioningMode.Relative)) {
+                        output *= UXEngine.R.GetScreenSize();
+                    }
+                } else if (mode.HasFlag(UIElement.PositioningMode.Relative)) {
+                    output = axisValue * currentContainerSize;
+                }
+
+                return output;
             }
+
+            Vector2 output = Vector2.Zero;
+
+            output += ApplyModeToAxis(mode.x, target * Vector2.UnitX);
+            output += ApplyModeToAxis(mode.y, target * Vector2.UnitY);
+
+            return output;
         }
     }
 }
