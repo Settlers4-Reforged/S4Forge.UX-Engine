@@ -99,9 +99,9 @@ namespace Forge.UX.UI {
             }
 
             void TraverseGroup(UIGroup group, SceneGraphState state) {
-                SceneGraphState newState = state.ApplyGroup(group);
+                OnGroup(group, state);
 
-                OnGroup(group, newState);
+                SceneGraphState newState = state.ApplyGroup(group);
 
                 foreach (UIElement el in group.GetSortedElements()) {
                     TraverseElement(el, newState);
