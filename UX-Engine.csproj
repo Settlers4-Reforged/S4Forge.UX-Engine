@@ -11,11 +11,22 @@
 	<Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Forge\S4Forge.csproj">
-		<HintPath>S4Forge.nasi</HintPath>
-    </ProjectReference>
-  </ItemGroup>
+  <Choose>
+    <When Condition="'$(SolutionName)'=='Forge'">
+      <ItemGroup>
+        <ProjectReference Include="..\..\Forge\S4Forge.csproj">
+        <HintPath>S4Forge.nasi</HintPath>
+        </ProjectReference>
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PackageReference Include="S4Forge" Version="*">
+          <HintPath>S4Forge.nasi</HintPath>
+        </PackageReference>
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
 
   <ItemGroup>
     <Folder Include="Interfaces\" />
