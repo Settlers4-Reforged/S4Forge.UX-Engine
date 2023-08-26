@@ -9,10 +9,11 @@
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	<LangVersion>9.0</LangVersion>
 	<Nullable>enable</Nullable>
+	<Platforms>x86</Platforms>
   </PropertyGroup>
 
   <Choose>
-    <When Condition="'$(SolutionName)'=='Forge'">
+    <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
       <ItemGroup>
         <ProjectReference Include="..\..\Forge\S4Forge.csproj">
         <HintPath>S4Forge.nasi</HintPath>
