@@ -10,6 +10,9 @@ using System.Runtime.CompilerServices;
 namespace Forge.UX.UI.Elements {
     public abstract class UIElement {
         public virtual string Id { get; set; } = string.Empty;
+
+        public virtual List<IUIComponent> Components { get; protected set; } = new List<IUIComponent>();
+
         public virtual Vector2 Size { get; set; }
 
         public virtual Vector2 Position { get; set; }
@@ -22,6 +25,19 @@ namespace Forge.UX.UI.Elements {
         /// Whether the element is sized in screen space coordinates, or relative to its group parent or relative to the screen size
         /// </summary>
         public virtual (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
+
+        [Flags]
+        public enum PositioningMode {
+            Normal = 0,
+            /// <summary>Absolute in screen coordinates</summary>
+            Absolute = 1 << 0,
+            /// <summary>relative to the parent group size - all values should be between 0..1</summary>
+            Relative = 1 << 1,
+            /// <summary>relative to the screen - all values should be between 0..1</summary>
+            AbsoluteRelative = Absolute | Relative,
+        }
+        public Effects Effects { get; set; }
+
 
         ///<summary>The lower the further behind: 0 &lt; 100 &lt; 1000</summary>
         public int ZIndex = 0;
@@ -41,21 +57,16 @@ namespace Forge.UX.UI.Elements {
         public virtual void OnMouseEnter() { }
         public virtual void OnMouseLeave() { }
 
-        public virtual void Input(SceneGraphState state) { }
-
-        public Effects Effects { get; set; }
-
-        public virtual List<IUIComponent> Components { get; protected set; } = new List<IUIComponent>();
-
-        [Flags]
-        public enum PositioningMode {
-            Normal = 0,
-            /// <summary>Absolute in screen coordinates</summary>
-            Absolute = 1 << 0,
-            /// <summary>relative to the parent group size - all values should be between 0..1</summary>
-            Relative = 1 << 1,
-            /// <summary>relative to the screen - all values should be between 0..1</summary>
-            AbsoluteRelative = Absolute | Relative,
+        public virtual void Input(SceneGraphState state) {
+            OnInput?.Invoke(this);
         }
+
+        #region EventHandlers
+
+        public delegate void UIEvent(UIElement initiator);
+
+        public UIEvent? OnInput;
+
+        #endregion
     }
 }
