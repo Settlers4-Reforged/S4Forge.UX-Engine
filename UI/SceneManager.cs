@@ -13,28 +13,39 @@ using System.Linq;
 using System.Numerics;
 
 namespace Forge.UX.UI {
-    public static class SceneManager {
-        private static readonly RootNode rootSceneNode = new RootNode();
+    public class SceneManager {
+        private readonly RootNode rootSceneNode = new RootNode();
 
-
-        static void Init() {
+        public void Init() {
             GameEventManager.RegisterS4ScreenChangeCallback(OnScreenChange);
         }
 
-        private static void OnScreenChange(UIScreen prev, UIScreen next) {
+        private void OnScreenChange(UIScreen prev, UIScreen next) {
             foreach (UIWindow window in rootSceneNode.GetAllSceneElements().OfType<UIWindow>()) {
                 if (!window.PersistMenus)
                     window.Close();
             }
         }
 
-        static void DoFrame() {
+        public IEnumerable<UIElement> GetAllElements() {
+            return rootSceneNode.GetAllSceneElements();
+        }
+
+        public IEnumerable<UIElement> GetRootElements() {
+            return rootSceneNode.Elements;
+        }
+
+        public void AddRootElement(UIElement e) {
+            rootSceneNode.Elements.Add(e);
+        }
+
+        public void DoFrame() {
             InputScene();
 
             RenderScene();
         }
 
-        static void InputScene() {
+        void InputScene() {
             UIElement? currentHoverElement = null;
 
             void HandleMouseHover(UIElement element, SceneGraphState state) {
@@ -88,25 +99,25 @@ namespace Forge.UX.UI {
         }
 
 
-        static void RenderScene() {
+        void RenderScene() {
             TraverseScene(RenderComponents, RenderComponents, true);
         }
 
-        static void RenderComponents(UIElement parent, SceneGraphState state) {
+        void RenderComponents(UIElement parent, SceneGraphState state) {
             foreach (IUIComponent component in parent.Components) {
                 UXEngine.R.RenderUIComponent(component, parent, state);
             }
         }
 
-        static void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement) {
+        void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement) {
             TraverseScene(OnGroup, OnElement, (g) => false);
         }
 
-        static void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement, bool skipInvisible) {
+        void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement, bool skipInvisible) {
             TraverseScene(OnGroup, OnElement, (g) => skipInvisible && g.Visible);
         }
 
-        static void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement, Func<UIGroup, bool> ShouldSkipGroup) {
+        void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement, Func<UIGroup, bool> ShouldSkipGroup) {
             void TraverseElement(UIElement element, SceneGraphState state) {
                 if (element is UIGroup g) {
                     if (!ShouldSkipGroup(g)) {
