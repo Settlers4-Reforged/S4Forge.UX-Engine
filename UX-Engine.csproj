@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -29,8 +29,14 @@
     </Otherwise>
   </Choose>
 
+  <!--Tests:-->
   <ItemGroup>
-    <Folder Include="Interfaces\" />
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="UI\Prefabs\Buttons\" />
   </ItemGroup>
 
