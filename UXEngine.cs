@@ -1,8 +1,7 @@
 ﻿using Forge.Engine;
+using Forge.Logging;
 using Forge.UX.Input;
 using Forge.UX.Rendering;
-
-using NetModAPI;
 
 using System;
 
@@ -15,7 +14,7 @@ namespace Forge.UX {
 
             IsInitialized = true;
 
-            Logger.LogInfo($"Requesting implementations from {OnRequestingImplementation?.GetInvocationList().Length ?? 0} assemblies that were already loaded...");
+            Logger.LogInfo("Requesting implementations from {0} assemblies that were already loaded...", OnRequestingImplementation?.GetInvocationList().Length ?? 0);
 
             OnRequestingImplementation?.Invoke();
 
@@ -33,12 +32,12 @@ namespace Forge.UX {
         internal static IRenderer R => renderer ?? throw new InvalidOperationException();
 
         public static void Implement(IRenderer rendererEngine, int implementationPriority) {
-            Logger.LogInfo($"Requested to add a new render engine implementation for UXEngine: {rendererEngine.Name} @ {implementationPriority}");
+            Logger.LogInfo("Requested to add a new render engine implementation for UXEngine: {0} @ {0}", rendererEngine.Name, implementationPriority);
 
             if (isImplemented && implementationPriority < (latestImplementationPriority ?? -1))
                 return;
 
-            Logger.LogInfo($"{rendererEngine.Name} promoted to new render engine");
+            Logger.LogInfo("{0} promoted to new render engine", rendererEngine.Name);
 
             UXEngine.renderer = rendererEngine;
 

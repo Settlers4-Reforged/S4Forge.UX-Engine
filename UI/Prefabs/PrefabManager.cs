@@ -1,6 +1,5 @@
 ﻿using Forge.UX.Interfaces;
-
-using NetModAPI;
+﻿using Forge.Logging;
 
 using System;
 using System.Collections.Generic;
