@@ -1,5 +1,5 @@
-﻿using Forge.UX.Interfaces;
 ﻿using Forge.Logging;
+using Forge.UX.Interfaces;
 
 using System;
 using System.Collections.Generic;
@@ -56,7 +56,7 @@ namespace Forge.UX.UI.Prefabs {
             Type[] types = prefabAssembly.GetExportedTypes();
 
             Type[] prefabList = (from Type t in types
-                                 where t.GetInterface(nameof(IPrefab)) != null
+                                 where t.GetInterface(nameof(IPrefab)) != null && t.IsPublic && !t.IsAbstract
                                  select t).ToArray();
 
             foreach (Type prefab in prefabList) {
@@ -68,6 +68,10 @@ namespace Forge.UX.UI.Prefabs {
             }
 
             Logger.LogInfo($"Registered {prefabList.Length} default prefabs from UX-Engine");
+        }
+
+        public IPrefab? GetPrefabByName(string name) {
+            return prefabs.Find(prefab => prefab.Name == name)?.Clone();
         }
 
     }
