@@ -2,10 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace Forge.UX.UI.Prefabs.Properties {
+    [DebuggerDisplay("Property {Name} | Value = {Value}")]
     public class Property<T> : IProperty {
         #region Error Handling
         private string? lastError = null;
@@ -22,6 +26,8 @@ namespace Forge.UX.UI.Prefabs.Properties {
         public string Name { get; }
         public string Description { get; }
 
+        public bool Required { get; set; }
+
         public T? Value { get; protected set; }
         public T? Default { get; set; } = default(T);
 
@@ -35,6 +41,14 @@ namespace Forge.UX.UI.Prefabs.Properties {
             }
 
             return true;
+        }
+
+        public virtual bool Parse(XmlNode node) {
+            if (node.Attributes == null) return true;
+
+            XmlAttribute? attribute = node.Attributes.Cast<XmlAttribute>().FirstOrDefault(attr => attr.Name.Equals(Name, StringComparison.InvariantCultureIgnoreCase));
+
+            return attribute == null || Parse(attribute!.Value);
         }
 
         public static implicit operator T?(Property<T> t) {

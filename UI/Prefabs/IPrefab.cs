@@ -15,12 +15,15 @@ namespace Forge.UX.UI.Prefabs {
         /// The name of the prefab - also used as node name in file deserialization
         /// </summary>
         public string Name { get; }
+        public string Description { get; }
 
         /// <summary>
         /// Instantiates this prefab instance with default properties
         /// </summary>
-        public UIElement Create();
+        public UIElement Instantiate();
 
         public IEnumerable<IProperty> GetProperties();
+
+        public IPrefab Clone();
     }
 }

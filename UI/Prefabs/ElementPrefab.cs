@@ -9,7 +9,8 @@ using System.Text;
 namespace Forge.UX.UI.Prefabs {
     public abstract class ElementPrefab : IPrefab {
         public abstract string Name { get; }
-        public abstract UIElement Create();
+        public abstract string Description { get; }
+        public abstract UIElement Instantiate();
 
         #region Properties
 
@@ -25,7 +26,7 @@ namespace Forge.UX.UI.Prefabs {
 
         public Property<int> ZIndex = new(nameof(ZIndex), "Z-Index of element", 0);
 
-        protected void ApplyPropertyValues(UIElement element) {
+        protected virtual void ApplyPropertyValues(UIElement element) {
             UIElement.PositioningMode posMode = PositionAbsolute ? UIElement.PositioningMode.Absolute : UIElement.PositioningMode.Normal;
 
             element.PositionMode = (
@@ -49,9 +50,21 @@ namespace Forge.UX.UI.Prefabs {
         #endregion
 
         public IEnumerable<IProperty> GetProperties() {
-            List<IProperty> properties = new();
+            List<IProperty> properties = new() {
+                X,
+                Y,
+                Width,
+                Height,
+                PositionAbsolute,
+                IgnoreMouse,
+                ZIndex,
+            };
 
             return properties;
+        }
+
+        public IPrefab Clone() {
+            return (IPrefab)Activator.CreateInstance(this.GetType());
         }
     }
 }

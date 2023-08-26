@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Xml.Schema;
 
 namespace Forge.UX.UI.Prefabs.Properties {
+
+    [DebuggerDisplay("RelativeProperty {Name} | Value = {Value}, Relative = {IsRelative}")]
     public sealed class RelativeProperty : Property<float> {
         public bool IsRelative;
 
