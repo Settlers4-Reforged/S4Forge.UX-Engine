@@ -23,6 +23,13 @@ namespace Forge.UX.Rendering.Texture {
 
         #endregion
 
+
+        #region NineSlices
+
+        Window = 21,
+
+        #endregion
+
         #region Menus
 
         SettingsMenu = 41,

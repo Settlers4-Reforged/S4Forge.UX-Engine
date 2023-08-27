@@ -85,8 +85,8 @@ namespace Forge.UX.UI.Elements.Interaction {
         #endregion
 
         public void DefaultTextures() {
-            DefaultButtonTexture ??= TextureCollectionManager.Get(0, 0);
-            DefaultButtonHeldTexture ??= TextureCollectionManager.Get(0, 0);
+            DefaultButtonTexture ??= UXEngine.TCM.Get(0, 0);
+            DefaultButtonHeldTexture ??= UXEngine.TCM.Get(0, 0);
 
             ButtonTexture ??= DefaultButtonTexture;
             ButtonHeldTexture ??= DefaultButtonHeldTexture;

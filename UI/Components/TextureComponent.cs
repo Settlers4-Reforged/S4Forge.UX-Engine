@@ -22,7 +22,7 @@ namespace Forge.UX.UI.Components {
         }
 
         public static TextureComponent FromCollection(int collection, int id) {
-            return new TextureComponent(TextureCollectionManager.GetCollection(collection).GetTexture(id));
+            return new TextureComponent(UXEngine.TCM.GetCollection(collection).GetTexture(id));
         }
     }
 }
