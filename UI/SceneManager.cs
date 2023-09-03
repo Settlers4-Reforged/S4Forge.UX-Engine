@@ -17,7 +17,7 @@ namespace Forge.UX.UI {
         private readonly RootNode rootSceneNode = new RootNode();
 
         public void Init() {
-            GameEventManager.RegisterS4ScreenChangeCallback(OnScreenChange);
+            UIEngine.RegisterS4ScreenChangeCallback(OnScreenChange);
         }
 
         private void OnScreenChange(UIScreen prev, UIScreen next) {
