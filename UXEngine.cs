@@ -1,10 +1,17 @@
 ﻿using Forge.Engine;
 using Forge.Logging;
+using Forge.Native;
+using Forge.S4.Callbacks;
 using Forge.UX.Input;
 using Forge.UX.Rendering;
 using Forge.UX.Rendering.Texture;
+using Forge.UX.S4;
+
+using Microsoft.DirectX.DirectDraw;
 
 using System;
+using System.ComponentModel;
+using System.Drawing;
 
 namespace Forge.UX {
     public class UXEngine : IEngine {
@@ -13,18 +20,21 @@ namespace Forge.UX {
         public bool Initialize(S4Forge forge) {
             Logger.LogInfo("Initialized UXEngine");
 
-            IsReady = true;
+            IsInitialized = true;
 
-            Logger.LogInfo("Requesting implementations from {0} assemblies that were already loaded...", OnRequestingImplementation?.GetInvocationList().Length ?? 0);
+            Logger.LogInfo("Requesting implementations from {0} assemblies that were already loaded...", onRequestingImplementation?.GetInvocationList().Length ?? 0);
+            onRequestingImplementation?.Invoke();
 
-            OnRequestingImplementation?.Invoke();
+
+
 
             return true;
         }
 
         public static bool IsReady;
+        public static bool IsInitialized;
 
-        public static Action? OnRequestingImplementation;
+        static Action? onRequestingImplementation;
 
         private static bool isImplemented = false;
         private static int? latestImplementationPriority = null;
@@ -41,21 +51,29 @@ namespace Forge.UX {
         public static void Implement(IRenderer rendererEngine, ITextureCollectionManager collectionManager, int implementationPriority) {
             Logger.LogInfo("Requested to add a new render engine implementation for UXEngine: {0} @ {0}", rendererEngine.Name, implementationPriority);
 
-            if (IsReady) {
-                Logger.LogWarn("{0} requested to add new implementation, after first render!", rendererEngine.Name);
-                return;
+            void InternalImplementation() {
+                if (IsReady) {
+                    Logger.LogWarn("{0} requested to add new implementation, after first render!", rendererEngine.Name);
+                    return;
+                }
+
+                if (isImplemented && implementationPriority < (latestImplementationPriority ?? -1))
+                    return;
+
+                Logger.LogInfo("{0} promoted to new render engine", rendererEngine.Name);
+
+                UXEngine.renderer = rendererEngine;
+                UXEngine.textureCollectionManager = collectionManager;
+
+                isImplemented = true;
+                latestImplementationPriority = implementationPriority;
             }
 
-            if (isImplemented && implementationPriority < (latestImplementationPriority ?? -1))
-                return;
-
-            Logger.LogInfo("{0} promoted to new render engine", rendererEngine.Name);
-
-            UXEngine.renderer = rendererEngine;
-            UXEngine.textureCollectionManager = collectionManager;
-
-            isImplemented = true;
-            latestImplementationPriority = implementationPriority;
+            if (IsInitialized) {
+                InternalImplementation();
+            } else {
+                onRequestingImplementation += InternalImplementation;
+            }
         }
     }
 }
