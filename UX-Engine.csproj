@@ -10,6 +10,7 @@
 	<LangVersion>9.0</LangVersion>
 	<Nullable>enable</Nullable>
 	<Platforms>x86</Platforms>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <Choose>

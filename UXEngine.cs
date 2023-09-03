@@ -25,8 +25,23 @@ namespace Forge.UX {
             Logger.LogInfo("Requesting implementations from {0} assemblies that were already loaded...", onRequestingImplementation?.GetInvocationList().Length ?? 0);
             onRequestingImplementation?.Invoke();
 
+            unsafe {
+                Callbacks.OnFrame += (texture, width, reserved) => {
+                    if (texture == null) return;
+
+                    try {
+                        texture.FillStyle = 6/*Cross*/;
+                        texture.FillColor = Color.Blue;
+                        texture.DrawBox(0, 0, 100, 100);
+                    } catch (Exception e) {
+                        Logger.LogWarn("Found error {0}", e);
+                    }
 
 
+
+                    var test = UIEngine.GetAllUIElementsFromIndexUnsafe(7);
+                };
+            }
 
             return true;
         }
