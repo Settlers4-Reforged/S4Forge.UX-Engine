@@ -6,6 +6,7 @@ using Forge.UX.Input;
 using Forge.UX.Rendering;
 using Forge.UX.Rendering.Texture;
 using Forge.UX.S4;
+using Forge.UX.UI;
 
 using Microsoft.DirectX.DirectDraw;
 
@@ -26,7 +27,18 @@ namespace Forge.UX {
             onRequestingImplementation?.Invoke();
 
             unsafe {
-                Callbacks.OnFrame += (texture, width, reserved) => {
+                Callbacks.OnFrame += (texture, width) => {
+                    if (!IsReady) {
+                        if (renderer == null) {
+                            //TODO: Add dummy renderer
+                            return;
+                        }
+
+                        IsReady = true;
+
+                        onReady?.Invoke();
+                    }
+
                     if (texture == null) return;
 
                     try {
@@ -37,9 +49,15 @@ namespace Forge.UX {
                         Logger.LogWarn("Found error {0}", e);
                     }
 
-
-
                     var test = UIEngine.GetAllUIElementsFromIndexUnsafe(7);
+                };
+
+                Callbacks.OnMouse += (button, x, y, id, hwnd, element) => {
+                    Logger.LogDebug("Mouse button {0} @ {1}, {2} on {3} ({4})", button, x, y, id, element);
+                };
+
+                onReady += () => {
+                    SM.Init();
                 };
             }
 
@@ -49,6 +67,7 @@ namespace Forge.UX {
         public static bool IsReady;
         public static bool IsInitialized;
 
+        private static Action? onReady;
         static Action? onRequestingImplementation;
 
         private static bool isImplemented = false;
@@ -62,6 +81,8 @@ namespace Forge.UX {
         /// Global TextureCollectionManager implementation, provided by the implementing renderer - should only be used after 
         /// </summary>
         public static ITextureCollectionManager TCM => textureCollectionManager ?? throw new InvalidOperationException();
+
+        public static SceneManager SM { get; } = new SceneManager();
 
         public static void Implement(IRenderer rendererEngine, ITextureCollectionManager collectionManager, int implementationPriority) {
             Logger.LogInfo("Requested to add a new render engine implementation for UXEngine: {0} @ {0}", rendererEngine.Name, implementationPriority);
