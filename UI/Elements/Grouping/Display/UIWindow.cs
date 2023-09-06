@@ -3,6 +3,7 @@ using Forge.UX.UI.Elements.Grouping.Layout;
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace Forge.UX.UI.Elements.Grouping.Display {
     public sealed class UIWindow : UIDisplay<UIWindow> {
@@ -14,7 +15,7 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
         public UIWindow() {
             PositionMode = (PositioningMode.Absolute, PositioningMode.Absolute);
 
-            Components = new List<IUIComponent>() { new NineSliceTextureComponent(null!, 0, 0, 0, 0) };
+            Components = new List<IUIComponent>() { new NineSliceTextureComponent(null!, Vector4.Zero, Vector4.Zero) };
         }
 
         public UIWindow(NineSliceTextureComponent backgroundTexture) {

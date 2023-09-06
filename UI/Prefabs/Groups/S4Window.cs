@@ -5,6 +5,7 @@ using Forge.UX.UI.Elements.Grouping.Display;
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Groups {
@@ -13,7 +14,7 @@ namespace Forge.UX.UI.Prefabs.Groups {
         public override string Description => "A generic Window in the style of a S4 pop-out";
 
         public override UIElement Instantiate() {
-            UIWindow element = new UIWindow(new NineSliceTextureComponent(UXEngine.TCM.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.Window), 0, 0, 0, 0));
+            UIWindow element = new UIWindow(new NineSliceTextureComponent(UXEngine.TCM.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.Window), 0));
             this.ApplyPropertyValues(element);
             return element;
         }
