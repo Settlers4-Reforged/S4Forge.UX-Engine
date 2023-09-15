@@ -14,6 +14,22 @@
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+
+  <PropertyGroup>
+    <!--NuGet Package settings:-->
+    <Title>UX-Engine</Title>
+    <Authors>WizzardMaker</Authors>
+    <Description>
+    	Forge UX-Engine for Settlers 4
+    </Description>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageOutputPath>$(SolutionDir)BUILD\NuGet\</PackageOutputPath>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
+    <Version>$(AssemblyVersion)</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
   <Choose>
     <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
       <ItemGroup>
