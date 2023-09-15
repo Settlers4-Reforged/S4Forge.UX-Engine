@@ -30,9 +30,12 @@ namespace Forge.UX {
                 Callbacks.OnFrame += (texture, width) => {
                     if (!IsReady) {
                         if (renderer == null) {
-                            //TODO: Add dummy renderer
+                            //TODO: Add dummy renderer or throw exception
+                            Logger.LogWarn("Missing renderer implementation...");
                             return;
                         }
+
+                        Logger.LogInfo($"UXEngine is ready to render with {renderer.Name}");
 
                         IsReady = true;
 
@@ -87,6 +90,14 @@ namespace Forge.UX {
         public static void Implement(IRenderer rendererEngine, ITextureCollectionManager collectionManager, int implementationPriority) {
             Logger.LogInfo("Requested to add a new render engine implementation for UXEngine: {0} @ {0}", rendererEngine.Name, implementationPriority);
 
+            if (IsInitialized) {
+                InternalImplementation();
+            } else {
+                onRequestingImplementation += InternalImplementation;
+            }
+
+            return;
+
             void InternalImplementation() {
                 if (IsReady) {
                     Logger.LogWarn("{0} requested to add new implementation, after first render!", rendererEngine.Name);
@@ -103,12 +114,6 @@ namespace Forge.UX {
 
                 isImplemented = true;
                 latestImplementationPriority = implementationPriority;
-            }
-
-            if (IsInitialized) {
-                InternalImplementation();
-            } else {
-                onRequestingImplementation += InternalImplementation;
             }
         }
     }
