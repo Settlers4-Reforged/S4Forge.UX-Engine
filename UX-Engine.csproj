@@ -10,22 +10,19 @@
 	<LangVersion>9.0</LangVersion>
 	<Nullable>enable</Nullable>
 	<Platforms>x86</Platforms>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <Choose>
     <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
       <ItemGroup>
-        <ProjectReference Include="..\..\Forge\S4Forge.csproj">
-        <HintPath>S4Forge.nasi</HintPath>
-        </ProjectReference>
+        <ProjectReference Include="..\..\Forge\S4Forge.csproj"/>
       </ItemGroup>
     </When>
     <Otherwise>
       <ItemGroup>
-        <PackageReference Include="S4Forge" Version="*">
-          <HintPath>S4Forge.nasi</HintPath>
-        </PackageReference>
+        <PackageReference Include="S4Forge" Version="*"/>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -39,6 +36,17 @@
 
   <ItemGroup>
     <Folder Include="UI\Prefabs\Buttons\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Numerics.Vectors" Version="4.4.0">
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.DirectX.DirectDraw">
+      <HintPath>..\..\Forge\Lib\Microsoft.DirectX.DirectDraw.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
