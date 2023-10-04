@@ -6,6 +6,8 @@ namespace Forge.UX.UI.Components {
         public Vector2? Size { get; set; }
         public string Text { get; set; }
 
+        public bool FitText { get; set; } = true;
+
         public TextComponent(string text) {
             Text = text;
         }
