@@ -8,7 +8,7 @@ namespace Forge.UX.UI.Components {
     /// <summary>
     /// Changes based on current tribe - defaults to DEFAULT if a tribe is not specified
     /// </summary>
-    public class TribeTextureComponent : TextureComponent {
+    public sealed class TribeTextureComponent : TextureComponent {
         public override ITexture Texture {
             get {
                 Tribe c = GameConfig.GetCurrentTribe();

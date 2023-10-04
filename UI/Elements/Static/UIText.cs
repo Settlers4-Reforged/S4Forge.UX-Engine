@@ -4,8 +4,11 @@ using System.Collections.Generic;
 
 namespace Forge.UX.UI.Elements.Static {
     public sealed class UIText : UIElement {
+        public TextComponent Text;
+
         public UIText(string text) {
-            Components = new List<IUIComponent> { new TextComponent(text) };
+            Text = new TextComponent(text);
+            Components = new List<IUIComponent> { Text };
         }
     }
 }
