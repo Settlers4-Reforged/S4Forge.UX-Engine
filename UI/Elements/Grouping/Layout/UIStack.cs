@@ -1,18 +1,18 @@
 ﻿using System.Numerics;
 
 namespace Forge.UX.UI.Elements.Grouping.Layout {
-    internal class UIRows : UIGroup, IUILayout {
+    internal class UIStack : UIGroup, IUILayout {
         private readonly float rowHeight;
         private int Rows => Elements.Count;
         private readonly Vector2 direction;
 
-        public UIRows(float rowHeight, bool isHorizontal = false) {
+        public UIStack(float rowHeight, bool isHorizontal = false) {
             this.rowHeight = rowHeight;
 
             direction = isHorizontal ? new Vector2(1, 0) : new Vector2(0, 1);
         }
 
-        public UIRows AddRows(params UIElement[] element) {
+        public UIStack AddRows(params UIElement[] element) {
             Elements.AddRange(element);
 
             Relayout();
@@ -31,7 +31,7 @@ namespace Forge.UX.UI.Elements.Grouping.Layout {
             base.Relayout();
 
             Vector2 offset = Vector2.Zero;
-            foreach (UIElement element in Elements) {
+            foreach (UIElement element in TransparentElements) {
                 Vector2 elementSize = element.Size * direction;
                 float height = elementSize.X + elementSize.Y;
                 height = height > rowHeight ? height : rowHeight;
