@@ -17,7 +17,7 @@ namespace Forge.UX.UI {
         private readonly RootNode rootSceneNode = new RootNode();
 
         public void Init() {
-            UIEngine.RegisterS4ScreenChangeCallback(OnScreenChange);
+            //UIEngine.RegisterS4ScreenChangeCallback(OnScreenChange);
         }
 
         private void OnScreenChange(UIScreen prev, UIScreen next) {
@@ -189,10 +189,14 @@ namespace Forge.UX.UI {
         public SceneGraphState ApplyGroup(UIGroup group) {
             SceneGraphState next = this.Clone();
 
+            // Transparent groups don't affect the layout state
+            if (group.IsTransparent)
+                return next;
+
             next.Depth++;
 
-            next.CurrentPosition = ApplyPositionMode(group.Position, group.PositionMode);
-            next.CurrentContainerSize = ApplyPositionMode(group.Size, group.SizeMode);
+            next.CurrentPosition = ApplyRelativeMode(group.Position, group.PositionMode);
+            next.CurrentContainerSize = ApplyRelativeMode(group.Size, group.SizeMode);
 
             if (group.ClipContent) {
                 next.ClippingRect = new Vector4(group.Position, group.Size.X, group.Size.Y);
@@ -216,14 +220,14 @@ namespace Forge.UX.UI {
             Vector2 elementSize = element.Size;
             Vector2 elementPos = element.Position;
 
-            elementSize = ApplyPositionMode(elementSize, element.SizeMode);
-            elementPos = ApplyPositionMode(elementPos, element.PositionMode);
+            elementSize = ApplyRelativeMode(elementSize, element.SizeMode);
+            elementPos = ApplyRelativeMode(elementPos, element.PositionMode);
 
             return (elementPos, elementSize);
         }
 
 
-        private Vector2 ApplyPositionMode(Vector2 target, (UIElement.PositioningMode x, UIElement.PositioningMode y) mode) {
+        private Vector2 ApplyRelativeMode(Vector2 target, (UIElement.PositioningMode x, UIElement.PositioningMode y) mode) {
             Vector2 currentContainerSize = CurrentContainerSize;
 
             Vector2 ApplyModeToAxis(UIElement.PositioningMode mode, Vector2 axisValue) {
