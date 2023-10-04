@@ -78,7 +78,7 @@ namespace Forge.UX.UI.Elements.Interaction {
             Down,
         }
 
-        private State holdStatus = State.Up;
+        protected State holdStatus = State.Up;
 
         public Action<UIElement>? OnInteract { get; set; }
         public Action<UIElement>? OnHover { get; set; }
@@ -103,7 +103,7 @@ namespace Forge.UX.UI.Elements.Interaction {
             };
         }
 
-        private void SetState(State newState) {
+        protected void SetState(State newState) {
             if (enabled) {
                 holdStatus = newState;
             }
