@@ -1,4 +1,7 @@
-﻿using System.Numerics;
+﻿using Forge.UX.Rendering.Text;
+
+using System.Net.Mime;
+using System.Numerics;
 
 namespace Forge.UX.UI.Components {
     public class TextComponent : IUIComponent {
@@ -7,6 +10,8 @@ namespace Forge.UX.UI.Components {
         public string Text { get; set; }
 
         public bool FitText { get; set; } = true;
+
+        public TextStyle Style { get; set; }
 
         public TextComponent(string text) {
             Text = text;

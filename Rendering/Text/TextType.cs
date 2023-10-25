@@ -12,16 +12,26 @@ namespace Forge.UX.Rendering.Text {
         Italic
     }
 
-
     public enum TextSize {
         Small,
         Regular,
         Large
     }
 
+    public enum TextAlignment {
+        Left,
+        Center,
+        Right
+    }
+
     public struct TextStyle {
-        private TextType type;
-        private TextSize size;
-        private Alignment alignment;
+        public TextType Type;
+        public TextSize Size;
+        public TextAlignment TextAlignment;
+        public TextStyle(TextType type = TextType.Normal, TextSize size = TextSize.Regular, TextAlignment textAlignment = TextAlignment.Left) {
+            Type = type;
+            Size = size;
+            TextAlignment = textAlignment;
+        }
     }
 }

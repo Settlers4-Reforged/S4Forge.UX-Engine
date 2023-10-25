@@ -25,7 +25,7 @@ namespace Forge.UX.Rendering.Text {
         #region State
         void SetTextSize(TextSize size);
         void SetTextType(TextType type);
-        void SetTextAlignment(Alignment alignment);
+        void SetTextAlignment(TextAlignment textAlignment);
         void SetTextColor(int rgba);
 
         void SetTextStyle(TextStyle style);

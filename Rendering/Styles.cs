@@ -7,12 +7,4 @@ namespace Forge.UX.Rendering {
         GrayScale = 1,
         Highlight = 1 << 1,
     }
-
-
-    public enum Alignment {
-        Left,
-        Center,
-        Right
-    }
-
 }
