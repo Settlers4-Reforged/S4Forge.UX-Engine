@@ -9,6 +9,10 @@ using System.Text;
 
 namespace Forge.UX.UI {
     public class SceneTree : ObservableCollection<UIElement> {
+        public UIElement? GetById(string id) {
+            return GetAllElementsInTree().FirstOrDefault(e => e.Id == id);
+        }
+
         public IEnumerable<UIElement> GetAllElementsInTree() {
             static IEnumerable<UIElement> GetChildElements(SceneTree parent) {
                 foreach (UIElement child in parent) {

@@ -1,5 +1,6 @@
 using Forge.UX;
 using Forge.UX.UI;
+using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
 using Forge.UX.UI.Elements.Grouping.Display;
 using Forge.UX.UI.Elements.Grouping.Interaction;
@@ -7,6 +8,7 @@ using Forge.UX.UI.Elements.Grouping.Layout;
 using Forge.UX.UI.Elements.Interaction;
 using Forge.UX.UI.Elements.Static;
 using Forge.UX.UI.Prefabs;
+using Forge.UX.UI.Prefabs.Text;
 
 using System.Numerics;
 using System.Reflection;
@@ -53,6 +55,7 @@ namespace UX_Engine_Tests {
                 UIWindow window = (UIWindow)manager.GetRootElements().First();
                 Assert.That(window.Size, Is.EqualTo(new Vector2(500, 500)));
                 Assert.That(window.Position, Is.EqualTo(new Vector2(50, 50)));
+                Assert.That(window.Id, Is.EqualTo("forge_ux_demo"));
                 //Assert.That(window.Draggable, Is.True);
 
                 Assert.That(window.Elements.Count, Is.EqualTo(1));
@@ -68,6 +71,26 @@ namespace UX_Engine_Tests {
                 UIGroup group = (UIGroup)stack.Elements[1];
                 Assert.That(group.Elements.Count, Is.EqualTo(1));
                 Assert.That(group.Elements[0], Is.AssignableTo(typeof(UIRadioButtonGroup<string>)));
+                {
+                    UIRadioButtonGroup<string> radioGroup = (UIRadioButtonGroup<string>)group.Elements[0];
+                    Assert.That(radioGroup.Elements.Count, Is.EqualTo(3));
+                    Assert.That(radioGroup.Id, Is.EqualTo("radio_group"));
+
+                    Assert.That(window.Elements.GetById("radio_group"), Is.EqualTo(radioGroup));
+
+                    Assert.That(radioGroup.Elements[0], Is.AssignableTo(typeof(UIText)));
+
+                    Assert.That(radioGroup.Elements[1], Is.AssignableTo(typeof(UIStack)));
+                    UIStack radioStack1 = (UIStack)radioGroup.Elements[1];
+                    Assert.That(radioStack1.SizeMode, Is.EqualTo((UIElement.PositioningMode.Relative, UIElement.PositioningMode.Normal)));
+                    Assert.That(radioStack1.Elements.Count, Is.EqualTo(2));
+                    Assert.That(radioStack1.Elements[0], Is.AssignableTo(typeof(UIRadioButton<string>)));
+                    Assert.That(radioStack1.Elements[1], Is.AssignableTo(typeof(UIRadioButton<string>)));
+
+                    UIRadioButton<string> radio1 = (UIRadioButton<string>)radioStack1.Elements[0];
+                    Assert.That(radio1.Text, Is.EqualTo("Test 1"));
+                    Assert.That(radio1.LinkId, Is.EqualTo("TestGroup"));
+                }
 
                 Assert.That(stack.Elements[2], Is.AssignableTo(typeof(UIButton)));
                 UIButton button = (UIButton)stack.Elements[2];
@@ -81,7 +104,7 @@ namespace UX_Engine_Tests {
 	<Stack>
 		<Header>Forge UX Demo</Header>
 		<Group height=""200"" width=""100%"">
-			<RadioButtonGroup LinkId=""TestGroup"">
+			<RadioButtonGroup Id=""radio_group"" LinkId=""TestGroup"">
 				<Header variant=""small"">Radio Buttons</Header>
 				<Stack width=""50%"">
 					<S4RadioButton LinkId=""TestGroup"">Test 1</S4RadioButton>
