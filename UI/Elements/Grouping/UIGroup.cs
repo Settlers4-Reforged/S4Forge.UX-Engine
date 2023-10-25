@@ -7,11 +7,10 @@ using System.Net.Sockets;
 
 namespace Forge.UX.UI.Elements.Grouping {
     public class UIGroup : UIElement, IUILayout {
-        private bool isTransparent = false;
         public SceneTree Elements { get; set; }
 
         /// <summary>
-        /// A list of elements combined with the elements of all transparent groups.
+        /// A list of elements combined with the elements of all recursive transparent groups.
         /// </summary>
         public IEnumerable<UIElement> TransparentElements =>
             Elements
@@ -34,7 +33,7 @@ namespace Forge.UX.UI.Elements.Grouping {
         /// <br/>
         /// <b>Layout transparency and relative positioning and sizing are mutually exclusive.</b>
         /// </remarks>
-        public bool IsTransparent {
+        public virtual bool IsTransparent {
             get => isTransparent;
             set {
                 if (SizeMode != (PositioningMode.Normal, PositioningMode.Normal))
@@ -45,6 +44,7 @@ namespace Forge.UX.UI.Elements.Grouping {
                 isTransparent = value;
             }
         }
+        private bool isTransparent = false;
 
         public UIGroup() {
             Elements ??= new SceneTree();
