@@ -2,18 +2,28 @@
 	<Stack>
 		<Header>Forge UX Demo</Header>
 		<Group height="200" width="100%">
-			<RadioButtonGroup>
+			<RadioButtonGroup id="test-radio">
 				<Header variant="small">Radio Buttons</Header>
 				<Stack width="50%">
-					<RadioButton>Test 1</RadioButton>
-					<RadioButton>Test 2</RadioButton>
+					<S4RadioButton>Test 1</S4RadioButton>
+					<S4RadioButton>Test 2</S4RadioButton>
 				</Stack>
 				<Stack x="50%" width="50%">
-					<RadioButton>Test 3</RadioButton>
-					<RadioButton>Test 4</RadioButton>
+					<S4RadioButton>Test 3</S4RadioButton>
+					<S4RadioButton>Test 4</S4RadioButton>
 				</Stack>
 			</RadioButtonGroup>
 		</Group>
-		<Button id="accept_button">Accept</Button>
+		<S4Button id="accept_button">Accept</S4Button>
 	</Stack>
 </S4Window>
+
+<!--
+Code Behind:
+
+SceneManager.CreateScene("^", out UIGroup scene);
+
+UIElement radioGroup = scene.FindById("test-radio")
+
+
+-->

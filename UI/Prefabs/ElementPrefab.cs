@@ -49,7 +49,7 @@ namespace Forge.UX.UI.Prefabs {
 
         #endregion
 
-        public IEnumerable<IProperty> GetProperties() {
+        public virtual IEnumerable<IProperty> GetProperties() {
             List<IProperty> properties = new() {
                 X,
                 Y,
