@@ -10,8 +10,11 @@ namespace Forge.UX.UI.Prefabs.Properties {
     /// </summary>
     [DebuggerDisplay("ValueProperty {Name} | Value = {Value}")]
     public class ValueProperty : Property<string> {
+        public ValueProperty(string name, string description) : base(name, description) { }
+
         public override bool Parse(XmlNode node) {
-            return Parse(node.Value);
+            string innerText = node.InnerText;
+            return Parse(innerText);
         }
     }
 }
