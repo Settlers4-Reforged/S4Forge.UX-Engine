@@ -27,8 +27,18 @@ namespace Forge.UX.UI {
             SceneManager = manager;
         }
 
-        public bool CreateScene(string config) {
+        public bool CreateSceneFromFile(string file, out GroupPrefab? scene) {
+            if (!File.Exists(file)) {
+                throw new FileNotFoundException($"Tried to create a scene from a non existing file! File: {file}");
+            }
+
+            return CreateScene(File.ReadAllText(file), out scene); ;
+        }
+
+        public bool CreateScene(string config, out GroupPrefab? scene) {
             //TODO: Validate input
+
+            scene = null;
 
             XmlDocument tree = new XmlDocument();
             try {
@@ -38,8 +48,6 @@ namespace Forge.UX.UI {
                 return false;
             }
 
-            UIGroup scene;
-
             try {
                 scene = ParseScene(tree);
             } catch (Exception e) {
@@ -47,53 +55,43 @@ namespace Forge.UX.UI {
                 return false;
             }
 
-            SceneManager.AddRootElement(scene);
-
             return true;
         }
 
-        public UIGroup ParseScene(XmlDocument tree) {
+        public GroupPrefab ParseScene(XmlDocument tree) {
             if (tree.FirstChild == null) throw new ArgumentException("Tried to parse scene without a parent node");
 
-            if (ParseNode(tree.FirstChild) is UIGroup g) {
-                return g;
-            }
+            if (ParseNode(tree.FirstChild) is not GroupPrefab g)
+                throw new NotSupportedException("Tried to load scene without a UIGroup as parent");
 
-            throw new NotSupportedException("Tried to load scene without a UIGroup as parent");
+            return g;
+
         }
 
-        public UIElement? ParseNode(XmlNode node) {
+        public IPrefab? ParseNode(XmlNode node) {
             IPrefab prefab = PrefabManager.GetPrefabByName(node.Name) ?? throw new ArgumentException("Found node without a registered prefab!", node.Name);
 
             foreach (IProperty property in prefab.GetProperties()) {
                 property.Parse(node);
             }
 
-            UIElement nodeElement;
+            IPrefab nodeElement;
             try {
-                nodeElement = prefab.Instantiate();
+                nodeElement = prefab;
             } catch (Exception e) {
                 throw new InvalidOperationException($"Failed to instantiate prefab {prefab.Name}", e);
             }
 
-            if (nodeElement is not UIGroup g) return nodeElement;
+            if (nodeElement is not GroupPrefab g) return nodeElement;
 
             foreach (XmlNode childNode in node.ChildNodes) {
-                UIElement? childElement = ParseNode(childNode);
+                IPrefab? childElement = ParseNode(childNode);
                 if (childElement != null) {
-                    g.Elements.Add(childElement);
+                    g.ChildPrefabs.Add(childElement);
                 }
             }
 
             return nodeElement;
-        }
-
-        public bool CreateSceneFromFile(string file) {
-            if (!File.Exists(file)) {
-                throw new FileNotFoundException($"Tried to create a scene from a non existing file! File: {file}");
-            }
-
-            return CreateScene(File.ReadAllText(file));
         }
     }
 }

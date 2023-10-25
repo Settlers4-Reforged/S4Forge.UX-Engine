@@ -14,8 +14,15 @@ namespace Forge.UX.UI.Prefabs {
         public Property<bool> ClipContent = new(nameof(ClipContent),
             "Whether the group should hide/clip content that is outside it's bounds");
 
-
         #endregion
+
+        protected void InstantiateChildren(UIGroup group) {
+            foreach (IPrefab prefab in ChildPrefabs) {
+                group.Elements.Add(prefab.Instantiate());
+            }
+        }
+
+        public List<IPrefab> ChildPrefabs { get; } = new List<IPrefab>();
 
 
         protected override void ApplyPropertyValues(UIElement element) {
@@ -24,7 +31,7 @@ namespace Forge.UX.UI.Prefabs {
             if (element is UIGroup g) {
                 g.ClipContent = ClipContent;
             } else {
-                throw new InvalidOperationException($"Tried to apply group prefab '{Name}' to non UI group element '{element.Id}'!");
+                throw new InvalidOperationException($"Tried to apply group prefab properties from '{Name}' to non UI group element '{element.Id}'!");
             }
         }
 

@@ -16,6 +16,9 @@ namespace Forge.UX.UI.Prefabs.Groups {
         public override UIElement Instantiate() {
             UIWindow element = new UIWindow(new NineSliceTextureComponent(UXEngine.TCM.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.Window), 0));
             this.ApplyPropertyValues(element);
+
+            InstantiateChildren(element);
+
             return element;
         }
     }
