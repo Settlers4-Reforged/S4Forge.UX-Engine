@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 
 namespace Forge.UX.UI.Elements.Grouping.Layout {
-    internal class UIStack : UIGroup, IUILayout {
+    public class UIStack : UIGroup, IUILayout {
         private readonly float rowHeight;
         private int Rows => Elements.Count;
         private readonly Vector2 direction;

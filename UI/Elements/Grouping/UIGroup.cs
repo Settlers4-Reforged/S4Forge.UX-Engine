@@ -8,7 +8,7 @@ using System.Net.Sockets;
 namespace Forge.UX.UI.Elements.Grouping {
     public class UIGroup : UIElement, IUILayout {
         private bool isTransparent = false;
-        public List<UIElement> Elements { get; set; }
+        public SceneTree Elements { get; set; }
 
         /// <summary>
         /// A list of elements combined with the elements of all transparent groups.
@@ -47,7 +47,7 @@ namespace Forge.UX.UI.Elements.Grouping {
         }
 
         public UIGroup() {
-            Elements ??= new List<UIElement>();
+            Elements ??= new SceneTree();
         }
 
         public IEnumerable<UIElement> GetSortedElements() {

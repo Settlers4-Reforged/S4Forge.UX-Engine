@@ -21,17 +21,17 @@ namespace Forge.UX.UI {
         }
 
         private void OnScreenChange(UIScreen prev, UIScreen next) {
-            foreach (UIWindow window in rootSceneNode.GetAllSceneElements().OfType<UIWindow>()) {
+            foreach (UIWindow window in GetRootElements().GetAllElementsInTree().OfType<UIWindow>()) {
                 if (!window.PersistMenus)
                     window.Close();
             }
         }
 
         public IEnumerable<UIElement> GetAllElements() {
-            return rootSceneNode.GetAllSceneElements();
+            return rootSceneNode.Elements.GetAllElementsInTree();
         }
 
-        public IEnumerable<UIElement> GetRootElements() {
+        public SceneTree GetRootElements() {
             return rootSceneNode.Elements;
         }
 
@@ -143,24 +143,7 @@ namespace Forge.UX.UI {
         }
 
         class RootNode : UIGroup {
-            public List<UIElement> GetAllSceneElements() {
-                List<UIElement> elements = new List<UIElement>();
 
-                static void GetChildElements(UIGroup parent, ref List<UIElement> elements) {
-                    foreach (UIElement child in parent.Elements) {
-                        if (child is UIGroup g) {
-                            GetChildElements(g, ref elements);
-                        }
-
-                        elements.Add(child);
-                    }
-                }
-
-
-                GetChildElements(this, ref elements);
-
-                return elements;
-            }
         }
     }
 
