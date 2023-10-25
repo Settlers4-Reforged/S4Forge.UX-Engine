@@ -33,66 +33,13 @@ namespace Forge.UX.S4 {
         }
 
         public static bool RegisterEventCallback(Event eventId, EventCallback callback) {
+
+
+
             throw new System.NotImplementedException();
+
         }
 
-        /// <summary>
-        /// Creates a copy to a UI Element from a container
-        /// </summary>
-        /// <param name="container"></param>
-        /// <param name="valueLink"></param>
-        /// <returns></returns>
-        public static S4UIEngineElement? GetUIElementFromIndex(int container, int valueLink) {
-            unsafe {
-                var element = GetUIElementFromIndexUnsafe(container, valueLink);
-                return element == null ? null : *element;
-            }
-        }
-
-        public static unsafe S4UIEngineElement* GetUIElementFromIndexUnsafe(int container, int valueLink) {
-            Int32 UIMenus = GameValues.ReadValue<Int32>(0x1064C94);
-
-
-            Int32 containerOffset = GameValues.ReadValue<Int32>(UIMenus + (container + 4) * 4, false);
-            Int32 elementsOffset = GameValues.ReadValue<Int32>(containerOffset + UIMenus, false);
-            Int16 elementCount = GameValues.ReadValue<Int16>(containerOffset + UIMenus + 12, false);
-            S4UIEngineElement* elementArrayPointer =
-                (S4UIEngineElement*)new IntPtr(containerOffset + UIMenus + 16).ToPointer();
-
-            int i = 0;
-            while (valueLink != elementArrayPointer->valueLink) {
-                i++;
-                elementArrayPointer++;
-
-                if (i >= elementCount)
-                    return null;
-            }
-
-            return elementArrayPointer;
-        }
-
-        public static unsafe S4UIEngineElement*[] GetAllUIElementsFromIndexUnsafe(int container) {
-            Int32 UIMenus = GameValues.ReadValue<Int32>(0x1064C94);
-
-
-            Int32 containerOffset = GameValues.ReadValue<Int32>(UIMenus + (container + 4) * 4, false);
-            Int32 elementsOffset = GameValues.ReadValue<Int32>(containerOffset + UIMenus, false);
-            Int16 elementCount = GameValues.ReadValue<Int16>(containerOffset + UIMenus + 12, false);
-            S4UIEngineElement* elementArrayPointer =
-                (S4UIEngineElement*)new IntPtr(containerOffset + UIMenus + 16).ToPointer();
-
-            S4UIEngineElement*[] elements = new S4UIEngineElement*[elementCount];
-
-            int i = 0;
-            while (i < elementCount) {
-                elements[i] = elementArrayPointer;
-
-                i++;
-                elementArrayPointer++;
-            }
-
-            return elements;
-        }
 
 
         public static GUIEventHandler? GUIEventHandler {
