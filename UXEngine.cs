@@ -1,7 +1,9 @@
 ﻿using Forge.Engine;
 using Forge.Logging;
 using Forge.Native;
+using Forge.S4;
 using Forge.S4.Callbacks;
+using Forge.UPlay;
 using Forge.UX.Input;
 using Forge.UX.Rendering;
 using Forge.UX.Rendering.Texture;
@@ -13,6 +15,7 @@ using Microsoft.DirectX.DirectDraw;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 
 namespace Forge.UX {
     public class UXEngine : IEngine {
@@ -52,10 +55,10 @@ namespace Forge.UX {
                         Logger.LogWarn("Found error {0}", e);
                     }
 
-                    var test = UIEngine.GetAllUIElementsFromIndexUnsafe(7);
+                    var test = GameValues.GetAllUIElementsFromIndexUnsafe(7);
                 };
 
-                Callbacks.OnMouse += (button, x, y, id, hwnd, element) => {
+                Callbacks.OnMouse += (button, x, y, id, element) => {
                     Logger.LogDebug("Mouse button {0} @ {1}, {2} on {3} ({4})", button, x, y, id, element);
                 };
 
