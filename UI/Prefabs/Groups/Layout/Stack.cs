@@ -21,15 +21,5 @@ namespace Forge.UX.UI.Prefabs.Groups.Layout {
 
         public Property<bool> IsHorizontal = new Property<bool>(nameof(IsHorizontal), "If true, the stack will be horizontal, otherwise it will be vertical");
         public Property<float> MinimumDistance = new Property<float>(nameof(MinimumDistance), "The minimum amount of space between elements in the stack");
-
-        public override IEnumerable<IProperty> GetProperties() {
-            List<IProperty> props = (List<IProperty>)base.GetProperties();
-            props.AddRange(new IProperty[] {
-                IsHorizontal,
-                MinimumDistance,
-            });
-
-            return props;
-        }
     }
 }

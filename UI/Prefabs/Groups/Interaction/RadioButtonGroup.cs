@@ -20,11 +20,5 @@ namespace Forge.UX.UI.Prefabs.Groups.Interaction {
         }
 
         public Property<string> LinkId = new Property<string>(nameof(LinkId), "The ID of the RadioButtonGroup to link to") { Required = true };
-
-        public override IEnumerable<IProperty> GetProperties() {
-            var props = base.GetProperties() as List<IProperty>;
-            props!.Add(LinkId);
-            return props;
-        }
     }
 }

@@ -49,16 +49,14 @@ namespace Forge.UX.UI.Prefabs {
 
         #endregion
 
-        public virtual IEnumerable<IProperty> GetProperties() {
-            List<IProperty> properties = new() {
-                X,
-                Y,
-                Width,
-                Height,
-                PositionAbsolute,
-                IgnoreMouse,
-                ZIndex,
-            };
+        public IEnumerable<IProperty> GetProperties() {
+            List<IProperty> properties = this.GetType().GetFields().Select(prop => {
+                if (prop.FieldType.GetInterfaces().Contains(typeof(IProperty))) {
+                    return (IProperty)prop.GetValue(this)!;
+                }
+
+                return null;
+            }).Where(prop => prop != null).ToList()!;
 
             return properties;
         }

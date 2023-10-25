@@ -34,11 +34,5 @@ namespace Forge.UX.UI.Prefabs {
                 throw new InvalidOperationException($"Tried to apply group prefab properties from '{Name}' to non UI group element '{element.Id}'!");
             }
         }
-
-        public override IEnumerable<IProperty> GetProperties() {
-            var props = base.GetProperties() as List<IProperty>;
-            props!.Add(ClipContent);
-            return props;
-        }
     }
 }

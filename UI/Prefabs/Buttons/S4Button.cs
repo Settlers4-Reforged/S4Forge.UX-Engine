@@ -29,15 +29,5 @@ namespace Forge.UX.UI.Prefabs.Buttons {
         public ValueProperty Text = new ValueProperty(nameof(Text), "Text to display on the button") { Default = "-" };
         public Property<bool> IsEnabled = new Property<bool>(nameof(IsEnabled), "Whether the button is enabled") { Default = true };
 
-
-        public override IEnumerable<IProperty> GetProperties() {
-            List<IProperty> props = (List<IProperty>)base.GetProperties();
-            props.AddRange(new IProperty[] {
-                Text,
-                IsEnabled,
-            });
-
-            return props;
-        }
     }
 }

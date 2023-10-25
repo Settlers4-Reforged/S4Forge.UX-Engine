@@ -27,15 +27,5 @@ namespace Forge.UX.UI.Prefabs.Text {
         public EnumProperty<TextAlignment> Alignment = new EnumProperty<TextAlignment>(nameof(Alignment), "The alignment of the text") { Default = TextAlignment.Center };
         public EnumProperty<TextType> Type = new EnumProperty<TextType>(nameof(TextType), "The type of text to display") { Default = TextType.Normal };
         public EnumProperty<TextSize> Size = new EnumProperty<TextSize>(nameof(Size), "The size of the text") { Default = TextSize.Regular };
-
-        public override IEnumerable<IProperty> GetProperties() {
-            List<IProperty> props = (List<IProperty>)base.GetProperties();
-            props.AddRange(new IProperty[] {
-                Text,
-                FitText,
-            });
-
-            return props;
-        }
     }
 }
