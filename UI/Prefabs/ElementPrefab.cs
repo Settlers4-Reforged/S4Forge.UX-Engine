@@ -3,6 +3,7 @@ using Forge.UX.UI.Prefabs.Properties;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Text;
 
@@ -13,6 +14,8 @@ namespace Forge.UX.UI.Prefabs {
         public abstract UIElement Instantiate();
 
         #region Properties
+
+        public Property<string> Id = new(nameof(Id), "Unique identifier for the element", () => Guid.NewGuid().ToString());
 
         public RelativeProperty X = new(nameof(X), "X position of the element");
         public RelativeProperty Y = new(nameof(Y), "Y position of the element");
@@ -45,6 +48,8 @@ namespace Forge.UX.UI.Prefabs {
             element.IgnoresMouse = IgnoreMouse;
 
             element.ZIndex = ZIndex;
+
+            element.Id = Id.Value ?? Id.Default!;
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using Forge.UX.Interfaces;
+﻿using Forge.Logging;
+using Forge.UX.Interfaces;
 
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ namespace Forge.UX.UI.Prefabs.Properties {
                 Value = (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
             } catch (Exception ex) {
                 lastError = string.Format(ParseError, ex.Message);
+                Logger.LogError(null, "Failed to parse value - Error: {0}", ex.Message);
                 Value = default(T);
                 return false;
             }
@@ -68,6 +70,12 @@ namespace Forge.UX.UI.Prefabs.Properties {
             Name = name;
             Description = description;
             Default = defaultValue;
+        }
+
+        public Property(string name, string description, Func<T> defaultValue) {
+            Name = name;
+            Description = description;
+            Default = defaultValue();
         }
     }
 }
