@@ -1,6 +1,10 @@
-﻿using Forge.S4.Types;
+﻿using DryIoc;
+
+using Forge.Config;
+using Forge.S4.Types;
 using Forge.UX.Input;
 using Forge.UX.Native;
+using Forge.UX.Rendering;
 using Forge.UX.S4;
 using Forge.UX.UI.Components;
 using Forge.UX.UI.Elements;
@@ -15,6 +19,13 @@ using System.Numerics;
 namespace Forge.UX.UI {
     public class SceneManager {
         private readonly RootNode rootSceneNode = new RootNode();
+
+        private readonly Lazy<IRenderer> _renderer;
+        IRenderer Renderer => _renderer.Value;
+
+        public SceneManager(Lazy<IRenderer> renderer) {
+            this._renderer = renderer;
+        }
 
         public void Init() {
             //UIEngine.RegisterS4ScreenChangeCallback(OnScreenChange);
@@ -105,7 +116,7 @@ namespace Forge.UX.UI {
 
         void RenderComponents(UIElement parent, SceneGraphState state) {
             foreach (IUIComponent component in parent.Components) {
-                UXEngine.R.RenderUIComponent(component, parent, state);
+                Renderer.RenderUIComponent(component, parent, state);
             }
         }
 
@@ -189,7 +200,7 @@ namespace Forge.UX.UI {
         }
 
         public static SceneGraphState Default() {
-            Vector2 screenSize = UXEngine.R.GetScreenSize();
+            Vector2 screenSize = DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
 
             return new SceneGraphState(Vector2.Zero, Vector2.Zero, Vector2.One, new Vector4(0, 0, screenSize.X, screenSize.Y), 0);
         }
@@ -218,7 +229,7 @@ namespace Forge.UX.UI {
                 if (mode.HasFlag(UIElement.PositioningMode.Absolute)) {
                     output = axisValue;
                     if (mode.HasFlag(UIElement.PositioningMode.Relative)) {
-                        output *= UXEngine.R.GetScreenSize();
+                        output *= DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
                     }
                 } else if (mode.HasFlag(UIElement.PositioningMode.Relative)) {
                     output = axisValue * currentContainerSize;

@@ -20,10 +20,8 @@ namespace Forge.UX.UI {
         public PrefabManager PrefabManager;
         public SceneManager SceneManager;
 
-        public SceneBuilder(SceneManager manager) {
-            PrefabManager = new PrefabManager();
-            PrefabManager.RegisterDefaultPrefabs();
-
+        public SceneBuilder(SceneManager manager, PrefabManager prefabManager) {
+            PrefabManager = prefabManager;
             SceneManager = manager;
         }
 

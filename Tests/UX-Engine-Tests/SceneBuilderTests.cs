@@ -1,4 +1,5 @@
 using Forge.UX;
+using Forge.UX.Rendering;
 using Forge.UX.UI;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
@@ -29,14 +30,14 @@ namespace UX_Engine_Tests {
             };
 
             UXEngine.IsInitialized = true;
-            UXEngine.Implement(new RenderingManagerMock(), new TextureCollectionManagerMock(), 0);
+            UXEngine.Implement(typeof(RenderingManagerMock), typeof(TextureCollectionManagerMock), 0);
         }
 
         [Test]
         public void SceneBuilder_WithCorrectScene_CorrectBuild() {
             // Prepare
-            SceneManager manager = new SceneManager();
-            SceneBuilder builder = new SceneBuilder(manager);
+            SceneManager manager = new SceneManager(new Lazy<IRenderer>(() => new RenderingManagerMock()));
+            SceneBuilder builder = new SceneBuilder(manager, new PrefabManager());
 
             // Run
             bool result = builder.CreateScene(CorrectScene, out GroupPrefab? output);

@@ -1,4 +1,7 @@
-﻿using Forge.S4.Types;
+﻿using DryIoc;
+
+using Forge.Config;
+using Forge.S4.Types;
 using Forge.UX.Rendering.Texture;
 
 using System;
@@ -22,7 +25,8 @@ namespace Forge.UX.UI.Components {
         }
 
         public static TextureComponent FromCollection(int collection, int id) {
-            return new TextureComponent(UXEngine.TCM.GetCollection(collection).GetTexture(id));
+            ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
+            return new TextureComponent(tcm.GetCollection(collection).GetTexture(id));
         }
     }
 }

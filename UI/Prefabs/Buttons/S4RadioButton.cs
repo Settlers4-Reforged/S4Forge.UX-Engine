@@ -1,4 +1,7 @@
-﻿using Forge.UX.Rendering.Texture;
+﻿using DryIoc;
+
+using Forge.Config;
+using Forge.UX.Rendering.Texture;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Interaction;
 using Forge.UX.UI.Prefabs.Properties;
@@ -12,9 +15,11 @@ namespace Forge.UX.UI.Prefabs.Buttons {
         public override string Name => "S4RadioButton";
         public override string Description => "A Settlers 4 style radio button - must be used in a RadioButtonGroup";
         public override UIElement Instantiate() {
+            ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
+
             return new UIRadioButton<string>(LinkId!, Value!) {
-                ButtonTexture = UXEngine.TCM.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.RadiobuttonUnchecked),
-                ButtonHeldTexture = UXEngine.TCM.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.RadiobuttonUnchecked),
+                ButtonTexture = tcm.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.RadiobuttonUnchecked),
+                ButtonHeldTexture = tcm.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.RadiobuttonUnchecked),
                 Text = Text!,
                 Enabled = IsEnabled!,
             };

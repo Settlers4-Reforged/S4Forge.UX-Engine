@@ -1,4 +1,7 @@
-﻿using Forge.Engine;
+﻿using DryIoc;
+
+using Forge.Config;
+using Forge.Engine;
 using Forge.Logging;
 using Forge.Native;
 using Forge.S4;
@@ -16,13 +19,23 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Forge.UX {
     public class UXEngine : IEngine {
         public string Name => "UXEngine";
 
-        public bool Initialize(S4Forge forge) {
+        private S4Forge forge;
+
+        public UXEngine(S4Forge forge) {
+            this.forge = forge;
+        }
+
+        public bool Initialize() {
             Logger.LogInfo("Initialized UXEngine");
+
+            RegisterDependencies();
+            new UIEngine();
 
             IsInitialized = true;
 
@@ -32,13 +45,13 @@ namespace Forge.UX {
             unsafe {
                 Callbacks.OnFrame += (texture, width) => {
                     if (!IsReady) {
-                        if (renderer == null) {
+                        if (DI.Dependencies.IsRegistered<IRenderer>() == false) {
                             //TODO: Add dummy renderer or throw exception
                             Logger.LogWarn("Missing renderer implementation...");
                             return;
                         }
 
-                        Logger.LogInfo($"UXEngine is ready to render with {renderer.Name}");
+                        Logger.LogInfo($"UXEngine is ready to render with {DI.Dependencies.Resolve<IRenderer>().Name}");
 
                         IsReady = true;
 
@@ -63,11 +76,15 @@ namespace Forge.UX {
                 };
 
                 onReady += () => {
-                    SM.Init();
+                    DI.Dependencies.Resolve<SceneManager>().Init();
                 };
             }
 
             return true;
+        }
+
+        public void RegisterDependencies() {
+
         }
 
         public static bool IsReady;
@@ -78,19 +95,8 @@ namespace Forge.UX {
 
         private static bool isImplemented = false;
         private static int? latestImplementationPriority = null;
-        private static IRenderer? renderer;
-        private static ITextureCollectionManager? textureCollectionManager;
 
-        internal static IRenderer R => renderer ?? throw new InvalidOperationException();
-
-        /// <summary>
-        /// Global TextureCollectionManager implementation, provided by the implementing renderer - should only be used after 
-        /// </summary>
-        public static ITextureCollectionManager TCM => textureCollectionManager ?? throw new InvalidOperationException();
-
-        public static SceneManager SM { get; } = new SceneManager();
-
-        public static void Implement(IRenderer rendererEngine, ITextureCollectionManager collectionManager, int implementationPriority) {
+        public static void Implement(Type rendererEngine, Type collectionManager, int implementationPriority) {
             Logger.LogInfo("Requested to add a new render engine implementation for UXEngine: {0} @ {0}", rendererEngine.Name, implementationPriority);
 
             if (IsInitialized) {
@@ -112,8 +118,11 @@ namespace Forge.UX {
 
                 Logger.LogInfo("{0} promoted to new render engine", rendererEngine.Name);
 
-                UXEngine.renderer = rendererEngine;
-                UXEngine.textureCollectionManager = collectionManager;
+                if (rendererEngine != null)
+                    DI.Dependencies.RegisterMany(new[] { rendererEngine }, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+
+                if (collectionManager != null)
+                    DI.Dependencies.RegisterMany(new[] { collectionManager }, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
 
                 isImplemented = true;
                 latestImplementationPriority = implementationPriority;

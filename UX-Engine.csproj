@@ -28,6 +28,7 @@
         <FileVersion>$(AssemblyVersion)</FileVersion>
         <Version>$(AssemblyVersion)</Version>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
 
     <Choose>
@@ -38,7 +39,7 @@
         </When>
         <Otherwise>
             <ItemGroup>
-                <PackageReference Include="S4Forge" Version="*" />
+                <PackageReference Include="S4Forge" Version="*"  />
             </ItemGroup>
         </Otherwise>
     </Choose>
@@ -51,8 +52,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Numerics.Vectors" Version="4.4.0">
-        </PackageReference>
+        <PackageReference Include="System.Numerics.Vectors" Version="4.4.0"/>
+        <PackageReference Include="Microsoft.SourceLink.GitLab" Version="1.1.1" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>

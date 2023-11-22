@@ -1,4 +1,7 @@
-﻿using Forge.UX.Rendering;
+﻿using DryIoc;
+
+using Forge.Config;
+using Forge.UX.Rendering;
 using Forge.UX.Rendering.Texture;
 using Forge.UX.UI.Components;
 
@@ -85,8 +88,10 @@ namespace Forge.UX.UI.Elements.Interaction {
         #endregion
 
         public void DefaultTextures() {
-            DefaultButtonTexture ??= UXEngine.TCM.Get(0, 0);
-            DefaultButtonHeldTexture ??= UXEngine.TCM.Get(0, 0);
+            ITextureCollectionManager textureCollectionManager = DI.Dependencies.Resolve<ITextureCollectionManager>();
+
+            DefaultButtonTexture ??= textureCollectionManager.Get(0, 0);
+            DefaultButtonHeldTexture ??= textureCollectionManager.Get(0, 0);
 
             ButtonTexture ??= DefaultButtonTexture;
             ButtonHeldTexture ??= DefaultButtonHeldTexture;

@@ -1,4 +1,7 @@
-﻿using Forge.UX.Rendering.Texture;
+﻿using DryIoc;
+
+using Forge.Config;
+using Forge.UX.Rendering.Texture;
 using Forge.UX.UI.Components;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping.Display;
@@ -14,7 +17,8 @@ namespace Forge.UX.UI.Prefabs.Groups {
         public override string Description => "A generic Window in the style of a S4 pop-out";
 
         public override UIElement Instantiate() {
-            UIWindow element = new UIWindow(new NineSliceTextureComponent(UXEngine.TCM.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.Window), 0));
+            ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
+            UIWindow element = new UIWindow(new NineSliceTextureComponent(tcm.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.Window), 0));
             this.ApplyPropertyValues(element);
 
             InstantiateChildren(element);
