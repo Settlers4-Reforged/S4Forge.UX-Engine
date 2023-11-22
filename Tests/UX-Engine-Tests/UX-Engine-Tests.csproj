@@ -1,44 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-    <RootNamespace>UX_Engine_Tests</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>10.0</LangVersion>
-    <Nullable>enable</Nullable>
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <RootNamespace>UX_Engine_Tests</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <PlatformTarget>x86</PlatformTarget>
+        <LangVersion>10.0</LangVersion>
+        <Nullable>enable</Nullable>
 
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
-    <Platforms>AnyCPU;x86</Platforms>
-  </PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <RunPostBuildEvent>Always</RunPostBuildEvent>
+        <Platforms>AnyCPU;x86</Platforms>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.3.0" />
-    <PackageReference Include="NUnit.Analyzers" Version="3.5.0" />
-    <PackageReference Include="coverlet.collector" Version="3.1.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+        <PackageReference Include="NUnit" Version="3.13.3" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.3.0" />
+        <PackageReference Include="NUnit.Analyzers" Version="3.5.0" />
+        <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    </ItemGroup>
 
-  <ItemGroup>
-	  <ProjectReference Include="..\..\UX-Engine.csproj"/>
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\UX-Engine.csproj"/>
+    </ItemGroup>
 
-  <Choose>
-	  <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
-		  <ItemGroup>
-			  <ProjectReference Include="..\..\..\..\Forge\S4Forge.csproj" />
-              <ProjectReference Include="..\..\..\..\APIWrapper\S4APIWrapper.vcxproj" />
-          </ItemGroup>
-      </When>
-      <Otherwise>
-          <ItemGroup>
-              <PackageReference Include="S4Forge" Version="*"/>
-              <PackageReference Include="S4APIWrapper" Version="*"/>
-          </ItemGroup>
-      </Otherwise>
-  </Choose>
+    <Choose>
+        <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
+            <ItemGroup>
+                <ProjectReference Include="..\..\..\..\Forge\S4Forge.csproj" />
+                <ProjectReference Include="..\..\..\..\APIWrapper\S4APIWrapper.vcxproj" />
+            </ItemGroup>
+        </When>
+        <Otherwise>
+            <ItemGroup>
+                <PackageReference Include="S4Forge" Version="*"/>
+                <PackageReference Include="S4APIWrapper" Version="*"/>
+            </ItemGroup>
+        </Otherwise>
+    </Choose>
 
 </Project>
