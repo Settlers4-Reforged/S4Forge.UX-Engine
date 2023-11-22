@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Forge.UX.S4 {
-    internal static class UIEngine {
+    internal class S4UI {
         public delegate void ScreenCallback(UIScreen previous, UIScreen next);
 
         public delegate void MenuCallback(List<UIMenu> previous, List<UIMenu> next);
