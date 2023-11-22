@@ -33,12 +33,12 @@
   <Choose>
     <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
       <ItemGroup>
-        <ProjectReference Include="..\..\Forge\S4Forge.csproj"/>
+        <ProjectReference Include="..\..\Forge\S4Forge.csproj" />
       </ItemGroup>
     </When>
     <Otherwise>
       <ItemGroup>
-        <PackageReference Include="S4Forge" Version="*"/>
+        <PackageReference Include="S4Forge" Version="*" />
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -48,10 +48,6 @@
     <Compile Remove="Tests\**" />
     <EmbeddedResource Remove="Tests\**" />
     <None Remove="Tests\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UI\Prefabs\Buttons\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -56,7 +56,7 @@ namespace UX_Engine_Tests {
                 Assert.That(window.Size, Is.EqualTo(new Vector2(500, 500)));
                 Assert.That(window.Position, Is.EqualTo(new Vector2(50, 50)));
                 Assert.That(window.Id, Is.EqualTo("forge_ux_demo"));
-                //Assert.That(window.Draggable, Is.True);
+                Assert.That(window.Draggable, Is.True);
 
                 Assert.That(window.Elements.Count, Is.EqualTo(1));
                 Assert.That(window.Elements[0], Is.AssignableTo(typeof(UIStack)));

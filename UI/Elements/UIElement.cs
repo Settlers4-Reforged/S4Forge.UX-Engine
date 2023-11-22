@@ -63,9 +63,9 @@ namespace Forge.UX.UI.Elements {
 
         #region EventHandlers
 
-        public delegate void UIEvent(UIElement initiator);
+        public delegate void UIEvent<in T>(T initiator);
 
-        public UIEvent? OnInput;
+        public UIEvent<UIElement>? OnInput;
 
         #endregion
     }
