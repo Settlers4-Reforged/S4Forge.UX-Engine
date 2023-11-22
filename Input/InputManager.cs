@@ -1,18 +1,34 @@
-﻿using Forge.UX.Native;
+﻿using Forge.Native;
+using Forge.UX.Native;
 
 using System;
 using System.Numerics;
 
 namespace Forge.UX.Input {
     public static class InputManager {
-        //Mouse:
+        #region Mouse
+
         public static bool IsMouseInRectangle(Vector4 rect) {
-            throw new NotImplementedException();
+            Vector2 mousePosition = GetMousePosition();
+            return mousePosition.X >= rect.X && mousePosition.X <= rect.X + rect.Z && mousePosition.Y >= rect.Y && mousePosition.Y <= rect.Y + rect.W;
         }
 
         public static float GetMouseScroll() {
             throw new NotImplementedException();
         }
+
+        private static Vector2 prevMousePosition;
+        public static Vector2 GetMousePosition() {
+            User32.GetCursorPos(out User32.Pos point);
+            Vector2 mousePosition = new Vector2(point.X, point.Y);
+            prevMousePosition = mousePosition;
+            return mousePosition;
+        }
+
+        public static Vector2 MouseDelta => GetMousePosition() - prevMousePosition;
+
+
+        #endregion
 
         //Key related input:
         public static bool IsKeyDown(Keys key) {
