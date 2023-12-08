@@ -1,4 +1,6 @@
-﻿using Forge.S4.Managers;
+﻿
+using Forge.Config;
+using Forge.S4.Game;
 using Forge.S4.Types;
 using Forge.UX.Rendering.Texture;
 
@@ -11,7 +13,8 @@ namespace Forge.UX.UI.Components {
     public sealed class TribeTextureComponent : TextureComponent {
         public override ITexture Texture {
             get {
-                Tribe c = GameConfig.GetCurrentTribe();
+                PlayerApi api = DI.Resolve<PlayerApi>();
+                Tribe c = api.GetCurrentTribe();
                 if (!textures.TryGetValue(c, out ITexture? o)) {
                     o = textures[Tribe.Default];
                 }
