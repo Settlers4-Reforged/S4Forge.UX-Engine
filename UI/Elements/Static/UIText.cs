@@ -6,18 +6,22 @@ using System.Collections.Generic;
 
 namespace Forge.UX.UI.Elements.Static {
     public sealed class UIText : UIElement, IUIBindable<string> {
-        public TextComponent Text;
+        public TextComponent TextComponent;
+        public string Text {
+            get => TextComponent.Text;
+            set => TextComponent.Text = value;
+        }
 
         public UIText(string text) {
-            Text = new TextComponent(text);
-            Components = new List<IUIComponent> { Text };
+            TextComponent = new TextComponent(text);
+            Components = new List<IUIComponent> { TextComponent };
         }
 
         public override void Input(SceneGraphState state) {
             base.Input(state);
 
             if (BindingGetValue != null) {
-                Text.Text = BindingGetValue(this);
+                Text = BindingGetValue(this);
             }
         }
 

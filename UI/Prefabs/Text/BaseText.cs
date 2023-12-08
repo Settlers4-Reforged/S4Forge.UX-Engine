@@ -16,7 +16,7 @@ namespace Forge.UX.UI.Prefabs.Text {
             UIText text = new UIText(Text!);
             this.ApplyPropertyValues(text);
 
-            TextComponent textComponent = text.Text;
+            TextComponent textComponent = text.TextComponent;
             textComponent.FitText = FitText;
 
             return text;

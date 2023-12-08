@@ -66,7 +66,7 @@ namespace UX_Engine_Tests {
                 Assert.That(stack.Elements.Count, Is.EqualTo(3));
                 Assert.That(stack.Elements[0], Is.AssignableTo(typeof(UIText)));
                 UIText header = (UIText)stack.Elements[0];
-                Assert.That(header.Text.Text, Is.EqualTo("Forge UX Demo"));
+                Assert.That(header.TextComponent.Text, Is.EqualTo("Forge UX Demo"));
 
                 Assert.That(stack.Elements[1], Is.AssignableTo(typeof(UIGroup)));
                 UIGroup group = (UIGroup)stack.Elements[1];
