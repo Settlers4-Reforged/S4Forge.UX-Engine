@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Forge.UX.UI.Elements.Static {
     public sealed class UITexture : UIElement {
-        public override Vector2 Size => new(texture.Texture.Width, texture.Texture.Height);
+        public override Vector2 Size => new Vector2(texture.Texture?.Width ?? 0, texture.Texture?.Height ?? 0);
 
         private readonly TextureComponent texture;
 
