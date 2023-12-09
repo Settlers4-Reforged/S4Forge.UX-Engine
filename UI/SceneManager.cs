@@ -1,6 +1,7 @@
 ﻿using DryIoc;
 
 using Forge.Config;
+using Forge.Logging;
 using Forge.S4.Types;
 using Forge.UX.Input;
 using Forge.UX.Native;
@@ -23,8 +24,17 @@ namespace Forge.UX.UI {
         private readonly Lazy<IRenderer> _renderer;
         IRenderer Renderer => _renderer.Value;
 
-        public SceneManager(Lazy<IRenderer> renderer) {
+        private readonly InputManager inputManager;
+
+        public SceneManager(Lazy<IRenderer> renderer, InputManager inputManager) {
             this._renderer = renderer;
+            this.inputManager = inputManager;
+
+            this.inputManager.AddInputBlockingMiddleware(new InputManager.InputBlockMiddleware(true, InputBlockingMiddleware, 1000));
+        }
+
+        private EventBlockFlags InputBlockingMiddleware(EventBlockFlags input) {
+            throw new NotImplementedException();
         }
 
         public void Init() {
@@ -32,7 +42,7 @@ namespace Forge.UX.UI {
         }
 
         private void OnScreenChange(UIScreen prev, UIScreen next) {
-            foreach (UIWindow window in GetRootElements().GetAllElementsInTree().OfType<UIWindow>()) {
+            foreach (UIWindow window in GetAllElements().OfType<UIWindow>()) {
                 if (!window.PersistMenus)
                     window.Close();
             }
@@ -51,9 +61,15 @@ namespace Forge.UX.UI {
         }
 
         public void DoFrame() {
-            InputScene();
+            try {
+                InputScene();
 
-            RenderScene();
+                RenderScene();
+
+                inputManager.Update();
+            } catch (Exception e) {
+                Logger.LogError(e, "Error in scene manager");
+            }
         }
 
         void InputScene() {
@@ -68,7 +84,7 @@ namespace Forge.UX.UI {
 
                 if (currentHoverElement == null || element.ZIndex > currentHoverElement.ZIndex) {
                     (Vector2 elementPosition, Vector2 elementSize) = state.TranslateElement(element);
-                    newHoverState = InputManager.IsMouseInRectangle(new Vector4(elementPosition, elementSize.X, elementSize.Y));
+                    newHoverState = inputManager.IsMouseInRectangle(new Vector4(elementPosition, elementSize.X, elementSize.Y));
 
                     if (element.IsMouseHover) {
                         currentHoverElement = element;
@@ -96,11 +112,11 @@ namespace Forge.UX.UI {
 
             int k = 0;
             foreach (Keys key in keys) {
-                if (InputManager.IsKeyDown(key)) {
+                if (inputManager.IsKeyDown(key)) {
                     currentHoverElement?.OnMouseClickDown(k);
                 }
 
-                if (InputManager.IsKeyUp(key)) {
+                if (inputManager.IsKeyUp(key)) {
                     currentHoverElement?.OnMouseClickUp(k);
                 }
 

@@ -36,7 +36,7 @@ namespace UX_Engine_Tests {
         [Test]
         public void SceneBuilder_WithCorrectScene_CorrectBuild() {
             // Prepare
-            SceneManager manager = new SceneManager(new Lazy<IRenderer>(() => new RenderingManagerMock()));
+            SceneManager manager = new SceneManager(new Lazy<IRenderer>(() => new RenderingManagerMock()), null);
             SceneBuilder builder = new SceneBuilder(manager, new PrefabManager());
 
             // Run

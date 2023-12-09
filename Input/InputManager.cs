@@ -2,55 +2,308 @@
 using Forge.UX.Native;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace Forge.UX.Input {
-    public static class InputManager {
+    public class InputManager {
+        private HashSet<Keys> downKeys, heldKeys, upKeys;
+        private int mouseScroll;
+
+        public InputManager() {
+#pragma warning disable CS0618 // Type or member is obsolete - InputManager requires a WndProc to be set
+            User32.WndProc += InputHandler;
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            downKeys = new HashSet<Keys>();
+            heldKeys = new HashSet<Keys>();
+            upKeys = new HashSet<Keys>();
+        }
+
+        public bool TextInputActive {
+            get => false; //TODO: implement
+        }
+
+        public bool ChatInputActive {
+            get => false; //TODO: implement
+        }
+
+        bool InputHandler(WndProcMsg msg, IntPtr wParam, IntPtr lParam) {
+            // When in Text input mode have a special input handler for WM_KEYDOWN events
+            // TODO: handle special keys like "Escape" better
+            if (TextInputActive && msg == WndProcMsg.WM_KEYDOWN) {
+                char c = (char)wParam;
+                // TODO: find out if this is the correct way to check for normal characters
+                if (char.IsLetterOrDigit(c) || char.IsPunctuation(c) || char.IsSymbol(c) || char.IsWhiteSpace(c)) {
+                    if (ChatInputActive) {
+                        return false;
+                    } else {
+                        TextInput?.Invoke(c.ToString());
+                        return false;
+                    }
+                }
+            }
+
+            HandleKeyStates(msg, wParam);
+
+            // Only if at least one key just was pressed down we want to handle the input
+            // This is to prevent the input from being handled multiple times
+            // TODO: find out if some keybinds should be called for every frame a key is held down
+            // Should then be handled by the Update method - makes it FPS dependent though
+            foreach (Keybind keybind in keybinds.Where(keybind => keybind.Keys.All(IsKeyHeld) && keybind.Keys.Any(IsKeyDown))) {
+                keybind.Action();
+                // Remove all keys that are part of the keybind
+                // This is to prevent the keybind from being called multiple times before the next update call
+                // TODO: find out if this collides with key states for consuming clients
+                downKeys.RemoveWhere(keybind.Keys.Contains);
+                return false;
+            }
+
+            return HandleInputBlocking(msg);
+        }
+
+        private bool HandleInputBlocking(WndProcMsg msg) {
+            EventBlockFlags blockedInput = inputBlocks.Where(middleware => middleware.IsBlocking).OrderBy((m) => m.Priority)
+                .Aggregate(EventBlockFlags.None, (current, middleware) => current | middleware.Middleware(current));
+
+            if ((blockedInput & EventBlockFlags.MouseClick) == EventBlockFlags.MouseClick) { // Mouse Clicks Blocked
+                if (msg is >= WndProcMsg.WM_LBUTTONDOWN and <= WndProcMsg.WM_XBUTTONDBLCLK) {
+                    //Not WM_MOUSEFIRST=WM_MOUSEMOVE because we want the game to still receive those events
+                    return true;
+                }
+            }
+
+            if ((blockedInput & EventBlockFlags.MouseWheel) == EventBlockFlags.MouseWheel) { // Mouse Clicks Blocked
+                if (msg == WndProcMsg.WM_MOUSEWHEEL) {
+                    return true;
+                }
+            }
+
+            if ((blockedInput & EventBlockFlags.Mouse) == EventBlockFlags.Mouse) { // Mouse Clicks Blocked
+                if (msg is >= WndProcMsg.WM_MOUSEFIRST and <= WndProcMsg.WM_MOUSELAST) {
+                    return true;
+                }
+            }
+
+            if ((blockedInput & EventBlockFlags.Keyboard) == EventBlockFlags.Keyboard) { // Mouse Clicks Blocked
+                if (msg is >= WndProcMsg.WM_KEYFIRST and <= WndProcMsg.WM_KEYLAST) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void HandleKeyStates(WndProcMsg msg, IntPtr wParam) {
+            Keys key = Keys.None;
+            bool up = false;
+
+            int wp = (int)wParam;
+
+            switch (msg) {
+                case WndProcMsg.WM_MOUSEWHEEL: //Scroll:
+                    mouseScroll = (wp) >> 0x10;
+                    break;
+
+                //Button up:
+                case WndProcMsg.WM_KEYUP:
+                    key = (Keys)wp;
+                    up = true;
+                    break;
+                case WndProcMsg.WM_SYSKEYUP: //Alt Gr up
+                    key = (Keys)wp;
+                    up = true;
+                    break;
+                //Mouse up:
+                case WndProcMsg.WM_LBUTTONUP: //Left
+                    key = Keys.LButton;
+                    up = true;
+                    break;
+                case WndProcMsg.WM_RBUTTONUP: //Right
+                    key = Keys.RButton;
+                    up = true;
+                    break;
+                case WndProcMsg.WM_MBUTTONUP: //Middle
+                    key = Keys.MButton;
+                    up = true;
+                    break;
+
+                //Keyboard button down:
+                case WndProcMsg.WM_KEYDOWN: //Keyboard down:
+                    key = (Keys)wp;
+                    break;
+                case WndProcMsg.WM_SYSKEYDOWN: //Alt Gr up
+                    key = (Keys)wp;
+                    break;
+                //Mouse down:
+                case WndProcMsg.WM_LBUTTONDOWN: //Left
+                    key = Keys.LButton;
+                    break;
+                case WndProcMsg.WM_RBUTTONDOWN: //Right
+                    key = Keys.RButton;
+                    break;
+                case WndProcMsg.WM_MBUTTONDOWN: //Middle
+                    key = Keys.MButton;
+                    break;
+
+                default:
+                    break;
+            }
+
+
+            if (key != Keys.None) {
+                if (up) {
+                    heldKeys.Remove(key);
+                    upKeys.Add(key);
+                } else {
+                    heldKeys.Add(key);
+                    downKeys.Add(key);
+                }
+            }
+        }
+
+        internal void Update() {
+            downKeys.Clear();
+            upKeys.Clear();
+            mouseScroll = 0;
+
+
+            User32.GetCursorPos(out User32.Pos point);
+            currentMousePosition = new Vector2(point.X, point.Y);
+            prevMousePosition = currentMousePosition;
+        }
+
         #region Mouse
 
-        public static bool IsMouseInRectangle(Vector4 rect) {
-            Vector2 mousePosition = GetMousePosition();
-            return mousePosition.X >= rect.X && mousePosition.X <= rect.X + rect.Z && mousePosition.Y >= rect.Y && mousePosition.Y <= rect.Y + rect.W;
+        public bool IsMouseInRectangle(Vector4 rect) {
+            return MousePosition.X >= rect.X && MousePosition.X <= rect.X + rect.Z && MousePosition.Y >= rect.Y && MousePosition.Y <= rect.Y + rect.W;
         }
 
-        public static float GetMouseScroll() {
-            throw new NotImplementedException();
-        }
+        private Vector2 prevMousePosition;
+        private Vector2 currentMousePosition;
 
-        private static Vector2 prevMousePosition;
-        public static Vector2 GetMousePosition() {
-            User32.GetCursorPos(out User32.Pos point);
-            Vector2 mousePosition = new Vector2(point.X, point.Y);
-            prevMousePosition = mousePosition;
-            return mousePosition;
-        }
+        public Vector2 MousePosition => currentMousePosition;
 
-        public static Vector2 MouseDelta => GetMousePosition() - prevMousePosition;
+        public Vector2 MouseDelta => MousePosition - prevMousePosition;
+
+        public float MouseScroll => mouseScroll;
 
 
         #endregion
 
         //Key related input:
-        public static bool IsKeyDown(Keys key) {
-            throw new NotImplementedException();
+
+        /// <summary>
+        /// Returns true if the key is was just pressed down.
+        /// </summary>
+        public bool IsKeyDown(Keys key) {
+            return downKeys.Contains(key);
         }
 
-        public static bool IsKeyUp(Keys key) {
-            throw new NotImplementedException();
+        /// <summary>
+        /// Returns true if the key is was just released.
+        /// </summary>
+        public bool IsKeyUp(Keys key) {
+            return upKeys.Contains(key);
         }
 
-        public static bool IsKeyHeld(Keys key) {
-            throw new NotImplementedException();
+        /// <summary>
+        /// Returns true if the key is currently held down.
+        /// </summary>
+        public bool IsKeyHeld(Keys key) {
+            return heldKeys.Contains(key);
         }
+
+        public Action<string>? TextInput { get; set; }
+
+        #region Kebinds
+
+        struct Keybind {
+            public readonly IList<Keys> Keys;
+            public readonly Action Action;
+
+            public Keybind(IList<Keys> keys, Action action) {
+                Keys = keys;
+                Action = action;
+            }
+        }
+
+        List<Keybind> keybinds = new List<Keybind>();
+
+        /// <summary>
+        /// Registers a keybind with the input manager.
+        /// </summary>
+        /// <returns>
+        /// Returns true if the keybind was successfully registered, false otherwise.
+        /// <br/>
+        /// Reasons for failure include:
+        /// <list type="bullet">
+        /// <item>Keybind already registered, but overwrite is false</item>
+        /// </list>
+        /// </returns>
+        public bool RegisterKeybind(Keys key, bool overrideExisting, Action action) {
+            return RegisterKeybind(new List<Keys>() { key }, overrideExisting, action);
+        }
+
+        /// <inheritdoc cref="RegisterKeybind(Forge.UX.Input.Keys,bool,System.Action)"/>
+        public bool RegisterKeybind(IList<Keys> keys, bool overrideExisting, Action action) {
+            if (keybinds.Any(k => k.Keys.SequenceEqual(keys))) {
+                if (overrideExisting) {
+                    keybinds.RemoveAll(k => k.Keys.SequenceEqual(keys));
+                } else {
+                    return false;
+                }
+            }
+
+            keybinds.Add(new Keybind(keys, action));
+            return true;
+        }
+
+        /// <summary>
+        /// Removes a keybind from the input manager.
+        /// </summary>
+        /// <returns>
+        /// Returns true if the keybind was successfully removed, false otherwise.
+        /// </returns>
+        public bool RemoveKeybind(Keys key) {
+            return RemoveKeybind(new List<Keys>() { key });
+        }
+
+        /// <inheritdoc cref="RemoveKeybind(Forge.UX.Input.Keys)"/>
+        public bool RemoveKeybind(IList<Keys> keys) {
+            return keybinds.RemoveAll(k => k.Keys.SequenceEqual(keys)) > 0;
+        }
+
+        #endregion
+
+
+        #region InputBlocking
+
+        public class InputBlockMiddleware {
+            public readonly int Priority;
+            public bool IsBlocking;
+            public Func<EventBlockFlags, EventBlockFlags> Middleware;
+            public InputBlockMiddleware(bool isBlocking, Func<EventBlockFlags, EventBlockFlags> middleware, int priority = 0) {
+                IsBlocking = isBlocking;
+                Middleware = middleware;
+                Priority = priority;
+            }
+        }
+
+        List<InputBlockMiddleware> inputBlocks = new List<InputBlockMiddleware>();
+
 
         //Original Game Input Blocking:
-        public static void ClearBlockFlags() {
-            throw new NotImplementedException();
+        public void AddInputBlockingMiddleware(InputBlockMiddleware middleware) {
+            inputBlocks.Add(middleware);
         }
 
-        public static void BlockInput(EventBlockFlags flags) {
-            throw new NotImplementedException();
+        public void RemoveInputBlockingMiddleware(InputBlockMiddleware middleware) {
+            inputBlocks.Remove(middleware);
         }
+
+        #endregion
     }
 
     [Flags]

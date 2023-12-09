@@ -86,6 +86,7 @@ namespace Forge.UX {
 
         public void RegisterDependencies() {
             new UIEngine();
+            DI.Dependencies.RegisterInstanceMany(new InputManager());
         }
 
         public static bool IsReady;

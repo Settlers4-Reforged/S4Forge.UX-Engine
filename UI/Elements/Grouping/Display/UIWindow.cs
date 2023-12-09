@@ -1,4 +1,5 @@
-﻿using Forge.UX.Input;
+﻿using Forge.Config;
+using Forge.UX.Input;
 using Forge.UX.UI.Components;
 using Forge.UX.UI.Elements.Grouping.Layout;
 
@@ -31,8 +32,10 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
         public override void OnMouseClickDown(int mb) {
             base.OnMouseClickDown(mb);
 
+            InputManager im = DI.Resolve<InputManager>();
+
             if (Draggable && mb == 0) {
-                Position += InputManager.MouseDelta;
+                Position += im.MouseDelta;
             }
         }
 
