@@ -25,17 +25,18 @@ namespace Forge.UX {
     public class UXEngine : IEngine {
         public string Name => "UXEngine";
 
-        private S4Forge forge;
+        private readonly S4Forge forge;
+        private readonly Callbacks callbacks;
 
-        public UXEngine(S4Forge forge) {
+        public UXEngine(S4Forge forge, Callbacks callbacks) {
             this.forge = forge;
+            this.callbacks = callbacks;
         }
 
         public bool Initialize() {
             Logger.LogInfo("Initialized UXEngine");
 
             RegisterDependencies();
-            new UIEngine();
 
             IsInitialized = true;
 
@@ -43,7 +44,7 @@ namespace Forge.UX {
             onRequestingImplementation?.Invoke();
 
             unsafe {
-                Callbacks.OnFrame += (texture, width) => {
+                callbacks.OnFrame += (texture, width) => {
                     if (!IsReady) {
                         if (DI.Dependencies.IsRegistered<IRenderer>() == false) {
                             //TODO: Add dummy renderer or throw exception
@@ -71,12 +72,12 @@ namespace Forge.UX {
                     var test = GameValues.GetAllUIElementsFromIndexUnsafe(7);
                 };
 
-                Callbacks.OnMouse += (button, x, y, id, element) => {
+                callbacks.OnMouse += (button, x, y, id, element) => {
                     Logger.LogDebug("Mouse button {0} @ {1}, {2} on {3} ({4})", button, x, y, id, element);
                 };
 
                 onReady += () => {
-                    DI.Dependencies.Resolve<SceneManager>().Init();
+                    DI.Resolve<SceneManager>().Init();
                 };
             }
 
@@ -84,7 +85,7 @@ namespace Forge.UX {
         }
 
         public void RegisterDependencies() {
-
+            new UIEngine();
         }
 
         public static bool IsReady;
