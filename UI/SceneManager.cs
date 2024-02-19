@@ -3,6 +3,7 @@
 using Forge.Config;
 using Forge.Logging;
 using Forge.S4.Types;
+using Forge.UX.Debug;
 using Forge.UX.Input;
 using Forge.UX.Native;
 using Forge.UX.Rendering;
@@ -38,6 +39,9 @@ namespace Forge.UX.UI {
         }
 
         public void Init() {
+#if DEBUG
+            DI.Dependencies.Resolve<UIDebugWindow>();
+#endif
             //UIEngine.RegisterS4ScreenChangeCallback(OnScreenChange);
         }
 

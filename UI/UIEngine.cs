@@ -1,6 +1,7 @@
 ﻿using DryIoc;
 
 using Forge.Config;
+using Forge.UX.Debug;
 using Forge.UX.UI.Prefabs;
 
 namespace Forge.UX.UI {
@@ -16,6 +17,10 @@ namespace Forge.UX.UI {
             PrefabManager prefabManager = new PrefabManager();
             prefabManager.RegisterDefaultPrefabs();
             DI.Dependencies.RegisterInstance<PrefabManager>(prefabManager);
+
+#if DEBUG
+            DI.Dependencies.Register<UIDebugWindow>();
+#endif
         }
     }
 }
