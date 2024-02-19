@@ -13,6 +13,12 @@ namespace Forge.UX.UI {
             return GetAllElementsInTree().FirstOrDefault(e => e.Id == id);
         }
 
+        public T? GetById<T>(string id) where T : UIElement {
+            UIElement? foundElement = GetById(id);
+            if (foundElement is T t) return t;
+            return null;
+        }
+
         public IEnumerable<UIElement> GetAllElementsInTree() {
             static IEnumerable<UIElement> GetChildElements(SceneTree parent) {
                 foreach (UIElement child in parent) {
