@@ -24,13 +24,13 @@ namespace Forge.UX.UI {
         private readonly Lazy<IRenderer> _renderer;
         IRenderer Renderer => _renderer.Value;
 
-        private readonly InputManager inputManager;
+        private readonly IInputManager inputManager;
 
-        public SceneManager(Lazy<IRenderer> renderer, InputManager inputManager) {
+        public SceneManager(Lazy<IRenderer> renderer, IInputManager inputManager) {
             this._renderer = renderer;
             this.inputManager = inputManager;
 
-            this.inputManager.AddInputBlockingMiddleware(new InputManager.InputBlockMiddleware(true, InputBlockingMiddleware, 1000));
+            this.inputManager.AddInputBlockingMiddleware(new InputBlockMiddleware(true, InputBlockingMiddleware, 1000));
         }
 
         private EventBlockFlags InputBlockingMiddleware(EventBlockFlags input) {

@@ -1,4 +1,5 @@
 ﻿using Forge.Native;
+using Forge.S4;
 using Forge.UX.Native;
 
 using System;
@@ -7,18 +8,86 @@ using System.Linq;
 using System.Numerics;
 
 namespace Forge.UX.Input {
-    public class InputManager {
+    public interface IInputManager {
+        float MouseScroll { get; }
+
+        bool TextInputActive {
+            get;
+        }
+
+        bool ChatInputActive {
+            get;
+        }
+
+        Vector2 MousePosition { get; }
+        Vector2 MouseDelta { get; }
+        Action<string>? TextInput { get; set; }
+
+        void Init();
+        void Update();
+
+        bool IsMouseInRectangle(Vector4 rect);
+
+        /// <summary>
+        /// Returns true if the key is was just pressed down.
+        /// </summary>
+        bool IsKeyDown(Keys key);
+
+        /// <summary>
+        /// Returns true if the key is was just released.
+        /// </summary>
+        bool IsKeyUp(Keys key);
+
+        /// <summary>
+        /// Returns true if the key is currently held down.
+        /// </summary>
+        bool IsKeyHeld(Keys key);
+
+        /// <summary>
+        /// Registers a keybind with the input manager.
+        /// </summary>
+        /// <returns>
+        /// Returns true if the keybind was successfully registered, false otherwise.
+        /// <br/>
+        /// Reasons for failure include:
+        /// <list type="bullet">
+        /// <item>Keybind already registered, but overwrite is false</item>
+        /// </list>
+        /// </returns>
+        bool RegisterKeybind(Keys key, bool overrideExisting, Action action);
+
+        /// <inheritdoc cref="InputManager.RegisterKeybind(Forge.UX.Input.Keys,bool,System.Action)"/>
+        bool RegisterKeybind(IList<Keys> keys, bool overrideExisting, Action action);
+
+        /// <summary>
+        /// Removes a keybind from the input manager.
+        /// </summary>
+        /// <returns>
+        /// Returns true if the keybind was successfully removed, false otherwise.
+        /// </returns>
+        bool RemoveKeybind(Keys key);
+
+        /// <inheritdoc cref="InputManager.RemoveKeybind(Forge.UX.Input.Keys)"/>
+        bool RemoveKeybind(IList<Keys> keys);
+
+        void AddInputBlockingMiddleware(InputBlockMiddleware middleware);
+        void RemoveInputBlockingMiddleware(InputBlockMiddleware middleware);
+    }
+
+    public class InputManager : IInputManager {
         private HashSet<Keys> downKeys, heldKeys, upKeys;
         private int mouseScroll;
 
         public InputManager() {
-#pragma warning disable CS0618 // Type or member is obsolete - InputManager requires a WndProc to be set
-            User32.WndProc += InputHandler;
-#pragma warning restore CS0618 // Type or member is obsolete
-
             downKeys = new HashSet<Keys>();
             heldKeys = new HashSet<Keys>();
             upKeys = new HashSet<Keys>();
+        }
+
+        public void Init() {
+#pragma warning disable CS0618 // Type or member is obsolete - InputManager requires a WndProc to be set
+            User32.AddWndProc(InputHandler);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         public bool TextInputActive {
@@ -29,7 +98,7 @@ namespace Forge.UX.Input {
             get => false; //TODO: implement
         }
 
-        bool InputHandler(WndProcMsg msg, IntPtr wParam, IntPtr lParam) {
+        bool InputHandler(WndProcMsg msg, UIntPtr wParam, UIntPtr lParam) {
             // When in Text input mode have a special input handler for WM_KEYDOWN events
             // TODO: handle special keys like "Escape" better
             if (TextInputActive && msg == WndProcMsg.WM_KEYDOWN) {
@@ -95,7 +164,7 @@ namespace Forge.UX.Input {
             return false;
         }
 
-        private void HandleKeyStates(WndProcMsg msg, IntPtr wParam) {
+        private void HandleKeyStates(WndProcMsg msg, UIntPtr wParam) {
             Keys key = Keys.None;
             bool up = false;
 
@@ -163,13 +232,14 @@ namespace Forge.UX.Input {
             }
         }
 
-        internal void Update() {
+        public void Update() {
             downKeys.Clear();
             upKeys.Clear();
             mouseScroll = 0;
 
 
             User32.GetCursorPos(out User32.Pos point);
+            User32.ScreenToClient(GameValues.Hwnd, ref point);
             currentMousePosition = new Vector2(point.X, point.Y);
             prevMousePosition = currentMousePosition;
         }
@@ -218,16 +288,6 @@ namespace Forge.UX.Input {
         public Action<string>? TextInput { get; set; }
 
         #region Kebinds
-
-        struct Keybind {
-            public readonly IList<Keys> Keys;
-            public readonly Action Action;
-
-            public Keybind(IList<Keys> keys, Action action) {
-                Keys = keys;
-                Action = action;
-            }
-        }
 
         List<Keybind> keybinds = new List<Keybind>();
 
@@ -280,17 +340,6 @@ namespace Forge.UX.Input {
 
         #region InputBlocking
 
-        public class InputBlockMiddleware {
-            public readonly int Priority;
-            public bool IsBlocking;
-            public Func<EventBlockFlags, EventBlockFlags> Middleware;
-            public InputBlockMiddleware(bool isBlocking, Func<EventBlockFlags, EventBlockFlags> middleware, int priority = 0) {
-                IsBlocking = isBlocking;
-                Middleware = middleware;
-                Priority = priority;
-            }
-        }
-
         List<InputBlockMiddleware> inputBlocks = new List<InputBlockMiddleware>();
 
 
@@ -304,15 +353,5 @@ namespace Forge.UX.Input {
         }
 
         #endregion
-    }
-
-    [Flags]
-    public enum EventBlockFlags : int {
-        None = 0b0000_0000,
-        MouseClick = 0b0000_0001,
-        MouseWheel = 0b0000_0010,
-        Mouse = 0b0000_0100,
-        Keyboard = 0b0000_1000,
-        All = 0b1111_1111
     }
 }
