@@ -11,7 +11,7 @@ namespace Forge.UX.UI.Prefabs {
 
         #region Properties
 
-        public Property<bool> ClipContent = new(nameof(ClipContent),
+        public Property<bool> ClipContent { get; set; } = new(nameof(ClipContent),
             "Whether the group should hide/clip content that is outside it's bounds");
 
         #endregion
@@ -22,7 +22,7 @@ namespace Forge.UX.UI.Prefabs {
             }
         }
 
-        public List<IPrefab> ChildPrefabs { get; } = new List<IPrefab>();
+        public List<IPrefab> ChildPrefabs { get; set; } = new List<IPrefab>();
 
 
         protected override void ApplyPropertyValues(UIElement element) {

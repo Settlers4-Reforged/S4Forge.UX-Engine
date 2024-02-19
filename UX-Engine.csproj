@@ -53,6 +53,7 @@
 
     <ItemGroup>
         <PackageReference Include="System.Numerics.Vectors" Version="4.4.0"/>
+        <PackageReference Include="DasMulli.DataBuilderGenerator" Version="2.0.0" ReferenceOutputAssembly="false" />
         <PackageReference Include="Microsoft.SourceLink.GitLab" Version="1.1.1" PrivateAssets="All" />
     </ItemGroup>
 

@@ -22,10 +22,10 @@ namespace Forge.UX.UI.Prefabs.Text {
             return text;
         }
 
-        public ValueProperty Text = new ValueProperty(nameof(Text), "The text to display");
-        public Property<bool> FitText = new Property<bool>(nameof(FitText), "If true, the text will be scaled to fit the element") { Default = false };
-        public EnumProperty<TextAlignment> Alignment = new EnumProperty<TextAlignment>(nameof(Alignment), "The alignment of the text") { Default = TextAlignment.Center };
-        public EnumProperty<TextType> Type = new EnumProperty<TextType>(nameof(TextType), "The type of text to display") { Default = TextType.Normal };
-        public EnumProperty<TextSize> Size = new EnumProperty<TextSize>(nameof(Size), "The size of the text") { Default = TextSize.Regular };
+        public ValueProperty Text { get; set; } = new ValueProperty(nameof(Text), "The text to display");
+        public Property<bool> FitText { get; set; } = new Property<bool>(nameof(FitText), "If true, the text will be scaled to fit the element") { Default = false };
+        public EnumProperty<TextAlignment> Alignment { get; set; } = new EnumProperty<TextAlignment>(nameof(Alignment), "The alignment of the text") { Default = TextAlignment.Center };
+        public EnumProperty<TextType> Type { get; set; } = new EnumProperty<TextType>(nameof(TextType), "The type of text to display") { Default = TextType.Normal };
+        public EnumProperty<TextSize> Size { get; set; } = new EnumProperty<TextSize>(nameof(Size), "The size of the text") { Default = TextSize.Regular };
     }
 }

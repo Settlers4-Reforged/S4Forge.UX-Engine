@@ -1,4 +1,6 @@
-﻿using DryIoc;
+﻿using DasMulli.DataBuilderGenerator;
+
+using DryIoc;
 
 using Forge.Config;
 using Forge.UX.Rendering.Texture;
@@ -12,13 +14,15 @@ using System.Numerics;
 using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Groups {
+
+    [GenerateDataBuilder]
     public class S4Window : GroupPrefab {
         public override string Name => "S4Window";
         public override string Description => "A generic Window in the style of a S4 pop-out";
 
         public override UIElement Instantiate() {
             ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
-            UIWindow element = new UIWindow(new NineSliceTextureComponent(tcm.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.Window), 0));
+            UIWindow element = new UIWindow(new NineSliceTextureComponent(tcm.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.S4Window), 0));
             this.ApplyPropertyValues(element);
 
             InstantiateChildren(element);

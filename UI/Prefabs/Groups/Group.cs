@@ -1,4 +1,6 @@
-﻿using Forge.UX.UI.Elements;
+﻿using DasMulli.DataBuilderGenerator;
+
+using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
 
 using System;
@@ -7,6 +9,8 @@ using System.Text;
 using System.Xml.Linq;
 
 namespace Forge.UX.UI.Prefabs.Groups {
+
+    [GenerateDataBuilder]
     public class Group : GroupPrefab {
         public override string Name => "Group";
         public override string Description => "A generic group of elements";

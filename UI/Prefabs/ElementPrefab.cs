@@ -15,20 +15,20 @@ namespace Forge.UX.UI.Prefabs {
 
         #region Properties
 
-        public Property<string> Id = new(nameof(Id), "Unique identifier for the element", () => Guid.NewGuid().ToString());
+        public Property<string> Id { get; set; } = new(nameof(Id), "Unique identifier for the element", () => Guid.NewGuid().ToString());
 
-        public RelativeProperty X = new(nameof(X), "X position of the element");
-        public RelativeProperty Y = new(nameof(Y), "Y position of the element");
+        public RelativeProperty X { get; set; } = new(nameof(X), "X position of the element");
+        public RelativeProperty Y { get; set; } = new(nameof(Y), "Y position of the element");
 
-        public RelativeProperty Width = new(nameof(Width), "Width of the element");
-        public RelativeProperty Height = new(nameof(Height), "Height of the element");
+        public RelativeProperty Width { get; set; } = new(nameof(Width), "Width of the element");
+        public RelativeProperty Height { get; set; } = new(nameof(Height), "Height of the element");
 
         public Property<bool> Visible { get; set; } = new(nameof(Visible), "Whether the element is visible", true);
         public Property<bool> PositionAbsolute = new(nameof(PositionAbsolute), "Whether the position is relative to group space (false) or screen space (true)", false);
 
-        public Property<bool> IgnoreMouse = new(nameof(IgnoreMouse), "Whether to ignore mouse inputs - affects children", false);
+        public Property<bool> IgnoreMouse { get; set; } = new(nameof(IgnoreMouse), "Whether to ignore mouse inputs - affects children", false);
 
-        public Property<int> ZIndex = new(nameof(ZIndex), "Z-Index of element", 0);
+        public Property<int> ZIndex { get; set; } = new(nameof(ZIndex), "Z-Index of element", 0);
 
         protected virtual void ApplyPropertyValues(UIElement element) {
             UIElement.PositioningMode posMode = PositionAbsolute ? UIElement.PositioningMode.Absolute : UIElement.PositioningMode.Normal;
@@ -57,13 +57,22 @@ namespace Forge.UX.UI.Prefabs {
         #endregion
 
         public IEnumerable<IProperty> GetProperties() {
-            List<IProperty> properties = this.GetType().GetFields().Select(prop => {
-                if (prop.FieldType.GetInterfaces().Contains(typeof(IProperty))) {
-                    return (IProperty)prop.GetValue(this)!;
-                }
+            List<IProperty> properties = this.GetType().GetFields()
+                .Select(prop => {
+                    if (prop.FieldType.GetInterfaces().Contains(typeof(IProperty))) {
+                        return (IProperty)prop.GetValue(this)!;
+                    }
 
-                return null;
-            }).Where(prop => prop != null).ToList()!;
+                    return null;
+                })
+                .Concat(
+                    this.GetType().GetProperties().Select(prop => {
+                        if (prop.PropertyType.GetInterfaces().Contains(typeof(IProperty))) {
+                            return (IProperty)prop.GetValue(this)!;
+                        }
+                        return null;
+                    }))
+                .Where(prop => prop != null).ToList()!;
 
             return properties;
         }
