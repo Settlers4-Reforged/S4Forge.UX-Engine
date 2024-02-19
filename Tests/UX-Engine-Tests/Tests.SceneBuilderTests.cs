@@ -1,5 +1,4 @@
-using Forge.UX;
-using Forge.UX.Rendering;
+﻿using Forge.Config;
 using Forge.UX.UI;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
@@ -9,35 +8,23 @@ using Forge.UX.UI.Elements.Grouping.Layout;
 using Forge.UX.UI.Elements.Interaction;
 using Forge.UX.UI.Elements.Static;
 using Forge.UX.UI.Prefabs;
-using Forge.UX.UI.Prefabs.Text;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
-using System.Reflection;
-
-using UX_Engine_Tests.Mocks;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace UX_Engine_Tests {
-    public class Tests {
-        [SetUp]
-        public void Setup() {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) => {
-                string assemblyName = new AssemblyName(args.Name).Name;
-                return assemblyName switch {
-                    "S4Forge" => Assembly.LoadFile(Environment.CurrentDirectory + "\\S4Forge.dll"),
-                    "S4APIWrapper" => Assembly.LoadFile(Environment.CurrentDirectory + "\\S4APIWrapper.asi"),
-                    _ => null
-                };
-            };
-
-            UXEngine.IsInitialized = true;
-            UXEngine.Implement(typeof(RenderingManagerMock), typeof(TextureCollectionManagerMock), 0);
-        }
-
+    public partial class Tests {
         [Test]
         public void SceneBuilder_WithCorrectScene_CorrectBuild() {
             // Prepare
-            SceneManager manager = new SceneManager(new Lazy<IRenderer>(() => new RenderingManagerMock()), null);
-            SceneBuilder builder = new SceneBuilder(manager, new PrefabManager());
+            SceneManager manager = DI.Resolve<SceneManager>();
+            SceneBuilder builder = DI.Resolve<SceneBuilder>();
+
+            manager.GetRootElements().Clear();
 
             // Run
             bool result = builder.CreateScene(CorrectScene, out GroupPrefab? output);
@@ -83,7 +70,7 @@ namespace UX_Engine_Tests {
 
                     Assert.That(radioGroup.Elements[1], Is.AssignableTo(typeof(UIStack)));
                     UIStack radioStack1 = (UIStack)radioGroup.Elements[1];
-                    Assert.That(radioStack1.SizeMode, Is.EqualTo((UIElement.PositioningMode.Relative, UIElement.PositioningMode.Normal)));
+                    Assert.That(radioStack1.SizeMode, Is.EqualTo((PositioningMode.Relative, PositioningMode.Normal)));
                     Assert.That(radioStack1.Elements.Count, Is.EqualTo(2));
                     Assert.That(radioStack1.Elements[0], Is.AssignableTo(typeof(UIRadioButton<string>)));
                     Assert.That(radioStack1.Elements[1], Is.AssignableTo(typeof(UIRadioButton<string>)));

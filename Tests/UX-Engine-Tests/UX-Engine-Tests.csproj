@@ -1,29 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net48</TargetFramework>
+        <TargetFrameworks>.net8.0-windows7.0</TargetFrameworks>
         <RootNamespace>UX_Engine_Tests</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <PlatformTarget>x86</PlatformTarget>
+        <Platforms>x86</Platforms>
         <LangVersion>10.0</LangVersion>
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
-        <IsTestProject>true</IsTestProject>
-        <RunPostBuildEvent>Always</RunPostBuildEvent>
-        <Platforms>AnyCPU;x86</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-        <PackageReference Include="NUnit" Version="3.13.3" />
-        <PackageReference Include="NUnit3TestAdapter" Version="4.3.0" />
-        <PackageReference Include="NUnit.Analyzers" Version="3.5.0" />
-        <PackageReference Include="coverlet.collector" Version="3.1.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+        <PackageReference Include="NUnit" Version="4.0.1" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+        <PackageReference Include="NUnit.Analyzers" Version="4.0.1" />
+        <PackageReference Include="coverlet.collector" Version="6.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
+    <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
+        <!-- See https://github.com/dotnet/sdk/issues/34775 for why...-->
+        <Delete Files="$(TargetDir)$(TargetName).deps.json" />
+    </Target>
+
+
     <ItemGroup>
-        <ProjectReference Include="..\..\UX-Engine.csproj"/>
+        <ProjectReference Include="..\..\UX-Engine.csproj" />
     </ItemGroup>
 
     <Choose>
@@ -35,8 +42,8 @@
         </When>
         <Otherwise>
             <ItemGroup>
-                <PackageReference Include="S4Forge" Version="*"/>
-                <PackageReference Include="S4APIWrapper" Version="*"/>
+                <PackageReference Include="S4Forge" Version="*" />
+                <PackageReference Include="S4APIWrapper" Version="*" />
             </ItemGroup>
         </Otherwise>
     </Choose>

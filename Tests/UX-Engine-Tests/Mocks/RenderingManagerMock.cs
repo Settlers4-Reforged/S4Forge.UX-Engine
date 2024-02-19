@@ -17,6 +17,10 @@ namespace UX_Engine_Tests.Mocks {
             throw new NotImplementedException();
         }
 
+        public void ClearScreen() {
+            throw new NotImplementedException();
+        }
+
         public Vector2 GetScreenSize() {
             throw new NotImplementedException();
         }
