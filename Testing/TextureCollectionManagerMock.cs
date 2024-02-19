@@ -6,19 +6,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UX_Engine_Tests.Mocks {
-    internal class TextureCollectionManagerMock : ITextureCollectionManager {
+namespace Forge.UX.Testing {
+    public class TextureCollectionManagerMock : ITextureCollectionManager {
         public ITextureCollection GetCollection(int id) {
-            throw new NotImplementedException();
+            return new TextureCollectionMock();
         }
 
         public ITexture Get(int col, int id) {
             return new TextureMock();
         }
 
-        internal class TextureMock : ITexture {
+        public class TextureMock : ITexture {
             public int Width { get; }
             public int Height { get; }
+        }
+
+        public class TextureCollectionMock : ITextureCollection {
+            public ITexture GetTexture(int id) {
+                return new TextureMock();
+            }
         }
     }
 }
