@@ -10,10 +10,8 @@ namespace Forge.UX.UI {
         }
 
         internal void RegisterDependencies() {
-            DI.Dependencies.RegisterInstance(this);
             DI.Dependencies.Register<SceneBuilder>(Reuse.Singleton);
             DI.Dependencies.Register<SceneManager>(Reuse.Singleton);
-
 
             PrefabManager prefabManager = new PrefabManager();
             prefabManager.RegisterDefaultPrefabs();

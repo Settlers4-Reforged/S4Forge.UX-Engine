@@ -3,32 +3,21 @@
 using Forge.Config;
 using Forge.Engine;
 using Forge.Logging;
-using Forge.Native;
-using Forge.S4;
 using Forge.S4.Callbacks;
-using Forge.UPlay;
 using Forge.UX.Input;
 using Forge.UX.Rendering;
-using Forge.UX.Rendering.Texture;
-using Forge.UX.S4;
 using Forge.UX.UI;
 
-using Microsoft.DirectX.DirectDraw;
-
 using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Xml.Linq;
 
 namespace Forge.UX {
     public class UXEngine : IEngine {
         public string Name => "UXEngine";
 
         private readonly S4Forge forge;
-        private readonly Callbacks callbacks;
+        private readonly ICallbacks callbacks;
 
-        public UXEngine(S4Forge forge, Callbacks callbacks) {
+        public UXEngine(S4Forge forge, ICallbacks callbacks) {
             this.forge = forge;
             this.callbacks = callbacks;
         }
@@ -58,26 +47,12 @@ namespace Forge.UX {
 
                         onReady?.Invoke();
                     }
-
-                    if (texture == null) return;
-
-                    try {
-                        texture.FillStyle = 6/*Cross*/;
-                        texture.FillColor = Color.Blue;
-                        texture.DrawBox(0, 0, 100, 100);
-                    } catch (Exception e) {
-                        Logger.LogWarn("Found error {0}", e);
-                    }
-
-                    var test = GameValues.GetAllUIElementsFromIndexUnsafe(7);
                 };
 
-                callbacks.OnMouse += (button, x, y, id, element) => {
-                    Logger.LogDebug("Mouse button {0} @ {1}, {2} on {3} ({4})", button, x, y, id, element);
-                };
 
                 onReady += () => {
                     DI.Resolve<SceneManager>().Init();
+                    DI.Resolve<IInputManager>().Init();
                 };
             }
 
@@ -85,14 +60,14 @@ namespace Forge.UX {
         }
 
         public void RegisterDependencies() {
-            new UIEngine();
-            DI.Dependencies.RegisterInstanceMany(new InputManager());
+            DI.Dependencies.RegisterInstance(new UIEngine());
+            DI.Dependencies.RegisterInstance<IInputManager>(new InputManager());
         }
 
         public static bool IsReady;
         public static bool IsInitialized;
 
-        private static Action? onReady;
+        internal static Action? onReady;
         static Action? onRequestingImplementation;
 
         private static bool isImplemented = false;
