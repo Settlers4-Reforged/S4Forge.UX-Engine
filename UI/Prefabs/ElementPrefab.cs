@@ -12,6 +12,9 @@ namespace Forge.UX.UI.Prefabs {
         public abstract string Name { get; }
         public abstract string Description { get; }
         public abstract UIElement Instantiate();
+        public T Instantiate<T>() where T : UIElement {
+            return (T)Instantiate();
+        }
 
         protected virtual void OverrideDefaults() { }
 
