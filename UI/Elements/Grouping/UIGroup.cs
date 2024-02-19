@@ -22,8 +22,6 @@ namespace Forge.UX.UI.Elements.Grouping {
 
         public bool ClipContent { get; set; } = false;
 
-        public virtual bool Visible { get; set; } = true;
-
         /// <summary>
         /// Gets or sets a value indicating whether the group is transparent in layout behavior.
         /// </summary>

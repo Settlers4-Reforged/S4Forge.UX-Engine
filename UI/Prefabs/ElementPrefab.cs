@@ -23,6 +23,7 @@ namespace Forge.UX.UI.Prefabs {
         public RelativeProperty Width = new(nameof(Width), "Width of the element");
         public RelativeProperty Height = new(nameof(Height), "Height of the element");
 
+        public Property<bool> Visible { get; set; } = new(nameof(Visible), "Whether the element is visible", true);
         public Property<bool> PositionAbsolute = new(nameof(PositionAbsolute), "Whether the position is relative to group space (false) or screen space (true)", false);
 
         public Property<bool> IgnoreMouse = new(nameof(IgnoreMouse), "Whether to ignore mouse inputs - affects children", false);
@@ -45,6 +46,7 @@ namespace Forge.UX.UI.Prefabs {
             element.Position = new Vector2(X, Y);
             element.Size = new Vector2(Width, Height);
 
+            element.Visible = Visible;
             element.IgnoresMouse = IgnoreMouse;
 
             element.ZIndex = ZIndex;

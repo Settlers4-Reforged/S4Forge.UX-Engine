@@ -38,6 +38,9 @@ namespace Forge.UX.UI.Elements {
         }
         public Effects Effects { get; set; }
 
+        /// <summary> Whether the element is visible during rendering phase </summary>
+        public virtual bool Visible { get; set; } = true;
+
 
         ///<summary>The lower the further behind: 0 &lt; 100 &lt; 1000</summary>
         public int ZIndex = 0;
@@ -49,6 +52,23 @@ namespace Forge.UX.UI.Elements {
         /// Will ignore all child elements when true for group
         /// </summary>
         public bool IgnoresMouse = false;
+
+        /// <summary>
+        /// Hides the element from rendering and disables input handling
+        /// </summary>
+        public void Hide() {
+            Visible = false;
+            IgnoresMouse = true;
+        }
+
+        /// <summary>
+        /// Shows the element for rendering and enables input handling
+        /// </summary>
+        public void Show() {
+            Visible = true;
+            IgnoresMouse = false;
+        }
+
 
         public virtual void OnMouseClickDown(int mb) { }
         public virtual void OnMouseClickUp(int mb) { }

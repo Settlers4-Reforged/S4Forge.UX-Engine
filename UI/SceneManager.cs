@@ -131,6 +131,9 @@ namespace Forge.UX.UI {
         }
 
         void RenderComponents(UIElement parent, SceneGraphState state) {
+            if (!parent.Visible)
+                return;
+
             foreach (IUIComponent component in parent.Components) {
                 Renderer.RenderUIComponent(component, parent, state);
             }
