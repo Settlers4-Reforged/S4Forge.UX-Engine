@@ -26,7 +26,7 @@ namespace Forge.UX.Rendering.Texture {
 
         #region NineSlices
 
-        Window = 21,
+        S4Window = 21,
 
         #endregion
 
