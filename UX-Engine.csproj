@@ -39,7 +39,7 @@
         </When>
         <Otherwise>
             <ItemGroup>
-                <PackageReference Include="S4Forge" Version="*" />
+                <PackageReference Include="S4Forge" Version="0.2.2" />
             </ItemGroup>
         </Otherwise>
     </Choose>
