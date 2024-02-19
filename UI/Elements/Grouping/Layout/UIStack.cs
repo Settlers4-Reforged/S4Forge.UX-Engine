@@ -36,8 +36,8 @@ namespace Forge.UX.UI.Elements.Grouping.Layout {
                 float height = elementSize.X + elementSize.Y;
                 height = height > rowHeight ? height : rowHeight;
 
-                offset += direction * height;
                 element.Position = offset;
+                offset += direction * height;
             }
         }
     }
