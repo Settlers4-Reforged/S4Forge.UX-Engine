@@ -13,6 +13,8 @@ namespace Forge.UX.UI.Prefabs {
         public abstract string Description { get; }
         public abstract UIElement Instantiate();
 
+        protected virtual void OverrideDefaults() { }
+
         #region Properties
 
         public Property<string> Id { get; set; } = new(nameof(Id), "Unique identifier for the element", () => Guid.NewGuid().ToString());
