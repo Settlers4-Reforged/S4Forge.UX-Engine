@@ -164,7 +164,7 @@ namespace Forge.UX.UI {
         }
 
         void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement, bool skipInvisible) {
-            TraverseScene(OnGroup, OnElement, (g) => skipInvisible && g.Visible);
+            TraverseScene(OnGroup, OnElement, (g) => skipInvisible && !g.Visible);
         }
 
         void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement, Func<UIGroup, bool> ShouldSkipGroup) {
