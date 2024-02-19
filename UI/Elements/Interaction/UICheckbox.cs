@@ -25,9 +25,6 @@ namespace Forge.UX.UI.Elements.Interaction {
             OnInteract?.Invoke(this);
         }
 
-        public override void OnMouseLeave() {
-            Effects &= ~Effects.Highlight;
-        }
         /// <summary>
         /// Binding for the value of the checkbox. Get's called during initialization
         /// </summary>

@@ -18,8 +18,8 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         #region Components
         // Button components, text defines the button text and texture represents both texture states
-        private readonly TextComponent textComponent = new TextComponent("NO TEXT") { Offset = new Vector2(0, 0) };
-        private readonly TextureComponent textureComponent;
+        protected readonly TextComponent textComponent = new TextComponent("NO TEXT") { Offset = new Vector2(0, 0) };
+        protected readonly TextureComponent textureComponent;
 
         // Proxies for various component options:
         /// <summary>
@@ -69,9 +69,9 @@ namespace Forge.UX.UI.Elements.Interaction {
             get => enabled;
             set {
                 if (value) {
-                    Effects &= ~Effects.GrayScale;
+                    textureComponent.Effects &= ~Effects.GrayScale;
                 } else {
-                    Effects |= Effects.GrayScale;
+                    textureComponent.Effects |= Effects.GrayScale;
                     holdStatus = State.Up;
                     interactionStarted = false;
                 }
@@ -89,7 +89,6 @@ namespace Forge.UX.UI.Elements.Interaction {
         protected State holdStatus = State.Up;
 
         public Action<UIElement>? OnInteract { get; set; }
-        public Action<UIElement, bool>? OnHover { get; set; }
         #endregion
 
         public void DefaultTextures() {
@@ -143,7 +142,7 @@ namespace Forge.UX.UI.Elements.Interaction {
         }
 
         public override void OnMouseEnter() {
-            Effects |= Effects.Highlight;
+            textureComponent.Effects |= Effects.Highlight;
 
             if (interactionStarted) {
                 SetState(State.Down);
@@ -152,7 +151,7 @@ namespace Forge.UX.UI.Elements.Interaction {
         }
 
         public override void OnMouseLeave() {
-            Effects &= ~Effects.Highlight;
+            textureComponent.Effects &= ~Effects.Highlight;
             SetState(State.Up);
         }
     }

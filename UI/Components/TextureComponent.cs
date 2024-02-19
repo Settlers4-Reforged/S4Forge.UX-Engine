@@ -1,5 +1,6 @@
 ﻿using Forge.Config;
 using Forge.S4.Types;
+using Forge.UX.Rendering;
 using Forge.UX.Rendering.Texture;
 
 using System;
@@ -9,6 +10,7 @@ namespace Forge.UX.UI.Components {
     public class TextureComponent : IUIComponent {
         public virtual ITexture? Texture { get; set; }
         public Vector2 Offset { get; set; } = Vector2.Zero;
+        public Effects Effects { get; set; }
 
         //Whether this texture gets scaled to the UIElement Size or not
         public bool Scaled { get; set; } = false;

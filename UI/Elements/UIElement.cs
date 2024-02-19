@@ -26,8 +26,6 @@ namespace Forge.UX.UI.Elements {
         /// </summary>
         public virtual (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
 
-        public Effects Effects { get; set; }
-
         /// <summary> Whether the element is visible during rendering phase </summary>
         public virtual bool Visible { get; set; } = true;
 
