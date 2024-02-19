@@ -224,7 +224,14 @@ namespace Forge.UX.UI {
 
             next.Depth++;
 
-            next.CurrentPosition = ApplyRelativeMode(group.Position, group.PositionMode);
+            if (group.PositionMode.x.HasFlag(PositioningMode.Absolute)) {
+                next.CurrentPosition *= Vector2.UnitY;
+            }
+            if (!group.PositionMode.y.HasFlag(PositioningMode.Absolute)) {
+                next.CurrentPosition *= Vector2.UnitX;
+            }
+
+            next.CurrentPosition += ApplyRelativeMode(group.Position, group.PositionMode);
             next.CurrentContainerSize = ApplyRelativeMode(group.Size, group.SizeMode);
 
             if (group.ClipContent) {
@@ -252,21 +259,23 @@ namespace Forge.UX.UI {
             elementSize = ApplyRelativeMode(elementSize, element.SizeMode);
             elementPos = ApplyRelativeMode(elementPos, element.PositionMode);
 
+            elementPos += CurrentPosition;
+
             return (elementPos, elementSize);
         }
 
 
-        private Vector2 ApplyRelativeMode(Vector2 target, (UIElement.PositioningMode x, UIElement.PositioningMode y) mode) {
+        private Vector2 ApplyRelativeMode(Vector2 target, (PositioningMode x, PositioningMode y) mode) {
             Vector2 currentContainerSize = CurrentContainerSize;
 
-            Vector2 ApplyModeToAxis(UIElement.PositioningMode mode, Vector2 axisValue) {
+            Vector2 ApplyModeToAxis(PositioningMode mode, Vector2 axisValue) {
                 Vector2 output = Vector2.Zero;
-                if (mode.HasFlag(UIElement.PositioningMode.Absolute)) {
+                if (mode.HasFlag(PositioningMode.Absolute) || mode == PositioningMode.Normal) {
                     output = axisValue;
-                    if (mode.HasFlag(UIElement.PositioningMode.Relative)) {
+                    if (mode.HasFlag(PositioningMode.Relative)) {
                         output *= DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
                     }
-                } else if (mode.HasFlag(UIElement.PositioningMode.Relative)) {
+                } else if (mode.HasFlag(PositioningMode.Relative)) {
                     output = axisValue * currentContainerSize;
                 }
 
