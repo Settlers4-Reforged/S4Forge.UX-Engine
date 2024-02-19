@@ -20,6 +20,13 @@ namespace Forge.UX.UI.Prefabs.Buttons {
     public class S4Button : ElementPrefab {
         public override string Name => "S4Button";
         public override string Description => "A generic button in the style of a S4 button";
+
+        protected override void OverrideDefaults() {
+            // Default size of a S4 button:
+            Width.Default = 322;
+            Height.Default = 60;
+        }
+
         public override UIElement Instantiate() {
             ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
 
@@ -28,7 +35,8 @@ namespace Forge.UX.UI.Prefabs.Buttons {
                 ButtonHeldTexture = tcm.Get(0, 195),
                 Text = Text!,
                 Enabled = IsEnabled!,
-                TextOffset = new Vector2(0, -4),
+                TextOffset = new Vector2(15, -6),
+                HeldTextOffset = new Vector2(2, 2)
             };
 
             this.ApplyPropertyValues(button);
