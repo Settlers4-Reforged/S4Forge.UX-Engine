@@ -33,7 +33,19 @@ namespace Forge.UX.UI.Elements {
         ///<summary>The lower the further behind: 0 &lt; 100 &lt; 1000</summary>
         public int ZIndex = 0;
 
-        public bool IsMouseHover;
+        bool _isMouseHover;
+
+        public bool IsMouseHover {
+            get {
+                return _isMouseHover;
+            }
+            set {
+                _isMouseHover = value;
+                OnHover?.Invoke(this, value);
+            }
+        }
+
+        public Action<UIElement, bool>? OnHover { get; set; }
 
         /// <summary>
         /// Prevents mouse hover or click inputs from being captured from this element<br/>
