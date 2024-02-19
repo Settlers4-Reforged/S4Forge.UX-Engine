@@ -93,8 +93,8 @@ namespace Forge.UX.UI.Elements.Interaction {
         public void DefaultTextures() {
             ITextureCollectionManager textureCollectionManager = DI.Dependencies.Resolve<ITextureCollectionManager>();
 
-            DefaultButtonTexture ??= textureCollectionManager.Get(0, 0);
-            DefaultButtonHeldTexture ??= textureCollectionManager.Get(0, 0);
+            DefaultButtonTexture ??= textureCollectionManager.Get(TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.Button);
+            DefaultButtonHeldTexture ??= textureCollectionManager.Get(TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.ButtonPressed);
 
             ButtonTexture ??= DefaultButtonTexture;
             ButtonHeldTexture ??= DefaultButtonHeldTexture;
