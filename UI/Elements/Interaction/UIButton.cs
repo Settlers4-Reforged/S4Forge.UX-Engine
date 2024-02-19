@@ -70,6 +70,8 @@ namespace Forge.UX.UI.Elements.Interaction {
                     Effects &= ~Effects.GrayScale;
                 } else {
                     Effects |= Effects.GrayScale;
+                    holdStatus = State.Up;
+                    interactionStarted = false;
                 }
 
                 enabled = value;
@@ -81,6 +83,7 @@ namespace Forge.UX.UI.Elements.Interaction {
             Down,
         }
 
+        protected bool interactionStarted = false;
         protected State holdStatus = State.Up;
 
         public Action<UIElement>? OnInteract { get; set; }
@@ -103,8 +106,8 @@ namespace Forge.UX.UI.Elements.Interaction {
 
             textureComponent = new TextureComponent(ButtonTexture!);
             components = new List<IUIComponent>() {
-                textComponent,
                 textureComponent,
+                textComponent,
             };
         }
 
@@ -115,16 +118,27 @@ namespace Forge.UX.UI.Elements.Interaction {
         }
 
         public override void OnMouseClickDown(int mb) {
+            interactionStarted = true;
             SetState(State.Down);
         }
 
         public override void OnMouseClickUp(int mb) {
+            interactionStarted = false;
             OnInteract?.Invoke(this);
             SetState(State.Up);
         }
 
+        public override void OnMouseGlobalClickUp(int mb) {
+            interactionStarted = false;
+        }
+
         public override void OnMouseEnter() {
             Effects |= Effects.Highlight;
+
+            if (interactionStarted) {
+                SetState(State.Down);
+            }
+
             OnHover?.Invoke(this);
         }
 
