@@ -26,16 +26,6 @@ namespace Forge.UX.UI.Elements {
         /// </summary>
         public virtual (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
 
-        [Flags]
-        public enum PositioningMode {
-            Normal = 0,
-            /// <summary>Absolute in screen coordinates</summary>
-            Absolute = 1 << 0,
-            /// <summary>relative to the parent group size - all values should be between 0..1</summary>
-            Relative = 1 << 1,
-            /// <summary>relative to the screen - all values should be between 0..1</summary>
-            AbsoluteRelative = Absolute | Relative,
-        }
         public Effects Effects { get; set; }
 
         /// <summary> Whether the element is visible during rendering phase </summary>

@@ -24,23 +24,22 @@ namespace Forge.UX.UI.Prefabs {
         public RelativeProperty Height { get; set; } = new(nameof(Height), "Height of the element");
 
         public Property<bool> Visible { get; set; } = new(nameof(Visible), "Whether the element is visible", true);
-        public Property<bool> PositionAbsolute = new(nameof(PositionAbsolute), "Whether the position is relative to group space (false) or screen space (true)", false);
 
         public Property<bool> IgnoreMouse { get; set; } = new(nameof(IgnoreMouse), "Whether to ignore mouse inputs - affects children", false);
 
         public Property<int> ZIndex { get; set; } = new(nameof(ZIndex), "Z-Index of element", 0);
 
         protected virtual void ApplyPropertyValues(UIElement element) {
-            UIElement.PositioningMode posMode = PositionAbsolute ? UIElement.PositioningMode.Absolute : UIElement.PositioningMode.Normal;
+            this.OverrideDefaults();
 
             element.PositionMode = (
-                posMode | (X.IsRelative ? UIElement.PositioningMode.Relative : UIElement.PositioningMode.Normal),
-                posMode | (Y.IsRelative ? UIElement.PositioningMode.Relative : UIElement.PositioningMode.Normal)
+                X,
+                Y
             );
 
             element.SizeMode = (
-                posMode | (Width.IsRelative ? UIElement.PositioningMode.Relative : UIElement.PositioningMode.Normal),
-                posMode | (Height.IsRelative ? UIElement.PositioningMode.Relative : UIElement.PositioningMode.Normal)
+                Width,
+                Height
             );
 
             element.Position = new Vector2(X, Y);

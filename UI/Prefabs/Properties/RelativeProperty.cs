@@ -8,22 +8,30 @@ namespace Forge.UX.UI.Prefabs.Properties {
 
     [DebuggerDisplay("RelativeProperty {Name} | Value = {Value}, Relative = {IsRelative}")]
     public sealed class RelativeProperty : Property<float> {
-        public bool IsRelative;
+        public PositioningMode PositionMode;
 
         private RelativeProperty() { }
         public RelativeProperty(string name, string description) : base(name, description) { }
 
-        public override bool Parse(string value) {
-            IsRelative = value.Contains("%");
+        public static implicit operator PositioningMode(RelativeProperty p) {
+            return p.PositionMode;
+        }
 
-            if (IsRelative) {
-                value = value.Replace("%", "");
-            }
+        public override bool Parse(string value) {
+            PositionMode = value switch {
+                _ when value.EndsWith("%") => PositioningMode.Relative,
+                _ when value.EndsWith("vp") => PositioningMode.Absolute, // vp => view position
+                _ when value.EndsWith("vp%") => PositioningMode.AbsoluteRelative,
+                _ => PositioningMode.Normal
+            };
+
+            value = value.Replace("%", "");
+            value = value.Replace("px", "");
 
             bool success = base.Parse(value);
 
-            if (success && IsRelative) {
-                Value /= 100;
+            if (success && PositionMode.HasFlag(PositioningMode.Relative)) {
+                Value /= 100.0f;
             }
 
             return success;
