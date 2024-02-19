@@ -38,6 +38,8 @@ namespace Forge.UX.UI.Elements.Interaction {
             set => textComponent.Offset = value;
         }
 
+        public Vector2 HeldTextOffset { get; set; }
+
         #endregion
 
         private readonly List<IUIComponent> components;
@@ -87,7 +89,7 @@ namespace Forge.UX.UI.Elements.Interaction {
         protected State holdStatus = State.Up;
 
         public Action<UIElement>? OnInteract { get; set; }
-        public Action<UIElement>? OnHover { get; set; }
+        public Action<UIElement, bool>? OnHover { get; set; }
         #endregion
 
         public void DefaultTextures() {
@@ -112,9 +114,17 @@ namespace Forge.UX.UI.Elements.Interaction {
         }
 
         protected void SetState(State newState) {
-            if (enabled) {
-                holdStatus = newState;
+            if (!enabled) return;
+
+            if (newState != holdStatus) {
+                int direction = newState == State.Down ? 1 : -1;
+                TextOffset += HeldTextOffset * direction;
             }
+
+            holdStatus = newState;
+
+
+            OnHover?.Invoke(this, holdStatus == State.Down);
         }
 
         public override void OnMouseClickDown(int mb) {
@@ -139,7 +149,6 @@ namespace Forge.UX.UI.Elements.Interaction {
                 SetState(State.Down);
             }
 
-            OnHover?.Invoke(this);
         }
 
         public override void OnMouseLeave() {
