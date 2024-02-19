@@ -57,6 +57,10 @@ namespace Forge.UX.UI.Prefabs.Properties {
             return t.Value ?? t.Default;
         }
 
+        public static implicit operator Property<T>(T value) {
+            return new Property<T> { Value = value };
+        }
+
         protected Property() {
 
         }
