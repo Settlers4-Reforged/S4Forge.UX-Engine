@@ -29,7 +29,17 @@ namespace Forge.UX.UI.Prefabs.Properties {
 
         public bool Required { get; set; }
 
-        public T? Value { get; protected set; }
+        bool valueSet = false;
+        T? value;
+
+        public T? Value {
+            get => valueSet ? value : Default;
+            protected set {
+                valueSet = true;
+                this.value = value;
+            }
+        }
+
         public T? Default { get; set; } = default(T);
 
         public virtual bool Parse(string value) {
@@ -54,7 +64,7 @@ namespace Forge.UX.UI.Prefabs.Properties {
         }
 
         public static implicit operator T?(Property<T> t) {
-            return t.Value ?? t.Default;
+            return t.Value;
         }
 
         public static implicit operator Property<T>(T value) {
