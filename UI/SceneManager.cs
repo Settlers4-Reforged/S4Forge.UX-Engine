@@ -114,10 +114,22 @@ namespace Forge.UX.UI {
             foreach (Keys key in keys) {
                 if (inputManager.IsKeyDown(key)) {
                     currentHoverElement?.OnMouseClickDown(k);
+
+                    foreach (UIElement element in GetAllElements()) {
+                        if (!element.IgnoresMouse) {
+                            element.OnMouseGlobalClickDown(k);
+                        }
+                    }
                 }
 
                 if (inputManager.IsKeyUp(key)) {
                     currentHoverElement?.OnMouseClickUp(k);
+
+                    foreach (UIElement element in GetAllElements()) {
+                        if (!element.IgnoresMouse) {
+                            element.OnMouseGlobalClickUp(k);
+                        }
+                    }
                 }
 
                 k++;

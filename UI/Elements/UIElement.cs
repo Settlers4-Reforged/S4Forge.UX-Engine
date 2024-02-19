@@ -62,6 +62,8 @@ namespace Forge.UX.UI.Elements {
 
         public virtual void OnMouseClickDown(int mb) { }
         public virtual void OnMouseClickUp(int mb) { }
+        public virtual void OnMouseGlobalClickDown(int mb) { }
+        public virtual void OnMouseGlobalClickUp(int mb) { }
         public virtual void OnMouseScroll(float scroll) { }
 
         public virtual void OnMouseEnter() { }
