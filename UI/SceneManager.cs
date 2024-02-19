@@ -35,7 +35,7 @@ namespace Forge.UX.UI {
         }
 
         private EventBlockFlags InputBlockingMiddleware(EventBlockFlags input) {
-            throw new NotImplementedException();
+            return EventBlockFlags.None;
         }
 
         public void Init() {
