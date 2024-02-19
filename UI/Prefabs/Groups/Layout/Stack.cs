@@ -19,6 +19,7 @@ namespace Forge.UX.UI.Prefabs.Groups.Layout {
             this.ApplyPropertyValues(element);
 
             InstantiateChildren(element);
+            element.Relayout();
 
             return element;
         }
