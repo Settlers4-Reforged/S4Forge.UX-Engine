@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Text {
     [GenerateDataBuilder]
-    public class Header : BaseText {
+    public class Header : TextPrefab {
         public override string Name => "Header";
         public override string Description => "A header text element.";
     }

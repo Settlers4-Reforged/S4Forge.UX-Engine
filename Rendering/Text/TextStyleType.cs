@@ -5,33 +5,33 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Forge.UX.Rendering.Text {
-    public enum TextType {
+    public enum TextStyleType {
         Normal,
         Bold,
         Thin,
         Italic
     }
 
-    public enum TextSize {
+    public enum TextStyleSize {
         Small,
         Regular,
         Large
     }
 
-    public enum TextAlignment {
+    public enum TextStyleAlignment {
         Left,
         Center,
         Right
     }
 
     public struct TextStyle {
-        public TextType Type;
-        public TextSize Size;
-        public TextAlignment TextAlignment;
-        public TextStyle(TextType type = TextType.Normal, TextSize size = TextSize.Regular, TextAlignment textAlignment = TextAlignment.Left) {
+        public TextStyleType Type;
+        public TextStyleSize Size;
+        public TextStyleAlignment Alignment;
+        public TextStyle(TextStyleType type = TextStyleType.Normal, TextStyleSize size = TextStyleSize.Regular, TextStyleAlignment alignment = TextStyleAlignment.Left) {
             Type = type;
             Size = size;
-            TextAlignment = textAlignment;
+            Alignment = alignment;
         }
     }
 }

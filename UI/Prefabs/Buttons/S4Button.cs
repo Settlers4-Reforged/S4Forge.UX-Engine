@@ -17,7 +17,7 @@ using System.Text;
 namespace Forge.UX.UI.Prefabs.Buttons {
 
     [GenerateDataBuilder]
-    public class S4Button : ElementPrefab {
+    public class S4Button : TextPrefab {
         public override string Name => "S4Button";
         public override string Description => "A generic button in the style of a S4 button";
 
@@ -40,11 +40,11 @@ namespace Forge.UX.UI.Prefabs.Buttons {
             };
 
             this.ApplyPropertyValues(button);
+            this.ApplyTextPropertyValues(button.TextComponent);
 
             return button;
         }
 
-        public ValueProperty Text { get; set; } = new ValueProperty(nameof(Text), "Text to display on the button") { Default = "-" };
         public Property<bool> IsEnabled { get; set; } = new Property<bool>(nameof(IsEnabled), "Whether the button is enabled") { Default = true };
     }
 }
