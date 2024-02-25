@@ -193,7 +193,7 @@ namespace Forge.UX.UI {
         }
 
         class RootNode : UIGroup {
-
+            public override Vector2 Size => DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
         }
     }
 
