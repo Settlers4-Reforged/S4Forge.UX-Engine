@@ -8,9 +8,15 @@ using System.Xml.Schema;
 
 namespace Forge.UX.UI.Prefabs.Properties {
 
-    [DebuggerDisplay("RelativeProperty {Name} | Value = {Value}, Relative = {IsRelative}")]
+    [DebuggerDisplay("RelativeProperty {Name} | Value = {Value}, Relative = {PositionMode}")]
     public sealed class RelativeProperty : Property<float> {
-        public PositioningMode PositionMode;
+        private PositioningMode? _positionMode = null;
+        public PositioningMode PositionMode {
+            get => _positionMode ?? DefaultMode;
+            set => _positionMode = value;
+        }
+
+        public PositioningMode DefaultMode { get; set; } = PositioningMode.Normal;
 
         private RelativeProperty() { }
         public RelativeProperty(string name, string description) : base(name, description) { }
