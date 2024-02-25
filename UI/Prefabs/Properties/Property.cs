@@ -32,12 +32,17 @@ namespace Forge.UX.UI.Prefabs.Properties {
         bool valueSet = false;
         T? value;
 
-        public T? Value {
+        public virtual T? Value {
             get => valueSet ? value : Default;
-            protected set {
+            set {
                 valueSet = true;
                 this.value = value;
             }
+        }
+
+        public bool IsSet {
+            get => valueSet;
+            protected set => valueSet = value;
         }
 
         public T? Default { get; set; } = default(T);
