@@ -26,6 +26,7 @@ namespace Forge.UX.UI.Prefabs.Buttons {
         protected override void OverrideDefaults() {
             // Default size of a S4 button:
             Size.Default = new Vector2(322, 60);
+            TextAlignment.Default = TextStyleAlignment.Center;
         }
 
         public override UIElement Instantiate() {

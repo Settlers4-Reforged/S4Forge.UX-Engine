@@ -10,6 +10,10 @@ namespace Forge.UX.UI.Prefabs.Properties {
         private EnumProperty() { }
         public EnumProperty(string name, string description) : base(name, description) { }
 
+        public static implicit operator EnumProperty<T>(T value) {
+            return new EnumProperty<T> { Value = value };
+        }
+
         public override bool Parse(string value) {
             bool success = Enum.TryParse(value, true, out T output);
             if (success) {
