@@ -5,18 +5,20 @@ using Forge.UX.UI.Prefabs;
 using Forge.UX.UI.Prefabs.Buttons;
 using Forge.UX.UI.Prefabs.Groups.Layout;
 
+using System.Numerics;
+
 namespace UX_Engine_Tests {
     public partial class Tests {
 
         [Test]
         public void Test_BuilderPattern() {
-            S4Button button = new S4ButtonBuilder().WithText("Test").WithWidth((100, PositioningMode.Absolute)).Build();
+            S4Button button = new S4ButtonBuilder().WithText("Test").WithSize(("100vp", "0")).Build();
 
             Assert.Multiple(() => {
                 // Overrides:
                 Assert.That(button.Text.Value, Is.EqualTo("Test"));
-                Assert.That(button.Width.Value, Is.EqualTo(100));
-                Assert.That(button.Width.PositionMode, Is.EqualTo(PositioningMode.Absolute));
+                Assert.That(button.Size.Value, Is.EqualTo(new Vector2(100, 0)));
+                Assert.That(button.Size.X.PositionMode, Is.EqualTo(PositioningMode.Absolute));
 
                 // Defaults:
                 Assert.That(button.IsEnabled.Default, Is.True);
@@ -36,8 +38,8 @@ namespace UX_Engine_Tests {
 
         [Test]
         public void Test_BuilderPattern_Relayout() {
-            UIStack layout = new StackBuilder().WithWidth("100%").WithHeight("100%").WithMinimumDistance(75).WithChildPrefabs(new List<IPrefab>() {
-                new S4ButtonBuilder().WithText("Test").WithWidth("100%").Build(),
+            UIStack layout = new StackBuilder().WithSize(("100%", "100%")).WithMinimumDistance(75).WithChildPrefabs(new List<IPrefab>() {
+                new S4ButtonBuilder().WithText("Test").WithSize((100, 75)).Build(),
             }).Build().Instantiate<UIStack>();
 
             Assert.Multiple(() => {
@@ -48,7 +50,7 @@ namespace UX_Engine_Tests {
                 };
 
                 Assert.That(button.Text, Is.EqualTo("Test"));
-                Assert.That(button.Size.Y, Is.EqualTo(75));
+                Assert.That(button.Size, Is.EqualTo(new Vector2(100, 75)));
             });
         }
     }

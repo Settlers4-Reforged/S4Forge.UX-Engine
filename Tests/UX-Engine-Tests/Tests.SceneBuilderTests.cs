@@ -88,7 +88,7 @@ namespace UX_Engine_Tests {
         }
 
         private const string CorrectScene = @"
-<S4Window id=""forge_ux_demo"" width=""500"" height=""500"" x=""50"" y=""50"" draggable=""true"">
+<S4Window id=""forge_ux_demo"" size=""500,500"" x=""50"" y=""50"" draggable=""true"">
 	<Stack>
 		<Header>Forge UX Demo</Header>
 		<Group height=""200"" width=""100%"">

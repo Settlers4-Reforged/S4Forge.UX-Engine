@@ -4,10 +4,12 @@ using DryIoc;
 
 using Forge.Config;
 using Forge.UX.Rendering;
+using Forge.UX.Rendering.Text;
 using Forge.UX.Rendering.Texture;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Interaction;
 using Forge.UX.UI.Prefabs.Properties;
+using Forge.UX.UI.Prefabs.Text;
 
 using System;
 using System.Collections.Generic;
@@ -23,8 +25,7 @@ namespace Forge.UX.UI.Prefabs.Buttons {
 
         protected override void OverrideDefaults() {
             // Default size of a S4 button:
-            Width.Default = 322;
-            Height.Default = 60;
+            Size.Default = new Vector2(322, 60);
         }
 
         public override UIElement Instantiate() {
