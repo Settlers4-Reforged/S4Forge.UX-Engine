@@ -46,7 +46,7 @@ namespace Forge.UX.UI.Prefabs.Properties {
             };
 
             value = value.Replace("%", "");
-            value = value.Replace("px", "");
+            value = value.Replace("vp", "");
 
             bool success = base.Parse(value);
 
