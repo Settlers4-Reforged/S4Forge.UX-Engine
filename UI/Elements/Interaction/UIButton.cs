@@ -143,7 +143,10 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         public override void OnMouseClickUp(int mb) {
             interactionStarted = false;
+
+            if (enabled)
                 OnInteract?.Invoke(this);
+
             SetState(State.Up);
         }
 
