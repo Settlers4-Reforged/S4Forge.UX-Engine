@@ -1,4 +1,6 @@
-﻿using Forge.UX.Input;
+﻿using Forge.S4.Game;
+using Forge.S4.Types;
+using Forge.UX.Input;
 using Forge.UX.Rendering.Text;
 using Forge.UX.UI;
 using Forge.UX.UI.Elements;
@@ -23,15 +25,17 @@ namespace Forge.UX.Debug {
     public class UIDebugWindow {
         readonly SceneManager manager;
         readonly IInputManager inputManager;
+        readonly IEventApi eventManager;
 
         public static bool Enabled = true;
 
         private UIWindow? window;
         private UIText? elements, cursor;
 
-        public UIDebugWindow(SceneManager manager, IInputManager inputManager) {
+        public UIDebugWindow(SceneManager manager, IInputManager inputManager, IEventApi eventManager) {
             this.manager = manager;
             this.inputManager = inputManager;
+            this.eventManager = eventManager;
 
             CreateMenu();
         }
@@ -45,7 +49,7 @@ namespace Forge.UX.Debug {
                 .WithSize(("100%", 40))
                 .WithFitText(true)
                 .WithTextAlignment(TextStyleAlignment.Center);
-            Stack layoutPrefab = new StackBuilder().WithId("layout").WithSize(("100%", "100%")).WithMinimumDistance(40)
+            Stack layoutPrefab = new StackBuilder().WithId("layout").WithSize(("100%", "100%")).WithMinimumDistance(80)
                 .WithChildPrefabs(new List<IPrefab>() {
                     new S4ButtonBuilder()
                         .WithId("close")
@@ -55,6 +59,10 @@ namespace Forge.UX.Debug {
                         .WithText("Disabled")
                         .WithIsEnabled(false)
                         .Build(),
+                    new S4ButtonBuilder()
+                        .WithId("test_lobby")
+                        .WithText("Open Lobby\nWoah")
+                        .Build(),
 
                     new S4TextBuilder(baseText).WithId("elements").WithText("Elements: 0").Build(),
                     new S4TextBuilder(baseText).WithId("cursor").WithText("Cursor X: 0, Y: 0").Build(),
@@ -62,7 +70,7 @@ namespace Forge.UX.Debug {
 
             window = new S4WindowBuilder()
                 .WithPosition((500, 0))
-                .WithSize((300, 500))
+                .WithSize((322, 500))
                 .WithChildPrefabs(
                     new List<IPrefab>() {
                         layoutPrefab
@@ -76,6 +84,10 @@ namespace Forge.UX.Debug {
             UIStack layout = window.Elements.GetById<UIStack>("layout")!;
             layout.Elements.GetById<UIButton>("close")!.OnInteract = (_) => {
                 window.Close();
+            };
+
+            layout.Elements.GetById<UIButton>("test_lobby")!.OnInteract = (_) => {
+                eventManager.SendEvent((EventType)64, 0, 0, 0);
             };
 
             elements = layout.Elements.GetById<UIText>("elements")!;
