@@ -74,7 +74,7 @@ namespace Forge.UX {
         private static int? latestImplementationPriority = null;
 
         public static void Implement(Type rendererEngine, Type collectionManager, int implementationPriority) {
-            Logger.LogInfo("Requested to add a new render engine implementation for UXEngine: {0} @ {0}", rendererEngine.Name, implementationPriority);
+            Logger.LogInfo("Requested to add a new render engine implementation for UXEngine: {0} @ {1}", rendererEngine.Name, implementationPriority);
 
             if (IsInitialized) {
                 InternalImplementation();
@@ -90,8 +90,10 @@ namespace Forge.UX {
                     return;
                 }
 
-                if (isImplemented && implementationPriority < (latestImplementationPriority ?? -1))
+                if (isImplemented && implementationPriority < (latestImplementationPriority ?? -1)) {
+                    Logger.LogWarn("{0} requested to add new implementation, but a higher priority implementation is already in place! New: {1} vs Current: {2}", rendererEngine.Name, implementationPriority, latestImplementationPriority ?? -1);
                     return;
+                }
 
                 Logger.LogInfo("{0} promoted to new render engine", rendererEngine.Name);
 
