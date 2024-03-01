@@ -87,11 +87,11 @@ namespace Forge.UX.UI {
                 bool newHoverState = element.IsMouseHover;
                 bool prevHoverState = element.IsMouseHover;
 
-                if (currentHoverElement == null || element.ZIndex + state.Depth > currentHoverElement.ZIndex + currentHoverDepth) {
+                if (currentHoverElement == null || element.ZIndex + state.Depth >= currentHoverElement.ZIndex + currentHoverDepth) {
                     (Vector2 elementPosition, Vector2 elementSize) = state.TranslateElement(element);
                     element.IsMouseHover = newHoverState = inputManager.IsMouseInRectangle(new Vector4(elementPosition, elementSize.X, elementSize.Y));
 
-                    if (element.IsMouseHover) {
+                    if (newHoverState) {
                         currentHoverElement = element;
                         currentHoverDepth = state.Depth;
                     }
