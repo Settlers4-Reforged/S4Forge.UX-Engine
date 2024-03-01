@@ -2,6 +2,7 @@
 using Forge.S4.Types;
 using Forge.UX.Rendering;
 using Forge.UX.Rendering.Texture;
+using Forge.UX.UI.Elements;
 
 using System;
 using System.Numerics;
@@ -9,7 +10,12 @@ using System.Numerics;
 namespace Forge.UX.UI.Components {
     public class TextureComponent : IUIComponent {
         public virtual ITexture? Texture { get; set; }
-        public Vector2 Offset { get; set; } = Vector2.Zero;
+
+        public Vector2 Size { get; set; } = Vector2.One;
+        public Vector2 Position { get; set; } = Vector2.Zero;
+        public (PositioningMode x, PositioningMode y) PositionMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
+        public (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Relative, PositioningMode.Relative);
+
         public Effects Effects { get; set; }
 
         //Whether this texture gets scaled to the UIElement Size or not

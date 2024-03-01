@@ -235,8 +235,8 @@ namespace Forge.UX.UI {
                 next.CurrentPosition *= Vector2.UnitX;
             }
 
-            next.CurrentPosition += ApplyRelativeMode(group.Position, group.PositionMode);
-            next.CurrentContainerSize = ApplyRelativeMode(group.Size, group.SizeMode);
+            next.CurrentPosition += ApplyRelativeModeToSize(group.Position, group.PositionMode);
+            next.CurrentContainerSize = ApplyRelativeModeToSize(group.Size, group.SizeMode);
 
             if (group.ClipContent) {
                 next.ClippingRect = new Vector4(group.Position, group.Size.X, group.Size.Y);
@@ -252,35 +252,45 @@ namespace Forge.UX.UI {
         }
 
         /// <summary>
-        /// Translates the 
+        /// Translates the element according to the current scene state with the relative modes applied
         /// </summary>
-        /// <param name="element"></param>
-        /// <returns></returns>
         public (Vector2 position, Vector2 size) TranslateElement(UIElement element) {
             Vector2 elementSize = element.Size;
-            Vector2 elementPos = element.Position;
+            Vector2 relativePosition = element.Position;
 
-            elementSize = ApplyRelativeMode(elementSize, element.SizeMode);
-            elementPos = ApplyRelativeMode(elementPos, element.PositionMode);
+            elementSize = ApplyRelativeModeToSize(elementSize, element.SizeMode);
+            relativePosition = ApplyRelativeModeToPosition(relativePosition, element.PositionMode);
 
-            elementPos += CurrentPosition;
-
-            return (elementPos, elementSize);
+            return (relativePosition, elementSize);
         }
 
+        /// <summary>
+        /// Translates the component according to the current scene state with the relative modes applied
+        /// </summary>
+        public (Vector2 position, Vector2 size) TranslateComponent(UIElement element, IUIComponent component) {
+            var transElement = TranslateElement(element);
 
-        private Vector2 ApplyRelativeMode(Vector2 target, (PositioningMode x, PositioningMode y) mode) {
-            Vector2 currentContainerSize = CurrentContainerSize;
+            Vector2 componentSize = component.Size;
+            Vector2 componentPos = component.Position;
 
-            Vector2 ApplyModeToAxis(PositioningMode mode, Vector2 axisValue) {
+            componentSize = ApplyRelativeModeToSize(componentSize, component.SizeMode, transElement.size);
+            componentPos = ApplyRelativeModeToPosition(componentPos, component.PositionMode, transElement.size, transElement.position);
+
+            return (componentPos, componentSize);
+        }
+
+        private Vector2 ApplyRelativeModeToSize(Vector2 target, (PositioningMode x, PositioningMode y) mode, Vector2? currentContainerSize = null) {
+            currentContainerSize ??= CurrentContainerSize;
+
+            Vector2 ApplyModeToAxis(PositioningMode axisMode, Vector2 axisValue) {
                 Vector2 output = Vector2.Zero;
-                if (mode.HasFlag(PositioningMode.Absolute) || mode == PositioningMode.Normal) {
+                if (axisMode.HasFlag(PositioningMode.Absolute) || axisMode == PositioningMode.Normal) {
                     output = axisValue;
-                    if (mode.HasFlag(PositioningMode.Relative)) {
+                    if (axisMode.HasFlag(PositioningMode.Relative)) {
                         output *= DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
                     }
-                } else if (mode.HasFlag(PositioningMode.Relative)) {
-                    output = axisValue * currentContainerSize;
+                } else if (axisMode.HasFlag(PositioningMode.Relative)) {
+                    output = axisValue * currentContainerSize.Value;
                 }
 
                 return output;
@@ -290,6 +300,32 @@ namespace Forge.UX.UI {
 
             output += ApplyModeToAxis(mode.x, target * Vector2.UnitX);
             output += ApplyModeToAxis(mode.y, target * Vector2.UnitY);
+
+            return output;
+        }
+
+        private Vector2 ApplyRelativeModeToPosition(Vector2 target, (PositioningMode x, PositioningMode y) mode, Vector2? currentContainerSize = null, Vector2? currentPosition = null) {
+            currentContainerSize ??= CurrentContainerSize;
+            currentPosition ??= CurrentPosition;
+
+            Vector2 GetAdjustedOffset(PositioningMode axisMode, Vector2 dir) {
+                Vector2 output = Vector2.Zero;
+
+                // When the mode is absolute, the position is already in screen space
+                // In relative or normal mode, the position needs to be adjusted by the current position of the group/container
+                // as that is the output of ApplyRelativeModeToSize
+                if (axisMode.HasFlag(PositioningMode.Relative) || axisMode == PositioningMode.Normal) {
+                    return currentPosition!.Value * dir;
+                }
+
+                return output;
+            }
+
+            // First apply the relative mode to the position according to the current container size
+            Vector2 output = ApplyRelativeModeToSize(target, mode, currentContainerSize);
+            // Then adjust the position by the current position of the group/container
+            output += GetAdjustedOffset(mode.x, Vector2.UnitX);
+            output += GetAdjustedOffset(mode.y, Vector2.UnitY);
 
             return output;
         }

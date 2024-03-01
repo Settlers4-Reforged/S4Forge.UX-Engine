@@ -18,7 +18,7 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         #region Components
         // Button components, text defines the button text and texture represents both texture states
-        public readonly TextComponent TextComponent = new TextComponent("NO TEXT") { Offset = new Vector2(0, 0) };
+        public readonly TextComponent TextComponent = new TextComponent("NO TEXT");
         public readonly TextureComponent TextureComponent;
 
         // Proxies for various component options:
@@ -31,11 +31,19 @@ namespace Forge.UX.UI.Elements.Interaction {
         }
 
         /// <summary>
-        /// The position offset of the button text
+        /// The offset of the button text
         /// </summary>
         public Vector2 TextOffset {
-            get => TextComponent.Offset;
-            set => TextComponent.Offset = value;
+            get => TextComponent.Position;
+            set => TextComponent.Position = value;
+        }
+
+        /// <summary>
+        /// The inner bounding box of the button text
+        /// </summary>
+        public Vector2 TextSize {
+            get => TextComponent.Size;
+            set => TextComponent.Size = value;
         }
 
         public Vector2 HeldTextOffset { get; set; }
