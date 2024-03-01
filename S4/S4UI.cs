@@ -32,12 +32,8 @@ namespace Forge.UX.S4 {
             throw new System.NotImplementedException();
         }
 
-        public static bool RegisterEventCallback(Event eventId, EventCallback callback) {
-
-
-
+        public static bool RegisterEventCallback(EventType eventType, EventCallback callback) {
             throw new System.NotImplementedException();
-
         }
 
 
@@ -57,7 +53,7 @@ namespace Forge.UX.S4 {
         }
 
         public struct EventCallbackParameters {
-            public Event EventId;
+            public EventType EventType;
 
             public int Timestamp;
 
