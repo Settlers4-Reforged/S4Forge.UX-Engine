@@ -3,6 +3,7 @@
 using DryIoc;
 
 using Forge.Config;
+using Forge.S4.Game;
 using Forge.UX.Rendering;
 using Forge.UX.Rendering.Text;
 using Forge.UX.Rendering.Texture;
@@ -45,6 +46,29 @@ namespace Forge.UX.UI.Prefabs.Buttons {
                 TextOffset = new Vector2(15 / DefaultWidth, 13 / DefaultHeight), // 15, 10
                 TextSize = new Vector2(292 / DefaultWidth, 32 / DefaultHeight),
                 HeldTextOffset = new Vector2(2 / DefaultWidth, 2 / DefaultHeight)
+            };
+
+
+            bool? prevState = null;
+            button.OnHover += (element, hovering) => {
+                ISoundApi sound = DI.Resolve<ISoundApi>();
+                if (button.IsHolding) {
+                    if (prevState == hovering) {
+                        return;
+                    }
+
+                    sound.PlaySound(hovering ? 7 : 6);
+                    prevState = hovering;
+                }
+            };
+
+            button.OnInteract += (_) => {
+                prevState = null;
+
+                ISoundApi sound = DI.Resolve<ISoundApi>();
+                sound.PlaySound(11);
+                //This seems to be a b u g in the game, it plays the release and click button simultaneously when releasing a button press
+                sound.PlaySound(6);
             };
 
             this.ApplyPropertyValues(button);

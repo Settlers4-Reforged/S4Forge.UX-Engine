@@ -96,6 +96,8 @@ namespace Forge.UX.UI.Elements.Interaction {
         protected bool interactionStarted = false;
         protected State holdStatus = State.Up;
 
+        public bool IsHolding => holdStatus == State.Down;
+
         public Action<UIElement>? OnInteract { get; set; }
         #endregion
 
@@ -141,7 +143,7 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         public override void OnMouseClickUp(int mb) {
             interactionStarted = false;
-            OnInteract?.Invoke(this);
+                OnInteract?.Invoke(this);
             SetState(State.Up);
         }
 

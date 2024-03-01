@@ -82,11 +82,11 @@ namespace Forge.UX.Debug {
             };
 
             UIStack layout = window.Elements.GetById<UIStack>("layout")!;
-            layout.Elements.GetById<UIButton>("close")!.OnInteract = (_) => {
+            layout.Elements.GetById<UIButton>("close")!.OnInteract += (_) => {
                 window.Close();
             };
 
-            layout.Elements.GetById<UIButton>("test_lobby")!.OnInteract = (_) => {
+            layout.Elements.GetById<UIButton>("test_lobby")!.OnInteract += (_) => {
                 eventManager.SendEvent((EventType)64, 0, 0, 0);
             };
 
@@ -103,7 +103,7 @@ namespace Forge.UX.Debug {
                 .WithPosition(("90%", 0.0f))
                 .Build().Instantiate<UIButton>();
 
-            windowButton.OnInteract = (_) => {
+            windowButton.OnInteract += (_) => {
                 window.Open();
             };
             windowButton.OnInput = (button) => {
