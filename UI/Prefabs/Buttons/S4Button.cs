@@ -23,10 +23,15 @@ namespace Forge.UX.UI.Prefabs.Buttons {
         public override string Name => "S4Button";
         public override string Description => "A generic button in the style of a S4 button";
 
+        const float DefaultWidth = 322;
+        const float DefaultHeight = 60;
+
         protected override void OverrideDefaults() {
             // Default size of a S4 button:
-            Size.Default = new Vector2(322, 60);
+            Size.Default = new Vector2(DefaultWidth, DefaultHeight);
             TextAlignment.Default = TextStyleAlignment.Center;
+            TextSize.Default = TextStyleSize.Large;
+            TextType.Default = TextStyleType.Bold;
         }
 
         public override UIElement Instantiate() {
@@ -37,12 +42,14 @@ namespace Forge.UX.UI.Prefabs.Buttons {
                 ButtonHeldTexture = tcm.Get(0, 195),
                 Text = Text!,
                 Enabled = IsEnabled!,
-                TextOffset = new Vector2(15, -6),
-                HeldTextOffset = new Vector2(2, 2)
+                TextOffset = new Vector2(15 / DefaultWidth, 13 / DefaultHeight), // 15, 10
+                TextSize = new Vector2(292 / DefaultWidth, 32 / DefaultHeight),
+                HeldTextOffset = new Vector2(2 / DefaultWidth, 2 / DefaultHeight)
             };
 
             this.ApplyPropertyValues(button);
             this.ApplyTextPropertyValues(button.TextComponent);
+            button.TextComponent.PositionMode = (PositioningMode.Relative, PositioningMode.Relative);
 
             return button;
         }
