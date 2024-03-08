@@ -16,6 +16,7 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
         /// </summary>
         public bool PersistMenus { get; set; } = true;
 
+        private bool dragging = false;
         public bool Draggable { get; set; } = true;
 
         public UIWindow() {
@@ -32,18 +33,37 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
             Components = new List<IUIComponent>() { backgroundTexture };
         }
 
-        public override void OnMouseClickDown(int mb) {
-            base.OnMouseClickDown(mb);
+        public override void Input(SceneGraphState state) {
+            base.Input(state);
 
             IInputManager im = DI.Resolve<IInputManager>();
 
-            if (Draggable && mb == 0) {
+            if (dragging && im.IsMouseOnScreen()) {
                 Position += im.MouseDelta;
+
+                bool clipToContainer = true;
+                // Clip to container:
+                if (clipToContainer) {
+                    Vector2 containerSize = state.CurrentContainerSize;
+                    Position = new Vector2(
+                        Math.Clamp(Position.X, 0, containerSize.X - Size.X),
+                        Math.Clamp(Position.Y, 0, containerSize.Y - Size.Y)
+                    );
+                }
             }
         }
 
-        public override void OnMouseClickUp(int mb) {
-            base.OnMouseClickUp(mb);
+        public override void OnMouseClickDown(int mb) {
+            base.OnMouseClickDown(mb);
+
+            if (Draggable && mb == 0) {
+                dragging = true;
+            }
+        }
+
+        public override void OnMouseGlobalClickUp(int mb) {
+            base.OnMouseGlobalClickUp(mb);
+            dragging = false;
         }
 
         public void Open() {
