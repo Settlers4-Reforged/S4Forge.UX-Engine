@@ -228,14 +228,7 @@ namespace Forge.UX.UI {
 
             next.Depth++;
 
-            if (group.PositionMode.x.HasFlag(PositioningMode.Absolute)) {
-                next.CurrentPosition *= Vector2.UnitY;
-            }
-            if (!group.PositionMode.y.HasFlag(PositioningMode.Absolute)) {
-                next.CurrentPosition *= Vector2.UnitX;
-            }
-
-            next.CurrentPosition += ApplyRelativeModeToSize(group.Position, group.PositionMode);
+            next.CurrentPosition = ApplyRelativeModeToPosition(group.Position, group.PositionMode);
             next.CurrentContainerSize = ApplyRelativeModeToSize(group.Size, group.SizeMode);
 
             if (group.ClipContent) {
