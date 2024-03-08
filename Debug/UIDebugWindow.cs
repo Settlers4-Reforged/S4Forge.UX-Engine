@@ -61,7 +61,7 @@ namespace Forge.UX.Debug {
                         .Build(),
                     new S4ButtonBuilder()
                         .WithId("test_lobby")
-                        .WithText("Open Lobby\nWoah")
+                        .WithText("Open Lobby\nNeue Zeile")
                         .Build(),
 
                     new S4TextBuilder(baseText).WithId("elements").WithText("Elements: 0").Build(),
@@ -70,7 +70,7 @@ namespace Forge.UX.Debug {
 
             window = new S4WindowBuilder()
                 .WithPosition((500, 0))
-                .WithSize((322, 500))
+                .WithSize((395, 500))
                 .WithChildPrefabs(
                     new List<IPrefab>() {
                         layoutPrefab
@@ -115,7 +115,7 @@ namespace Forge.UX.Debug {
 
         private void UpdateMenu() {
             elements!.Text = "Elements: " + manager.GetAllElements().Count();
-            cursor!.Text = $"Cursor X: {inputManager.MousePosition.X}, Y: {inputManager.MousePosition.Y}";
+            cursor!.Text = $"Cursor X: {inputManager.MousePosition.X}, Y: {inputManager.MousePosition.Y}\n Delta X: {inputManager.MouseDelta.X}, Y: {inputManager.MouseDelta.Y}";
         }
     }
 }
