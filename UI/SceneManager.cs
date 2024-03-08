@@ -231,9 +231,18 @@ namespace Forge.UX.UI {
             next.CurrentPosition = ApplyRelativeModeToPosition(group.Position, group.PositionMode);
             next.CurrentContainerSize = ApplyRelativeModeToSize(group.Size, group.SizeMode);
 
+            // Apply clipping:
+            // For consideration... Clipping inside or outside of padding?
             if (group.ClipContent) {
                 next.ClippingRect = new Vector4(group.Position, group.Size.X, group.Size.Y);
             }
+
+            // Apply padding:
+            Vector2 positionPadding = new Vector2(group.Padding.X, group.Padding.Y);
+            Vector2 sizePadding = new Vector2(group.Padding.Z, group.Padding.W);
+            next.CurrentPosition += positionPadding;
+            next.CurrentContainerSize -= sizePadding + positionPadding;
+
 
             return next;
         }

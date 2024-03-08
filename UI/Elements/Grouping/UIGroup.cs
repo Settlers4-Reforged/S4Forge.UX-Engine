@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Numerics;
 
 namespace Forge.UX.UI.Elements.Grouping {
     public class UIGroup : UIElement, IUILayout {
@@ -21,6 +22,8 @@ namespace Forge.UX.UI.Elements.Grouping {
                 );
 
         public bool ClipContent { get; set; } = false;
+
+        public Vector4 Padding { get; set; } = Vector4.Zero;
 
         /// <summary>
         /// Gets or sets a value indicating whether the group is transparent in layout behavior.

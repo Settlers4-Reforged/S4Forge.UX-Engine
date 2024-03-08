@@ -4,6 +4,7 @@ using Forge.UX.UI.Prefabs.Properties;
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Forge.UX.UI.Prefabs {
@@ -13,6 +14,8 @@ namespace Forge.UX.UI.Prefabs {
 
         public Property<bool> ClipContent { get; set; } = new(nameof(ClipContent),
             "Whether the group should hide/clip content that is outside it's bounds");
+
+        public Property<Vector4> Padding { get; set; } = new(nameof(Padding), "The inner margin of the group");
 
         #endregion
 
@@ -30,6 +33,7 @@ namespace Forge.UX.UI.Prefabs {
 
             if (element is UIGroup g) {
                 g.ClipContent = ClipContent;
+                g.Padding = Padding;
             } else {
                 throw new InvalidOperationException($"Tried to apply group prefab properties from '{Name}' to non UI group element '{element.Id}'!");
             }
