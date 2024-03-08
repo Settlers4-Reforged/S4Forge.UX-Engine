@@ -5,14 +5,18 @@ using System.Numerics;
 namespace Forge.UX.UI.Components {
     public sealed class NineSliceTextureComponent : TextureComponent {
         //Slices:
-        // Corner widths (top-left, top-right, bottom-left, bottom-right)
+        /// <summary>
+        /// Corner widths (top-left, top-right, bottom-left, bottom-right)
+        /// </summary>
         public Vector4 CornerWidths { get; set; }
 
-        // Edge widths (top, left, right, bottom)
+        /// <summary>
+        /// Edge widths (top, left, right, bottom)
+        /// </summary>
         public Vector4 EdgeWidths { get; set; }
 
-        public bool RepeatEdges { get; set; } = false;
-        public bool RepeatCorners { get; set; } = true;
+        public bool RepeatEdges { get; set; } = true;
+        public bool RepeatCorners { get; set; } = false;
         public bool RepeatCenter { get; set; } = true;
 
         public NineSliceTextureComponent(ITexture texture, Vector4 cornerWidths, Vector4 edgeWidths) : base(texture) {
