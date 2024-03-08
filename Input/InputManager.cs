@@ -27,6 +27,7 @@ namespace Forge.UX.Input {
         void Update();
 
         bool IsMouseInRectangle(Vector4 rect);
+        bool IsMouseOnScreen();
 
         /// <summary>
         /// Returns true if the key is was just pressed down.
@@ -187,10 +188,12 @@ namespace Forge.UX.Input {
                 //Mouse up:
                 case WndProcMsg.WM_LBUTTONUP: //Left
                     key = Keys.LButton;
+                    HandleMouseDrag(false);
                     up = true;
                     break;
                 case WndProcMsg.WM_RBUTTONUP: //Right
                     key = Keys.RButton;
+                    HandleMouseDrag(false);
                     up = true;
                     break;
                 case WndProcMsg.WM_MBUTTONUP: //Middle
@@ -208,9 +211,11 @@ namespace Forge.UX.Input {
                 //Mouse down:
                 case WndProcMsg.WM_LBUTTONDOWN: //Left
                     key = Keys.LButton;
+                    HandleMouseDrag(true);
                     break;
                 case WndProcMsg.WM_RBUTTONDOWN: //Right
                     key = Keys.RButton;
+                    HandleMouseDrag(true);
                     break;
                 case WndProcMsg.WM_MBUTTONDOWN: //Middle
                     key = Keys.MButton;
@@ -232,6 +237,14 @@ namespace Forge.UX.Input {
             }
         }
 
+        private void HandleMouseDrag(bool start) {
+            if (start) {
+                User32.SetCapture(GameValues.Hwnd);
+            } else {
+                User32.ReleaseCapture();
+            }
+        }
+
         public void Update() {
             downKeys.Clear();
             upKeys.Clear();
@@ -249,6 +262,15 @@ namespace Forge.UX.Input {
 
         public bool IsMouseInRectangle(Vector4 rect) {
             return MousePosition.X >= rect.X && MousePosition.X <= rect.X + rect.Z && MousePosition.Y >= rect.Y && MousePosition.Y <= rect.Y + rect.W;
+        }
+
+        public bool IsMouseOnScreen() {
+            User32.Rect rect = new User32.Rect();
+            User32.GetWindowRect(GameValues.Hwnd, ref rect);
+
+            float width = rect.Z - rect.X;
+            float height = rect.W - rect.Y;
+            return IsMouseInRectangle(new Vector4(0, 0, width, height));
         }
 
         private Vector2 prevMousePosition;

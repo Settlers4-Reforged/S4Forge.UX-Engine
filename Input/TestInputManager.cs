@@ -24,6 +24,10 @@ namespace Forge.UX.Input {
             return true;
         }
 
+        public bool IsMouseOnScreen() {
+            return true;
+        }
+
         public bool IsKeyDown(Keys key) {
             return true;
         }
