@@ -20,9 +20,13 @@ namespace Forge.UX.UI.Prefabs.Groups {
         public override string Name => "S4Window";
         public override string Description => "A generic Window in the style of a S4 pop-out";
 
+        protected override void OverrideDefaults() {
+            Padding.Default = new Vector4(35);
+        }
+
         public override UIElement Instantiate() {
             ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
-            UIWindow element = new UIWindow(new NineSliceTextureComponent(tcm.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.S4Window), 0));
+            UIWindow element = new UIWindow(new NineSliceTextureComponent(tcm.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.S4Window), 35));
             this.ApplyPropertyValues(element);
 
             InstantiateChildren(element);
