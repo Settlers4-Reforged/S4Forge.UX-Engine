@@ -238,10 +238,11 @@ namespace Forge.UX.Input {
             mouseScroll = 0;
 
 
+            prevMousePosition = currentMousePosition;
+
             User32.GetCursorPos(out User32.Pos point);
             User32.ScreenToClient(GameValues.Hwnd, ref point);
             currentMousePosition = new Vector2(point.X, point.Y);
-            prevMousePosition = currentMousePosition;
         }
 
         #region Mouse
