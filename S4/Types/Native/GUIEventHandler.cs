@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Forge.UX.S4.Types {
+namespace Forge.UX.S4.Types.Native {
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    struct GUIEventHandler {
-        public Int32 __vftable /*VFT*/;
-        public Int16 field_4;
-        public Byte gap_6_1;
-        public Byte gap_6_2;
+    public struct GUIEventHandler {
+        public int __vftable /*VFT*/;
+        public short field_4;
+        public byte gap_6_1;
+        public byte gap_6_2;
         public int field_8;
         public int field_C;
         public int field_10;
@@ -25,7 +25,7 @@ namespace Forge.UX.S4.Types {
         public int ChatShowButtonSurface;
         public int field_38;
         public int TimeWindow;
-        public Byte unknownSurfaceData;
-        public Int16 field_41;
+        public byte unknownSurfaceData;
+        public short field_41;
     }
 }
