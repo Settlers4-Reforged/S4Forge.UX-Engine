@@ -22,17 +22,17 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         public override void OnMouseClickUp(int mb) {
             IsChecked = !IsChecked;
-            OnInteract?.Invoke(this);
+            Interact();
         }
 
         /// <summary>
         /// Binding for the value of the checkbox. Get's called during initialization
         /// </summary>
-        public Func<UIElement, bool>? BindingGetValue { get; set; }
+        public event BindableGetter<bool>? BindingGetValue;
 
         /// <summary>
         /// Gets called when the value of the checkbox changes
         /// </summary>
-        public Action<UIElement, bool>? OnValueChange { get; set; }
+        public event ValueObserverSetter<bool>? OnValueChange;
     }
 }

@@ -98,7 +98,7 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         public bool IsHolding => holdStatus == State.Down;
 
-        public Action<UIElement>? OnInteract { get; set; }
+        public event UIEvent<UIElement>? OnInteract;
         #endregion
 
         public void DefaultTextures() {
@@ -133,7 +133,11 @@ namespace Forge.UX.UI.Elements.Interaction {
             holdStatus = newState;
 
 
-            OnHover?.Invoke(this, holdStatus == State.Down);
+            Hover(holdStatus == State.Down);
+        }
+
+        protected virtual void Interact() {
+            OnInteract?.Invoke(this);
         }
 
         public override void OnMouseClickDown(int mb) {
@@ -145,7 +149,7 @@ namespace Forge.UX.UI.Elements.Interaction {
             interactionStarted = false;
 
             if (enabled)
-                OnInteract?.Invoke(this);
+                Interact();
 
             SetState(State.Up);
         }

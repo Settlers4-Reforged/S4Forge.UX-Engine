@@ -20,7 +20,7 @@ namespace Forge.UX.UI.Elements.Grouping.Interaction {
             // Update all radio buttons with the same link id
             foreach (UIElement element in Elements.GetAllElementsInTree()) {
                 if (element is UIRadioButton<T> rbX) {
-                    rbX.OnValueChange = (target, check) => {
+                    rbX.OnValueChange += (target, check) => {
                         UIRadioButton<T>? rb = (UIRadioButton<T>)target;
 
                         // Ignore unchecks
@@ -50,7 +50,8 @@ namespace Forge.UX.UI.Elements.Grouping.Interaction {
             base.Input(state);
         }
 
-        public Func<UIElement, T>? BindingGetValue { get; set; }
-        public Action<UIElement, T>? OnValueChange { get; set; }
+        public event BindableGetter<T>? BindingGetValue;
+        public event ValueObserverSetter<T>? OnValueChange;
+
     }
 }

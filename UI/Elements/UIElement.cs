@@ -45,7 +45,11 @@ namespace Forge.UX.UI.Elements {
             }
         }
 
-        public Action<UIElement, bool>? OnHover { get; set; }
+        public event UIEvent<UIElement, bool>? OnHover;
+
+        protected void Hover(bool hover) {
+            IsMouseHover = hover;
+        }
 
         /// <summary>
         /// Prevents mouse hover or click inputs from being captured from this element<br/>
@@ -69,15 +73,46 @@ namespace Forge.UX.UI.Elements {
             IgnoresMouse = false;
         }
 
-
+        #region Mouse Events
+        /// <summary>
+        /// Called when the mouse is clicked down while the mouse is over the element
+        /// </summary>
+        /// <param name="mb">Which mouse button was pressed. 0 = left, 1 = middle, 2 = right</param>
         public virtual void OnMouseClickDown(int mb) { }
+
+        /// <summary>
+        /// Called when the mouse is clicked up while the mouse is over the element
+        /// </summary>
+        /// <param name="mb">Which mouse button was pressed. 0 = left, 1 = middle, 2 = right</param>
         public virtual void OnMouseClickUp(int mb) { }
-        public virtual void OnMouseGlobalClickDown(int mb) { }
-        public virtual void OnMouseGlobalClickUp(int mb) { }
+
+        /// <summary>
+        /// Called when the mouse wheel is scrolled while the mouse is over the element
+        /// </summary>
+        /// <param name="scroll">The amount scrolled, signed to the direction</param>
         public virtual void OnMouseScroll(float scroll) { }
 
+        /// <summary>
+        /// Called when the mouse enters the element
+        /// </summary>
         public virtual void OnMouseEnter() { }
+        /// <summary>
+        /// Called when the mouse leaves the element
+        /// </summary>
         public virtual void OnMouseLeave() { }
+
+        /// <summary>
+        /// Called when the mouse is clicked down anywhere on the screen
+        /// </summary>
+        /// <param name="mb">Which mouse button was pressed. 0 = left, 1 = middle, 2 = right</param>
+        public virtual void OnMouseGlobalClickDown(int mb) { }
+
+        /// <summary>
+        /// Called when the mouse is clicked up anywhere on the screen
+        /// </summary>
+        /// <param name="mb">Which mouse button was pressed. 0 = left, 1 = middle, 2 = right</param>
+        public virtual void OnMouseGlobalClickUp(int mb) { }
+        #endregion
 
         public virtual void Input(SceneGraphState state) {
             OnInput?.Invoke(this);
@@ -86,8 +121,9 @@ namespace Forge.UX.UI.Elements {
         #region EventHandlers
 
         public delegate void UIEvent<in T>(T initiator);
+        public delegate void UIEvent<in T, in TA1>(T initiator, TA1 value);
 
-        public UIEvent<UIElement>? OnInput;
+        public event UIEvent<UIElement>? OnInput;
 
         #endregion
     }

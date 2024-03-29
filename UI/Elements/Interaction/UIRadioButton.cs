@@ -17,7 +17,7 @@ namespace Forge.UX.UI.Elements.Interaction {
             if (IsChecked) return;
 
             IsChecked = true;
-            OnInteract?.Invoke(this);
+            Interact();
         }
     }
 }

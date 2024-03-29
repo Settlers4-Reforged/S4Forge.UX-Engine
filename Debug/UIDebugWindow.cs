@@ -106,7 +106,7 @@ namespace Forge.UX.Debug {
             windowButton.OnInteract += (_) => {
                 window.Open();
             };
-            windowButton.OnInput = (button) => {
+            windowButton.OnInput += (button) => {
                 button.Visible = !window.Visible;
             };
 

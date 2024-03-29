@@ -28,6 +28,6 @@ namespace Forge.UX.UI.Elements.Static {
         /// <summary>
         /// Sets the text of the element. Get's called during rendering
         /// </summary>
-        public Func<UIElement, string>? BindingGetValue { get; set; }
+        public event BindableGetter<string>? BindingGetValue;
     }
 }

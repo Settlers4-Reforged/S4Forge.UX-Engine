@@ -68,13 +68,17 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
 
         public void Open() {
             Visible = true;
+
+            Opened?.Invoke(this);
         }
 
         public void Close() {
             Visible = false;
+
+            Closed?.Invoke(this);
         }
 
-        public UIEvent<UIWindow>? OnOpen { get; set; }
-        public UIEvent<UIWindow>? OnClose { get; set; }
+        public event UIEvent<UIWindow>? Opened;
+        public event UIEvent<UIWindow>? Closed;
     }
 }
