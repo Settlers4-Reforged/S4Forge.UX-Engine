@@ -17,7 +17,6 @@ namespace Forge.UX.UI {
         }
 
         internal void RegisterDependencies() {
-            DI.Dependencies.Register<UIManager>(Reuse.Singleton);
             DI.Dependencies.Register<UICallbacks>(Reuse.Singleton);
             DI.Dependencies.Register<SceneBuilder>(Reuse.Singleton);
             DI.Dependencies.Register<SceneManager>(Reuse.Singleton);

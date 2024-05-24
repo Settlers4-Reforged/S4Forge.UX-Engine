@@ -2,6 +2,7 @@
 using Forge.Native;
 using Forge.S4;
 using Forge.S4.Types;
+using Forge.UX.Interfaces;
 using Forge.UX.S4.Types.Native;
 
 using System;
@@ -12,6 +13,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Forge.UX.S4 {
+    public interface IUIManager {
+        unsafe int* UIScenes { get; }
+        GUIEventHandler? GUIEventHandler { get; }
+        S4UIScreenId GetActiveScreen();
+        S4UIMenuId GetActiveMenu();
+        S4UIMenuId GetActiveSubmenu();
+    }
+
     public class UIManager {
         /// <summary>
         /// A list of all known menu state class vtables and their corresponding screen IDs.

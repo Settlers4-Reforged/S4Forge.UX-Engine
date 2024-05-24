@@ -66,6 +66,10 @@ namespace Forge.UX.UI {
 
         public void DoFrame() {
             try {
+                IUIManager uiManager = DI.Resolve<IUIManager>();
+                uiManager.GetActiveMenu();
+                uiManager.GetActiveScreen();
+
                 InputScene();
 
                 RenderScene();

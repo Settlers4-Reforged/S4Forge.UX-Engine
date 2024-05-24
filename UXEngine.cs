@@ -6,6 +6,7 @@ using Forge.Logging;
 using Forge.S4.Callbacks;
 using Forge.UX.Input;
 using Forge.UX.Rendering;
+using Forge.UX.S4;
 using Forge.UX.UI;
 
 using System;
@@ -60,8 +61,10 @@ namespace Forge.UX {
         }
 
         public void RegisterDependencies() {
-            DI.Dependencies.RegisterInstance(new UIEngine());
+            DI.Dependencies.RegisterMany<UIManager>(Reuse.Singleton);
             DI.Dependencies.RegisterInstance<IInputManager>(new InputManager());
+
+            DI.Dependencies.RegisterInstance(new UIEngine());
         }
 
         public static bool IsReady;
