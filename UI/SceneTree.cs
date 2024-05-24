@@ -9,6 +9,24 @@ using System.Text;
 
 namespace Forge.UX.UI {
     public class SceneTree : ObservableCollection<UIElement> {
+        SceneManager? attachedManager;
+
+        public void Attach(SceneManager manager) {
+            if (attachedManager != null) {
+                CollectionChanged += (sender, e) => {
+                    RefreshAttachment();
+                };
+            }
+
+            attachedManager = manager;
+        }
+
+        private void RefreshAttachment() {
+            foreach (UIElement element in this) {
+                element.Attach(attachedManager!);
+            }
+        }
+
         public UIElement? GetById(string id) {
             return GetAllElementsInTree().FirstOrDefault(e => e.Id == id);
         }

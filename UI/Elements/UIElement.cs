@@ -114,6 +114,15 @@ namespace Forge.UX.UI.Elements {
         public virtual void OnMouseGlobalClickUp(int mb) { }
         #endregion
 
+        /// <summary>
+        /// The manager of the scene tree that this element is attached to
+        /// </summary>
+        public SceneManager? AttachedManager { get; protected set; }
+
+        public virtual void Attach(SceneManager manager) {
+            AttachedManager = manager;
+        }
+
         public virtual void Input(SceneGraphState state) {
             OnInput?.Invoke(this);
         }

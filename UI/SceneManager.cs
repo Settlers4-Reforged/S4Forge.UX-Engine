@@ -20,7 +20,7 @@ using System.Numerics;
 
 namespace Forge.UX.UI {
     public class SceneManager {
-        private readonly RootNode rootSceneNode = new RootNode();
+        private readonly RootNode rootSceneNode;
 
         private readonly Lazy<IRenderer> _renderer;
         IRenderer Renderer => _renderer.Value;
@@ -32,6 +32,9 @@ namespace Forge.UX.UI {
             this.inputManager = inputManager;
 
             this.inputManager.AddInputBlockingMiddleware(new InputBlockMiddleware(true, InputBlockingMiddleware, 1000));
+
+            rootSceneNode = new RootNode();
+            rootSceneNode.Attach(this);
         }
 
         private EventBlockFlags InputBlockingMiddleware(EventBlockFlags input) {
@@ -42,14 +45,6 @@ namespace Forge.UX.UI {
 #if DEBUG
             DI.Dependencies.Resolve<UIDebugWindow>();
 #endif
-            //UIEngine.RegisterS4ScreenChangeCallback(OnScreenChange);
-        }
-
-        private void OnScreenChange(UIScreen prev, UIScreen next) {
-            foreach (UIWindow window in GetAllElements().OfType<UIWindow>()) {
-                if (!window.PersistMenus)
-                    window.Close();
-            }
         }
 
         public IEnumerable<UIElement> GetAllElements() {

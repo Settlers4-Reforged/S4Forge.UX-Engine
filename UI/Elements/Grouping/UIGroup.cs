@@ -69,6 +69,10 @@ namespace Forge.UX.UI.Elements.Grouping {
             return null;
         }
 
+        public override void Attach(SceneManager manager) {
+            base.Attach(manager);
+            Elements.Attach(manager);
+        }
 
         public virtual void Relayout() {
             foreach (IUILayout element in Elements.OfType<IUILayout>()) {
