@@ -13,7 +13,7 @@ namespace Forge.UX.UI.Components {
     public sealed class TribeTextureComponent : TextureComponent {
         public override ITexture Texture {
             get {
-                PlayerApi api = DI.Resolve<PlayerApi>();
+                IPlayerApi api = DI.Resolve<IPlayerApi>();
                 Tribe c = api.GetCurrentTribe();
                 if (!textures.TryGetValue(c, out ITexture? o)) {
                     o = textures[Tribe.Default];
@@ -26,6 +26,8 @@ namespace Forge.UX.UI.Components {
         private readonly IDictionary<Tribe, ITexture> textures;
 
         public TribeTextureComponent(IDictionary<Tribe, ITexture> textures) : base() {
+            //TODO: validate that the dictionary contains all tribes or at least Default
+
             this.textures = textures;
         }
     }
