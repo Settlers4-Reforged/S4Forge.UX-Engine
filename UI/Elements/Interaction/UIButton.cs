@@ -132,7 +132,6 @@ namespace Forge.UX.UI.Elements.Interaction {
 
             holdStatus = newState;
 
-
             Hover(holdStatus == State.Down);
         }
 
@@ -146,6 +145,9 @@ namespace Forge.UX.UI.Elements.Interaction {
         }
 
         public override void OnMouseClickUp(int mb) {
+            if (!interactionStarted)
+                return;
+
             interactionStarted = false;
 
             if (enabled)
