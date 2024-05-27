@@ -79,7 +79,7 @@ namespace Forge.UX.UI.Prefabs {
         }
 
         public IPrefab Clone() {
-            return (IPrefab)Activator.CreateInstance(this.GetType());
+            return (IPrefab)Activator.CreateInstance(this.GetType())!;
         }
     }
 }

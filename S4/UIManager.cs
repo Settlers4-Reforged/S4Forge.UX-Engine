@@ -161,7 +161,7 @@ namespace Forge.UX.S4 {
 
                 int submenuSceneSurfaceId = UIScenes[3];
                 if (submenuSceneSurfaceId != 0 && !submenuTranslation.ContainsKey(submenuSceneSurfaceId)) {
-                    Logger.LogWarn($"New menu detected: {submenuSceneSurfaceId:X}!");
+                    Logger.LogWarn($"New sub-menu detected: {submenuSceneSurfaceId:X}!");
                     return (S4UIMenuId)submenuSceneSurfaceId;
                 }
 
