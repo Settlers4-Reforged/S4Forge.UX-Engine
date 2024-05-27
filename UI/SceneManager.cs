@@ -164,9 +164,8 @@ namespace Forge.UX.UI {
 
 
         void RenderScene() {
-            //Renderer.ClearScreen();
-
             TraverseScene(null, RenderComponents, true);
+            Renderer.RenderSceneS();
         }
 
         void RenderComponents(UIElement parent, SceneGraphState state) {
