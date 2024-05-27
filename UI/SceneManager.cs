@@ -215,7 +215,7 @@ namespace Forge.UX.UI {
                 OnGroup?.Invoke(group, state);
             }
 
-            SceneGraphState baseState = SceneGraphState.Default();
+            SceneGraphState baseState = SceneGraphState.Default(rootSceneNode);
             TraverseGroup(rootSceneNode, baseState);
         }
 

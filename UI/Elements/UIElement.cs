@@ -34,6 +34,14 @@ namespace Forge.UX.UI.Elements {
         }
 
         /// <summary>
+        /// The rendering data associated with the element
+        /// </summary>
+        /// <remarks>
+        /// This object is only for rendering purposes and should not be used by application code
+        /// </remarks>
+        public IElementData? Data { get; set; }
+
+        /// <summary>
         /// Whether the element is positioned in screen space coordinates, or relative to its group parent or relative to the screen size
         /// </summary>
         public virtual (PositioningMode x, PositioningMode y) PositionMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);

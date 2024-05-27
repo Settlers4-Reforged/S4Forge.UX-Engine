@@ -1,10 +1,12 @@
-﻿using System.Numerics;
-using DryIoc;
+﻿using DryIoc;
+
 using Forge.Config;
 using Forge.UX.Rendering;
 using Forge.UX.UI.Components;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
+
+using System.Numerics;
 
 namespace Forge.UX.UI;
 
@@ -18,20 +20,23 @@ public struct SceneGraphState {
 
     public bool DebugActive { get; private set; }
 
-    public SceneGraphState(Vector2 currentPosition, Vector2 currentContainerSize, Vector2 currentScale, Vector4 clippingRect, int depth) {
+    public UIGroup? ContainerGroup { get; private set; }
+
+    public SceneGraphState(Vector2 currentPosition, Vector2 currentContainerSize, Vector2 currentScale, Vector4 clippingRect, int depth, UIGroup container) {
         CurrentPosition = currentPosition;
         CurrentContainerSize = currentContainerSize;
         CurrentScale = currentScale;
         ClippingRect = clippingRect;
         Depth = depth;
-        DebugActive = true;
+        DebugActive = false;
+        ContainerGroup = container;
     }
-    public SceneGraphState Clone() {
-        return new SceneGraphState(CurrentPosition, CurrentContainerSize, CurrentScale, ClippingRect, Depth) { DebugActive = this.DebugActive };
+    public SceneGraphState Clone(UIGroup container) {
+        return new SceneGraphState(CurrentPosition, CurrentContainerSize, CurrentScale, ClippingRect, Depth, container) { DebugActive = this.DebugActive };
     }
 
     public SceneGraphState ApplyGroup(UIGroup group) {
-        SceneGraphState next = this.Clone();
+        SceneGraphState next = this.Clone(group);
 
         // Transparent groups don't affect the layout state
         if (group.IsTransparent)
@@ -58,10 +63,10 @@ public struct SceneGraphState {
         return next;
     }
 
-    public static SceneGraphState Default() {
+    public static SceneGraphState Default(UIGroup container) {
         Vector2 screenSize = DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
 
-        return new SceneGraphState(Vector2.Zero, Vector2.Zero, Vector2.One, new Vector4(0, 0, screenSize.X, screenSize.Y), 0);
+        return new SceneGraphState(Vector2.Zero, Vector2.Zero, Vector2.One, new Vector4(0, 0, screenSize.X, screenSize.Y), 0, container);
     }
 
     /// <summary>
