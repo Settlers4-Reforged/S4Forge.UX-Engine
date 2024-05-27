@@ -9,7 +9,7 @@ namespace Forge.UX.Rendering {
         string Name { get; }
 
         void RenderUIComponent(IUIComponent component, UIElement parent, SceneGraphState sceneGraphState);
-        void RenderSceneS();
+        void ClearScreen();
 
         Vector2 GetScreenSize();
     }
