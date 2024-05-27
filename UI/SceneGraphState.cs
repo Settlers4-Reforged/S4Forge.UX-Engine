@@ -72,12 +72,12 @@ public struct SceneGraphState {
     /// <summary>
     /// Translates the element according to the current scene state with the relative modes applied
     /// </summary>
-    public (Vector2 position, Vector2 size) TranslateElement(UIElement element) {
+    public (Vector2 position, Vector2 size) TranslateElement(UIElement element, bool skipGroupOffset = false) {
         Vector2 elementSize = element.Size;
         Vector2 relativePosition = element.Position;
 
         elementSize = ApplyRelativeModeToSize(elementSize, element.SizeMode);
-        relativePosition = ApplyRelativeModeToPosition(relativePosition, element.PositionMode);
+        relativePosition = ApplyRelativeModeToPosition(relativePosition, element.PositionMode, skipGroupOffset ? Vector2.Zero : null);
 
         return (relativePosition, elementSize);
     }
@@ -85,8 +85,8 @@ public struct SceneGraphState {
     /// <summary>
     /// Translates the component according to the current scene state with the relative modes applied
     /// </summary>
-    public (Vector2 position, Vector2 size) TranslateComponent(UIElement element, IUIComponent component) {
-        var transElement = TranslateElement(element);
+    public (Vector2 position, Vector2 size) TranslateComponent(UIElement element, IUIComponent component, bool skipGroupOffset = false) {
+        var transElement = TranslateElement(element, skipGroupOffset);
 
         Vector2 componentSize = component.Size;
         Vector2 componentPos = component.Position;

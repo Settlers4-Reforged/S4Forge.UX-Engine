@@ -164,9 +164,7 @@ namespace Forge.UX.UI {
 
 
         void RenderScene() {
-            //Renderer.ClearScreen();
-
-            TraverseScene(null, RenderComponents, true);
+            TraverseScene(RenderGroup, RenderComponents, true);
         }
 
         void RenderComponents(UIElement parent, SceneGraphState state) {
@@ -182,6 +180,13 @@ namespace Forge.UX.UI {
             foreach (IUIComponent component in parent.Components) {
                 Renderer.RenderUIComponent(component, parent, state);
             }
+        }
+
+        void RenderGroup(UIGroup group, SceneGraphState state) {
+            if (!group.Visible)
+                return;
+
+            Renderer.RenderGroup(group, state);
         }
 
         void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement) {
