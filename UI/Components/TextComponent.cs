@@ -12,6 +12,7 @@ namespace Forge.UX.UI.Components {
         public (PositioningMode x, PositioningMode y) PositionMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
         public (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Relative, PositioningMode.Relative);
         public Effects Effects { get; set; }
+        public IElementData? Data { get; set; }
 
         public string Text { get; set; }
 

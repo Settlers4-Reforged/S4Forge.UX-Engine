@@ -17,6 +17,7 @@ namespace Forge.UX.UI.Components {
         public (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Relative, PositioningMode.Relative);
 
         public Effects Effects { get; set; }
+        public IElementData? Data { get; set; }
 
         //Whether this texture gets scaled to the UIElement Size or not
         public bool Scaled { get; set; } = false;

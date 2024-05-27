@@ -18,5 +18,13 @@ namespace Forge.UX.UI.Components {
         public (PositioningMode width, PositioningMode height) SizeMode { get; set; }
 
         public Effects Effects { get; set; }
+
+        /// <summary>
+        /// The rendering data associated with the element
+        /// </summary>
+        /// <remarks>
+        /// This object is only for rendering purposes and should not be used by application code
+        /// </remarks>
+        public IElementData? Data { get; set; }
     }
 }
