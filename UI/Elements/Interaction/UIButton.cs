@@ -27,7 +27,10 @@ namespace Forge.UX.UI.Elements.Interaction {
         /// </summary>
         public string Text {
             get => TextComponent?.Text ?? "";
-            set => TextComponent.Text = value;
+            set {
+                IsDirty = true;
+                TextComponent.Text = value;
+            }
         }
 
         /// <summary>
@@ -35,7 +38,10 @@ namespace Forge.UX.UI.Elements.Interaction {
         /// </summary>
         public Vector2 TextOffset {
             get => TextComponent.Position;
-            set => TextComponent.Position = value;
+            set {
+                IsDirty = true;
+                TextComponent.Position = value;
+            }
         }
 
         /// <summary>
@@ -43,7 +49,10 @@ namespace Forge.UX.UI.Elements.Interaction {
         /// </summary>
         public Vector2 TextSize {
             get => TextComponent.Size;
-            set => TextComponent.Size = value;
+            set {
+                IsDirty = true;
+                TextComponent.Size = value;
+            }
         }
 
         public Vector2 HeldTextOffset { get; set; }
@@ -84,6 +93,7 @@ namespace Forge.UX.UI.Elements.Interaction {
                     interactionStarted = false;
                 }
 
+                IsDirty = true;
                 enabled = value;
             }
         }
@@ -162,6 +172,7 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         public override void OnMouseEnter() {
             TextureComponent.Effects |= Effects.Highlight;
+            IsDirty = true;
 
             if (interactionStarted) {
                 SetState(State.Down);
@@ -171,6 +182,7 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         public override void OnMouseLeave() {
             TextureComponent.Effects &= ~Effects.Highlight;
+            IsDirty = true;
             SetState(State.Up);
         }
     }

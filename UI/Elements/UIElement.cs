@@ -13,9 +13,26 @@ namespace Forge.UX.UI.Elements {
 
         public virtual List<IUIComponent> Components { get; protected set; } = new List<IUIComponent>();
 
-        public virtual Vector2 Size { get; set; }
+        private Vector2 size;
 
-        public virtual Vector2 Position { get; set; }
+        public virtual Vector2 Size {
+            get => size;
+            set {
+                IsDirty = true;
+                size = value;
+            }
+        }
+
+
+        private Vector2 position;
+        public virtual Vector2 Position {
+            get => position;
+            set {
+                IsDirty = true;
+                position = value;
+            }
+        }
+
         /// <summary>
         /// Whether the element is positioned in screen space coordinates, or relative to its group parent or relative to the screen size
         /// </summary>
@@ -29,6 +46,16 @@ namespace Forge.UX.UI.Elements {
         /// <summary> Whether the element is visible during rendering phase </summary>
         public virtual bool Visible { get; set; } = true;
 
+        /// <summary> Whether the element is dirty and needs to be re-rendered </summary>
+        private bool isDirty = true;
+        public bool IsDirty {
+            get {
+                return isDirty;
+            }
+            set {
+                isDirty = value;
+            }
+        }
 
         ///<summary>The lower the further behind: 0 &lt; 100 &lt; 1000</summary>
         public int ZIndex = 0;
@@ -121,6 +148,7 @@ namespace Forge.UX.UI.Elements {
 
         public virtual void Attach(SceneManager manager) {
             AttachedManager = manager;
+            IsDirty = true;
         }
 
         public virtual void Input(SceneGraphState state) {

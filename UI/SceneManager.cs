@@ -65,7 +65,7 @@ namespace Forge.UX.UI {
                 uiManager.GetActiveMenu();
                 uiManager.GetActiveScreen();
 
-                InputScene();
+                ProcessScene();
 
                 RenderScene();
 
@@ -75,7 +75,7 @@ namespace Forge.UX.UI {
             }
         }
 
-        void InputScene() {
+        void ProcessScene() {
             UIElement? currentHoverElement = null;
             int currentHoverDepth = int.MinValue;
 
@@ -104,13 +104,33 @@ namespace Forge.UX.UI {
                 }
             }
 
-            TraverseScene(HandleMouseHover, HandleMouseHover, (g) => g.IgnoresMouse);
+            TraverseScene(null, HandleMouseHover, (g) => g.IgnoresMouse);
 
-            void HandleInput(UIElement element, SceneGraphState state) {
+            void HandleProcessing(UIElement element, SceneGraphState state) {
                 element.Input(state);
             }
 
-            TraverseScene(HandleInput, HandleInput);
+            void HandleGroupProcessing(UIGroup group, SceneGraphState state) {
+                //group.Input(state);
+
+                foreach (UIElement child in group.Elements) {
+                    if (!child.IsDirty) continue;
+
+                    group.IsDirty = true;
+                    break;
+                }
+
+                if (!group.IsDirty)
+                    return;
+
+                // Propagate dirty state down the tree
+                // TODO: maybe add a method to only re-render parts of the group - possibly add a "has alpha" check, to see if we can just render the group as a whole
+                foreach (UIElement child in group.Elements.GetAllElementsInTree()) {
+                    child.IsDirty = true;
+                }
+            }
+
+            TraverseScene(HandleGroupProcessing, HandleProcessing);
 
             // Handle Mouse click events:
             Keys[] keys = { Keys.LButton, Keys.MButton, Keys.RButton };
@@ -144,29 +164,35 @@ namespace Forge.UX.UI {
 
 
         void RenderScene() {
-            Renderer.ClearScreen();
+            //Renderer.ClearScreen();
 
-            TraverseScene(RenderComponents, RenderComponents, true);
+            TraverseScene(null, RenderComponents, true);
         }
 
         void RenderComponents(UIElement parent, SceneGraphState state) {
+            if (!parent.IsDirty)
+                return;
+
+            parent.IsDirty = false;
+
             if (!parent.Visible)
                 return;
+
 
             foreach (IUIComponent component in parent.Components) {
                 Renderer.RenderUIComponent(component, parent, state);
             }
         }
 
-        void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement) {
+        void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement) {
             TraverseScene(OnGroup, OnElement, (g) => false);
         }
 
-        void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement, bool skipInvisible) {
+        void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement, bool skipInvisible) {
             TraverseScene(OnGroup, OnElement, (g) => skipInvisible && !g.Visible);
         }
 
-        void TraverseScene(Action<UIGroup, SceneGraphState> OnGroup, Action<UIElement, SceneGraphState> OnElement, Func<UIGroup, bool> ShouldSkipGroup) {
+        void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement, Func<UIGroup, bool> ShouldSkipGroup) {
             void TraverseElement(UIElement element, SceneGraphState state) {
                 if (element is UIGroup g) {
                     if (!ShouldSkipGroup(g)) {
@@ -178,13 +204,15 @@ namespace Forge.UX.UI {
             }
 
             void TraverseGroup(UIGroup group, SceneGraphState state) {
-                OnGroup(group, state);
+                OnElement(group, state);
 
                 SceneGraphState newState = state.ApplyGroup(group);
 
                 foreach (UIElement el in group.GetSortedElements()) {
                     TraverseElement(el, newState);
                 }
+
+                OnGroup?.Invoke(group, state);
             }
 
             SceneGraphState baseState = SceneGraphState.Default();

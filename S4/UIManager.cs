@@ -21,7 +21,7 @@ namespace Forge.UX.S4 {
         S4UIMenuId GetActiveSubmenu();
     }
 
-    public class UIManager {
+    public class UIManager : IUIManager {
         /// <summary>
         /// A list of all known menu state class vtables and their corresponding screen IDs.
         /// </summary>
