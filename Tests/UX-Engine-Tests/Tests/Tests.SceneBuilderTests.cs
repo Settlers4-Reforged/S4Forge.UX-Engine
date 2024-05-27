@@ -21,6 +21,8 @@ namespace UX_Engine_Tests {
         [Test]
         public void SceneBuilder_WithCorrectScene_CorrectBuild() {
             // Prepare
+            IoCSetup();
+
             SceneManager manager = DI.Resolve<SceneManager>();
             SceneBuilder builder = DI.Resolve<SceneBuilder>();
 

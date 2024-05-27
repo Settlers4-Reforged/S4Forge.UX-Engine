@@ -12,6 +12,8 @@ namespace UX_Engine_Tests {
 
         [Test]
         public void Test_BuilderPattern() {
+            IoCSetup();
+
             S4Button button = new S4ButtonBuilder().WithText("Test").WithSize(("100vp", "0")).Build();
 
             Assert.Multiple(() => {
@@ -38,6 +40,8 @@ namespace UX_Engine_Tests {
 
         [Test]
         public void Test_BuilderPattern_Relayout() {
+            IoCSetup();
+
             UIStack layout = new StackBuilder().WithSize(("100%", "100%")).WithMinimumDistance(75).WithChildPrefabs(new List<IPrefab>() {
                 new S4ButtonBuilder().WithText("Test").WithSize((100, 75)).Build(),
             }).Build().Instantiate<UIStack>();

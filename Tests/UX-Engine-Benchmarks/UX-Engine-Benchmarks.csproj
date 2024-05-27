@@ -1,36 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>UX_Engine_Tests</RootNamespace>
+        <RootNamespace>UX_Engine_Benchmarks</RootNamespace>
+        <OutputType>Exe</OutputType>
         <TargetFrameworks>.net8.0-windows7.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Platforms>x86</Platforms>
+        <PlatformTarget>x86</PlatformTarget>
         <LangVersion>10.0</LangVersion>
         <Nullable>enable</Nullable>
 
-        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-        <PackageReference Include="Moq" Version="4.20.70" />
-        <PackageReference Include="NUnit" Version="4.0.1" />
-        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-        <PackageReference Include="NUnit.Analyzers" Version="4.0.1" />
-        <PackageReference Include="coverlet.collector" Version="6.0.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
+    <Target Name="PreBuild" BeforeTargets="_CopyOutOfDateSourceItemsToOutputDirectory">
+        <PropertyGroup>
+            <TestsTargetFile>..\UX-Engine-Tests\bin\x86\Debug\.net8.0-windows7.0\UX-Engine-Tests.deps.json</TestsTargetFile>
+        </PropertyGroup>
+
+        <!-- See https://github.com/dotnet/sdk/issues/34775 for why...-->
+        <!--<Delete Files="$(TargetDir)$(TargetName).deps.json" />-->
+        <Message Importance="High" Text="Path: $(TestsTargetFile).deps.json" />
+        <WriteLinesToFile File="$(TestsTargetFile)" Lines="" Overwrite="true" />
+    </Target>
 
     <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
         <!-- See https://github.com/dotnet/sdk/issues/34775 for why...-->
         <Delete Files="$(TargetDir)$(TargetName).deps.json" />
+        <Message Importance="High" Text="$(TestsTargetFile)" />
+        <Delete Files="$(TestsTargetFile)" />
     </Target>
 
 
     <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+    </ItemGroup>
+
+
+    <ItemGroup>
         <ProjectReference Include="..\..\UX-Engine.csproj" />
+        <ProjectReference Include="..\UX-Engine-Tests\UX-Engine-Tests.csproj" />
     </ItemGroup>
 
     <Choose>
