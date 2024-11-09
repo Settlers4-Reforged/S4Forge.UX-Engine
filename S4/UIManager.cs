@@ -89,6 +89,7 @@ namespace Forge.UX.S4 {
 
         private readonly Dictionary<Int32, S4UIMenuId> menuTranslation = new Dictionary<Int32, S4UIMenuId>() {
             { 0x22, S4UIMenuId.ExtrasSave },
+            { 0x2C, S4UIMenuId.ConfirmDestroy },
             { 0x24, S4UIMenuId.ExtrasMission },
             { 0x3B, S4UIMenuId.ExtrasChatSettings },
             { 0x23, S4UIMenuId.ExtrasQuit },
@@ -118,8 +119,6 @@ namespace Forge.UX.S4 {
             { 0x2D, S4UIMenuId.UnitSelectionSpecialists },
             { 0x29, S4UIMenuId.UnitSelectionVehicles },
             { 0x2B, S4UIMenuId.UnitSelectionFerry },
-            { 0x39, S4UIMenuId.UnitSelectionSubSpells },
-            { 0x38, S4UIMenuId.UnitSelectionSubGroupings },
             { 0x10, S4UIMenuId.SelectionSimpleBuilding },
             { 0x11, S4UIMenuId.SelectionTowerBuilding },
             { 0x12, S4UIMenuId.SelectionTraderBuilding },
@@ -134,6 +133,8 @@ namespace Forge.UX.S4 {
             { 0x33,  S4UIMenuId.SelectionSubStorage },
             { 0x34, S4UIMenuId.SelectionSubBuildVehicle },
             { 0x31, S4UIMenuId.SelectionSubBarracks },
+            { 0x39, S4UIMenuId.UnitSelectionSubSpells },
+            { 0x38, S4UIMenuId.UnitSelectionSubGroupings },
         };
 
 
