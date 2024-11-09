@@ -28,10 +28,19 @@ namespace Forge.UX.UI {
         }
 
         public UIElement? GetById(string id) {
+            return GetAllElementsInTree().First(e => e.Id == id);
+        }
+        public UIElement? GetByIdOrNull(string id) {
             return GetAllElementsInTree().FirstOrDefault(e => e.Id == id);
         }
 
         public T? GetById<T>(string id) where T : UIElement {
+            UIElement? foundElement = GetById(id);
+            if (foundElement is T t) return t;
+            throw new KeyNotFoundException($"Element with id {id} and type {typeof(T).Name} not found");
+        }
+
+        public T? GetByIdOrNull<T>(string id) where T : UIElement {
             UIElement? foundElement = GetById(id);
             if (foundElement is T t) return t;
             return null;
