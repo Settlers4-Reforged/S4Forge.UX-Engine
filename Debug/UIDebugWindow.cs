@@ -1,7 +1,13 @@
-﻿using Forge.S4.Game;
+﻿using CrashHandling;
+
+using Forge.Config;
+using Forge.S4;
+using Forge.S4.Game;
 using Forge.S4.Types;
+using Forge.S4.Types.Native.Entities;
 using Forge.UX.Input;
 using Forge.UX.Rendering.Text;
+using Forge.UX.S4;
 using Forge.UX.UI;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping.Display;
@@ -26,16 +32,18 @@ namespace Forge.UX.Debug {
         readonly SceneManager manager;
         readonly IInputManager inputManager;
         readonly IEventApi eventManager;
+        readonly IEntityApi entityManager;
 
         public static bool Enabled = true;
 
         private UIWindow? window;
-        private UIText? elements, cursor;
+        private UIText? entities, elements, cursor, uiScene, uiMenus;
 
-        public UIDebugWindow(SceneManager manager, IInputManager inputManager, IEventApi eventManager) {
+        public UIDebugWindow(SceneManager manager, IInputManager inputManager, IEventApi eventManager, IEntityApi entityManager) {
             this.manager = manager;
             this.inputManager = inputManager;
             this.eventManager = eventManager;
+            this.entityManager = entityManager;
 
             CreateMenu();
         }
@@ -56,66 +64,133 @@ namespace Forge.UX.Debug {
                         .WithText("Close")
                         .Build(),
                     new S4ButtonBuilder()
-                        .WithText("Disabled")
-                        .WithIsEnabled(false)
-                        .Build(),
-                    new S4ButtonBuilder()
-                        .WithId("test_lobby")
-                        .WithText("Open Lobby\nNeue Zeile")
+                        .WithId("hurt")
+                        .WithText("Hurt")
                         .Build(),
 
                     new S4TextBuilder(baseText).WithId("elements").WithText("Elements: 0").Build(),
                     new S4TextBuilder(baseText).WithId("cursor").WithText("Cursor X: 0, Y: 0").Build(),
+                    new S4TextBuilder(baseText).WithId("ui-scene").WithText("UI Scene: Unknown").Build(),
+                    new S4TextBuilder(baseText).WithId("ui-menu").WithFitText(true).WithText("UI Menu: Unknown\nUI Submenu: Unknown").Build(),
+
+                    new S4TextBuilder(baseText).WithId("entities").WithSize(("100%", "500")).WithText("Entities: 0").WithFitText(true).Build(),
                 }).Build();
 
             window = new S4WindowBuilder()
                 .WithPosition((500, 0))
-                .WithSize((395, 500))
+                .WithSize((395, 590))
                 .WithChildPrefabs(
                     new List<IPrefab>() {
                         layoutPrefab
                     }
                 )
                 .Build().Instantiate<UIWindow>();
-            window.OnInput += _ => {
-                UpdateMenu();
+            window.OnTick += _ => {
+                TickMenu();
+            };
+            window.OnProcess += (_, _) => {
+                ProcessMenu();
             };
 
             UIStack layout = window.Elements.GetById<UIStack>("layout")!;
             layout.Elements.GetById<UIButton>("close")!.OnInteract += (_) => {
                 window.Close();
             };
+            layout.Elements.GetById<UIButton>("hurt")!.OnInteract += (_) => {
+                unsafe {
+                    var selection = entityManager.Selection;
+                    if (selection != null && selection->Count > 0) {
 
-            layout.Elements.GetById<UIButton>("test_lobby")!.OnInteract += (_) => {
-                eventManager.SendEvent((EventType)64, 0, 0, 0);
+                        for (int i = 0; i < selection->Count; i++) {
+                            IEntity* entity = entityManager.GetEntity(selection->entityIds[i]);
+                            if (entity != null && entity->health > 0) {
+                                entity->health = 1;
+                            }
+                        }
+                    }
+                }
             };
 
+            entities = layout.Elements.GetById<UIText>("entities")!;
             elements = layout.Elements.GetById<UIText>("elements")!;
             cursor = layout.Elements.GetById<UIText>("cursor")!;
+            uiScene = layout.Elements.GetById<UIText>("ui-scene")!;
+            uiMenus = layout.Elements.GetById<UIText>("ui-menu")!;
 
             manager.AddRootElement(window);
 
-
-
-            UIButton windowButton = new S4ButtonBuilder()
-                .WithText("Forge Debug")
+            UIStack buttonStack = new StackBuilder()
                 .WithSize((322f * 0.75f, 60f * 0.75f))
                 .WithPosition(("90%", 0.0f))
-                .Build().Instantiate<UIButton>();
+                .WithChildPrefabs(new List<IPrefab>() {
+                    new S4ButtonBuilder()
+                        .WithId("window-button")
+                        .WithSize(("100%", "100%"))
+                        .WithText("Forge Debug")
+                        .Build()
+                })
+                .Build().Instantiate<UIStack>();
 
+            UIButton windowButton = buttonStack.Elements.GetById<UIButton>("window-button")!;
             windowButton.OnInteract += (_) => {
                 window.Open();
             };
-            windowButton.OnInput += (button) => {
-                button.Visible = !window.Visible;
+            windowButton.OnProcess += (button, _) => {
+                if (window.Visible)
+                    button.Hide();
+                else
+                    button.Show();
             };
 
-            manager.AddRootElement(windowButton);
+            manager.AddRootElement(buttonStack);
         }
 
-        private void UpdateMenu() {
-            elements!.Text = "Elements: " + manager.GetAllElements().Count();
+        private void ProcessMenu() {
             cursor!.Text = $"Cursor X: {inputManager.MousePosition.X}, Y: {inputManager.MousePosition.Y}\n Delta X: {inputManager.MouseDelta.X}, Y: {inputManager.MouseDelta.Y}";
+        }
+
+        private void TickMenu() {
+            entities!.Text = "No world active";
+            unsafe {
+                IEntity** allEntities = entityManager.BackingEntityPool;
+                var selection = entityManager.Selection;
+                if (selection != null && selection->Count > 0) {
+                    entities!.Text = "Selection: " + selection->Count;
+
+                    for (int i = 0; i < selection->Count; i++) {
+                        IEntity* entity = entityManager.GetEntity(selection->entityIds[i]);
+
+                        if (entity != null) {
+                            EntityClass entityClass = entityManager.ClassOf(entity);
+                            uint id = entity->id;
+
+                            entities!.Text += $"\nEntity {i}: {id} {entityClass}, {entity->health}";
+                        }
+                    }
+
+                } else if (allEntities != null) {
+                    entities!.Text = "Entities: " + entityManager.EntityPoolSize;
+
+                    for (uint i = 0; i < entityManager.EntityPoolSize; i++) {
+                        IEntity* entity = entityManager.GetEntity(i);
+                        if (entity != null) {
+                            EntityClass entityClass = entityManager.ClassOf(entity);
+                            uint id = entity->id;
+
+                            entities!.Text += $"\nEntity {i}: {id} {entityClass}";
+                        }
+                    }
+                }
+            }
+
+            elements!.Text = "Elements: " + manager.GetAllElements().Count();
+
+            IUIManager uiManager = DI.Resolve<IUIManager>();
+            S4UIScreenId currentScreen = uiManager.GetActiveScreen();
+            uiScene!.Text = "UI Scene: " + currentScreen.ToString();
+
+            uiMenus!.Text = "UI Menu: " + uiManager.GetActiveMenu() + "\nUI Submenu: " + uiManager.GetActiveSubmenu() + "\n TestXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+
         }
     }
 }
