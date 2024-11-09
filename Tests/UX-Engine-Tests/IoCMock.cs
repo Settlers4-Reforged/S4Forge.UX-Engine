@@ -45,8 +45,8 @@ namespace UX_Engine_Tests {
 
             UXTestDependencies.AddTestDependencies();
             UXEngine.IsInitialized = true;
-            UXEngine.Implement(renderer.Object.GetType(), typeof(TextureCollectionManagerMock), 0);
 
+            DI.Dependencies.RegisterMany(new[] { typeof(TextureCollectionManagerMock) }, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
             DI.Dependencies.RegisterInstance<IRenderer>(renderer.Object, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
         }
 
