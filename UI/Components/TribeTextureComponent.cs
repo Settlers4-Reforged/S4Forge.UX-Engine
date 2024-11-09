@@ -14,7 +14,7 @@ namespace Forge.UX.UI.Components {
         public override ITexture Texture {
             get {
                 IPlayerApi api = DI.Resolve<IPlayerApi>();
-                Tribe c = api.GetCurrentTribe();
+                Tribe c = api.GetLocalPlayer().Tribe;
                 if (!textures.TryGetValue(c, out ITexture? o)) {
                     o = textures[Tribe.Default];
                 }
