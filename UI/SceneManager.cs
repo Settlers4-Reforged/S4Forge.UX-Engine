@@ -45,6 +45,21 @@ namespace Forge.UX.UI {
 #if DEBUG
             DI.Dependencies.Resolve<UIDebugWindow>();
 #endif
+
+            PrefabManager prefabManager = DI.Resolve<PrefabManager>();
+
+            var pluginPrefabs = DI.Dependencies.ResolveMany<IPluginPrefab>();
+            foreach (IPluginPrefab pluginPrefab in pluginPrefabs) {
+                pluginPrefab.Build(DI.Dependencies.Resolve<SceneBuilder>());
+
+                if (!pluginPrefab.AutoRegister) continue;
+                prefabManager.RegisterPrefab(pluginPrefab.Prefab!);
+
+                if (pluginPrefab is not IPluginScene pluginScene) continue;
+
+                AddRootElement(pluginScene.Group.Instantiate());
+                pluginScene.AfterSceneTreeAdd();
+            }
         }
 
         public IEnumerable<UIElement> GetAllElements() {
