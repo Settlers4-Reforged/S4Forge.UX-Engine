@@ -33,13 +33,14 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
             Components = new List<IUIComponent>() { backgroundTexture };
         }
 
-        public override void Input(SceneGraphState state) {
-            base.Input(state);
+        public override void Process(SceneGraphState state) {
+            base.Process(state);
 
             IInputManager im = DI.Resolve<IInputManager>();
 
-            if (dragging && im.IsMouseOnScreen()) {
+            if (dragging && im.IsMouseOnScreen() && im.MouseDelta.LengthSquared() > 0) {
                 Position += im.MouseDelta;
+                IsDirty = true;
 
                 bool clipToContainer = true;
                 // Clip to container:
@@ -53,13 +54,22 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
             }
         }
 
-        public override void OnMouseClickDown(int mb) {
-            base.OnMouseClickDown(mb);
+        public override void Input(ref InputEvent @event) {
+            base.Input(ref @event);
 
-            if (Draggable && mb == 0) {
+            if (!Visible)
+                return;
+
+            if (@event is { Type: InputType.MouseWheel })
+                @event.IsHandled = true;
+
+            if (Draggable && @event is { Key: Keys.LButton, Type: InputType.KeyDown }) {
                 dragging = true;
+
+                @event.IsHandled = true;
             }
         }
+
 
         public override void OnMouseGlobalClickUp(int mb) {
             base.OnMouseGlobalClickUp(mb);
@@ -68,17 +78,19 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
 
         public void Open() {
             Visible = true;
+            IsDirty = true;
 
             Opened?.Invoke(this);
         }
 
         public void Close() {
             Visible = false;
+            IsDirty = true;
 
             Closed?.Invoke(this);
         }
 
-        public event UIEvent<UIWindow>? Opened;
-        public event UIEvent<UIWindow>? Closed;
+        public event UIEventAction<UIWindow>? Opened;
+        public event UIEventAction<UIWindow>? Closed;
     }
 }

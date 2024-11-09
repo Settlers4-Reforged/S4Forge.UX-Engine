@@ -3,6 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Forge.UX.Input {
+    public enum InputType {
+        MouseEnter,
+        MouseLeave,
+        MouseWheel,
+        Windows,
+        TextInput,
+        KeyDown,
+        KeyUp,
+        KeyHold
+    }
+
     [Flags]
     public enum Keys {
         /// <summary>The bitmask to extract a key code from a key value.</summary>

@@ -20,8 +20,8 @@ namespace Forge.UX.UI.Elements.Static {
             Components = new List<IUIComponent> { TextComponent };
         }
 
-        public override void Input(SceneGraphState state) {
-            base.Input(state);
+        public override void Process(SceneGraphState state) {
+            base.Process(state);
 
             if (BindingGetValue != null) {
                 Text = BindingGetValue(this);

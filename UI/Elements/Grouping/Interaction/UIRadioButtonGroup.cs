@@ -46,8 +46,8 @@ namespace Forge.UX.UI.Elements.Grouping.Interaction {
 
         public T? SelectedValue => SelectedRadioButton != null ? SelectedRadioButton.Value : default;
 
-        public override void Input(SceneGraphState state) {
-            base.Input(state);
+        public override void Process(SceneGraphState state) {
+            base.Process(state);
         }
 
         public event BindableGetter<T>? BindingGetValue;

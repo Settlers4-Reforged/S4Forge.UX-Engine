@@ -16,7 +16,14 @@ namespace Forge.UX.UI.Elements.Interaction {
         /// <summary>
         /// Triggered when the element is interacted with - interaction is defined by the implementing element (e.g. button => click)
         /// </summary>
-        event UIElement.UIEvent<UIElement>? OnInteract;
+        event UIElement.UIEventAction<UIElement>? OnInteract;
+    }
+
+    public interface IUIFocusable {
+        /// <summary>
+        /// Whether this element can be focused. Controls how keyboard input events are handled
+        /// </summary>
+        bool Focused { get; set; }
     }
 
     public delegate TValue BindableGetter<out TValue>(UIElement sender);

@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
+using static Forge.UX.Input.IInputManager;
+
 namespace Forge.UX.Input {
     public interface IInputManager {
         float MouseScroll { get; }
@@ -21,7 +23,10 @@ namespace Forge.UX.Input {
 
         Vector2 MousePosition { get; }
         Vector2 MouseDelta { get; }
-        Action<string>? TextInput { get; set; }
+
+        delegate void InputEventHandlerCallback(ref InputEvent e);
+
+        event InputEventHandlerCallback InputEventHandler;
 
         void Init();
         void Update();
@@ -109,13 +114,18 @@ namespace Forge.UX.Input {
                     if (ChatInputActive) {
                         return false;
                     } else {
-                        TextInput?.Invoke(c.ToString());
-                        return false;
+                        InputEvent inputEvent = new InputEvent() {
+                            Type = InputType.TextInput,
+                            Character = c,
+                        };
+
+                        InputEventHandler?.Invoke(
+                            ref inputEvent
+                        );
+                        return inputEvent.IsHandled;
                     }
                 }
             }
-
-            HandleKeyStates(msg, wParam);
 
             // Only if at least one key just was pressed down we want to handle the input
             // This is to prevent the input from being handled multiple times
@@ -130,33 +140,51 @@ namespace Forge.UX.Input {
                 return false;
             }
 
+            if (HandleKeyStates(msg, wParam))
+                return true;
+
             return HandleInputBlocking(msg);
         }
 
         private bool HandleInputBlocking(WndProcMsg msg) {
-            EventBlockFlags blockedInput = inputBlocks.Where(middleware => middleware.IsBlocking).OrderBy((m) => m.Priority)
-                .Aggregate(EventBlockFlags.None, (current, middleware) => current | middleware.Middleware(current));
+            EventBlockFlags blockedInput = inputBlocks.Where(middleware => middleware.IsBlocking).OrderBy(m => m.Priority)
+                .Aggregate(EventBlockFlags.None, (current, middleware) => middleware.Middleware(current));
 
             if ((blockedInput & EventBlockFlags.MouseClick) == EventBlockFlags.MouseClick) { // Mouse Clicks Blocked
                 if (msg is >= WndProcMsg.WM_LBUTTONDOWN and <= WndProcMsg.WM_XBUTTONDBLCLK) {
-                    //Not WM_MOUSEFIRST=WM_MOUSEMOVE because we want the game to still receive those events
+                    //Not WM_MOUSEFIRST=WM_MOUSEMOVE because we want the game to still receive those events, see EventBlockFlags.MouseMove
                     return true;
                 }
             }
 
-            if ((blockedInput & EventBlockFlags.MouseWheel) == EventBlockFlags.MouseWheel) { // Mouse Clicks Blocked
+            if ((blockedInput & EventBlockFlags.MouseClickDown) == EventBlockFlags.MouseClickDown) { // Mouse Clicks Down Blocked
+                WndProcMsg[] mouseDowns = { WndProcMsg.WM_LBUTTONDOWN, WndProcMsg.WM_RBUTTONDOWN, WndProcMsg.WM_MBUTTONDOWN, WndProcMsg.WM_XBUTTONDOWN };
+                if (mouseDowns.Contains(msg)) {
+                    return true;
+                }
+            }
+
+            if ((blockedInput & EventBlockFlags.MouseClickUp) == EventBlockFlags.MouseClickUp) { // Mouse Clicks Up Blocked
+                WndProcMsg[] mouseUps = { WndProcMsg.WM_LBUTTONUP, WndProcMsg.WM_RBUTTONUP, WndProcMsg.WM_MBUTTONUP, WndProcMsg.WM_XBUTTONUP };
+                if (mouseUps.Contains(msg)) {
+                    return true;
+                }
+            }
+
+
+            if ((blockedInput & EventBlockFlags.MouseWheel) == EventBlockFlags.MouseWheel) { // Mouse Wheel Blocked
                 if (msg == WndProcMsg.WM_MOUSEWHEEL) {
                     return true;
                 }
             }
 
-            if ((blockedInput & EventBlockFlags.Mouse) == EventBlockFlags.Mouse) { // Mouse Clicks Blocked
+            if ((blockedInput & EventBlockFlags.MouseMove) == EventBlockFlags.MouseMove) { // Mouse Movement Blocked
                 if (msg is >= WndProcMsg.WM_MOUSEFIRST and <= WndProcMsg.WM_MOUSELAST) {
                     return true;
                 }
             }
 
-            if ((blockedInput & EventBlockFlags.Keyboard) == EventBlockFlags.Keyboard) { // Mouse Clicks Blocked
+            if ((blockedInput & EventBlockFlags.Keyboard) == EventBlockFlags.Keyboard) { // Keyboard events Blocked
                 if (msg is >= WndProcMsg.WM_KEYFIRST and <= WndProcMsg.WM_KEYLAST) {
                     return true;
                 }
@@ -165,7 +193,8 @@ namespace Forge.UX.Input {
             return false;
         }
 
-        private void HandleKeyStates(WndProcMsg msg, UIntPtr wParam) {
+        /// <returns>True when it should block that input</returns>
+        private bool HandleKeyStates(WndProcMsg msg, UIntPtr wParam) {
             Keys key = Keys.None;
             bool up = false;
 
@@ -175,6 +204,10 @@ namespace Forge.UX.Input {
                 case WndProcMsg.WM_MOUSEWHEEL: //Scroll:
                     mouseScroll = (wp) >> 0x10;
                     break;
+
+                case WndProcMsg.WM_MOUSEMOVE:
+                    // Handled in Update
+                    return false;
 
                 //Button up:
                 case WndProcMsg.WM_KEYUP:
@@ -226,6 +259,7 @@ namespace Forge.UX.Input {
             }
 
 
+            InputEvent inputEvent;
             if (key != Keys.None) {
                 if (up) {
                     heldKeys.Remove(key);
@@ -234,7 +268,27 @@ namespace Forge.UX.Input {
                     heldKeys.Add(key);
                     downKeys.Add(key);
                 }
+
+                inputEvent = new InputEvent() {
+                    Type = up ? InputType.KeyUp : InputType.KeyDown,
+                    Key = key,
+                };
+            } else if (msg == WndProcMsg.WM_MOUSEWHEEL) {
+                inputEvent = new InputEvent() {
+                    Type = InputType.MouseWheel,
+                };
+            } else {
+
+                inputEvent = new InputEvent() {
+                    Type = InputType.Windows,
+                    WindowsMessage = msg,
+                };
             }
+
+            InputEventHandler?.Invoke(
+                ref inputEvent
+            );
+            return inputEvent.IsHandled;
         }
 
         private void HandleMouseDrag(bool start) {
@@ -250,9 +304,18 @@ namespace Forge.UX.Input {
             upKeys.Clear();
             mouseScroll = 0;
 
+            foreach (Keys key in heldKeys) {
+                InputEvent inputEvent = new InputEvent() {
+                    Type = InputType.KeyHold,
+                    Key = key,
+                };
+
+                InputEventHandler?.Invoke(
+                    ref inputEvent
+                );
+            }
 
             prevMousePosition = currentMousePosition;
-
             User32.GetCursorPos(out User32.Pos point);
             User32.ScreenToClient(GameValues.Hwnd, ref point);
             currentMousePosition = new Vector2(point.X, point.Y);
@@ -308,7 +371,7 @@ namespace Forge.UX.Input {
             return heldKeys.Contains(key);
         }
 
-        public Action<string>? TextInput { get; set; }
+        public event InputEventHandlerCallback InputEventHandler;
 
         #region Kebinds
 

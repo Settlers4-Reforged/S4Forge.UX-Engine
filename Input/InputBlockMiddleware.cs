@@ -18,10 +18,13 @@ namespace Forge.UX.Input {
     [Flags]
     public enum EventBlockFlags : int {
         None = 0b0000_0000,
-        MouseClick = 0b0000_0001,
-        MouseWheel = 0b0000_0010,
-        Mouse = 0b0000_0100,
-        Keyboard = 0b0000_1000,
+        MouseClickDown = 0b0000_0001,
+        MouseClickUp = 0b0000_0010,
+        MouseClick = MouseClickDown | MouseClickUp,
+        MouseWheel = 0b0000_0100,
+        MouseMove = 0b0000_1000,
+        Mouse = MouseClick | MouseWheel | MouseMove,
+        Keyboard = 0b0001_0000,
         All = 0b1111_1111
     }
 }

@@ -54,6 +54,13 @@ namespace Forge.UX.UI.Elements {
         /// <summary> Whether the element is visible during rendering phase </summary>
         public virtual bool Visible { get; set; } = true;
 
+        /// <summary> Whether the element should process input events </summary>
+        public bool ProcessInputEvents { get; set; } = true;
+        /// <summary> Whether the element should process unhandled input events </summary>
+        public bool ProcessUnhandledInputEvents { get; set; } = false;
+        /// <summary> Whether the element should process windows message input events </summary>
+        public bool ProcessWindowsInputEvents { get; set; } = false;
+
         /// <summary> Whether the element is dirty and needs to be re-rendered </summary>
         private bool isDirty = true;
         public bool IsDirty {
@@ -68,36 +75,22 @@ namespace Forge.UX.UI.Elements {
         ///<summary>The lower the further behind: 0 &lt; 100 &lt; 1000</summary>
         public int ZIndex = 0;
 
-        bool _isMouseHover;
-
-        public bool IsMouseHover {
-            get {
-                return _isMouseHover;
-            }
-            set {
-                _isMouseHover = value;
-                OnHover?.Invoke(this, value);
-            }
-        }
-
-        public event UIEvent<UIElement, bool>? OnHover;
-
-        protected void Hover(bool hover) {
-            IsMouseHover = hover;
-        }
-
         /// <summary>
-        /// Prevents mouse hover or click inputs from being captured from this element<br/>
-        /// Will ignore all child elements when true for group
+        /// Whether the element is currently being hovered by the mouse.
+        ///
+        /// This does not take into account the element's visibility or input hierarchy.
         /// </summary>
-        public bool IgnoresMouse = false;
+        public bool IsMouseHover { get; set; }
+
+        public event UIEventAction<UIElement, bool>? OnHover;
+
 
         /// <summary>
         /// Hides the element from rendering and disables input handling
         /// </summary>
         public void Hide() {
             Visible = false;
-            IgnoresMouse = true;
+            IsDirty = true;
         }
 
         /// <summary>
@@ -105,37 +98,10 @@ namespace Forge.UX.UI.Elements {
         /// </summary>
         public void Show() {
             Visible = true;
-            IgnoresMouse = false;
+            IsDirty = true;
         }
 
         #region Mouse Events
-        /// <summary>
-        /// Called when the mouse is clicked down while the mouse is over the element
-        /// </summary>
-        /// <param name="mb">Which mouse button was pressed. 0 = left, 1 = middle, 2 = right</param>
-        public virtual void OnMouseClickDown(int mb) { }
-
-        /// <summary>
-        /// Called when the mouse is clicked up while the mouse is over the element
-        /// </summary>
-        /// <param name="mb">Which mouse button was pressed. 0 = left, 1 = middle, 2 = right</param>
-        public virtual void OnMouseClickUp(int mb) { }
-
-        /// <summary>
-        /// Called when the mouse wheel is scrolled while the mouse is over the element
-        /// </summary>
-        /// <param name="scroll">The amount scrolled, signed to the direction</param>
-        public virtual void OnMouseScroll(float scroll) { }
-
-        /// <summary>
-        /// Called when the mouse enters the element
-        /// </summary>
-        public virtual void OnMouseEnter() { }
-        /// <summary>
-        /// Called when the mouse leaves the element
-        /// </summary>
-        public virtual void OnMouseLeave() { }
-
         /// <summary>
         /// Called when the mouse is clicked down anywhere on the screen
         /// </summary>
@@ -159,16 +125,47 @@ namespace Forge.UX.UI.Elements {
             IsDirty = true;
         }
 
-        public virtual void Input(SceneGraphState state) {
-            OnInput?.Invoke(this);
+        /// <summary>
+        /// Generic per-frame callback
+        /// </summary>
+        /// <param name="state"></param>
+        public virtual void Process(SceneGraphState state) {
+            OnProcess?.Invoke(this, state);
+        }
+
+        /// <summary>
+        /// Input handling for the element
+        /// </summary>
+        public virtual void Input(ref InputEvent @event) {
+            OnInput?.Invoke(this, @event);
+        }
+
+        /// <summary>
+        /// When an input event is not handled by any hovered element, then this is called
+        /// </summary>
+        public virtual void UnhandledInput(InputEvent @event) {
+            OnUnhandledInput?.Invoke(this, @event);
+        }
+
+        /// <summary>
+        /// A per-tick callback. Used for low frequency game related logic
+        /// </summary>
+        public virtual void Tick() {
+            OnTick?.Invoke(this);
         }
 
         #region EventHandlers
 
-        public delegate void UIEvent<in T>(T initiator);
-        public delegate void UIEvent<in T, in TA1>(T initiator, TA1 value);
+        public delegate void UIEventAction<in T>(T initiator);
+        public delegate void UIEventAction<in T, in TA1>(T initiator, TA1 value);
+        public delegate void UIEventAction<in T, in TA1, in TA2>(T initiator, TA1 value1, TA2 value2);
 
-        public event UIEvent<UIElement>? OnInput;
+        public delegate TO UIEventFunc<in T, out TO, in TA1>(T initiator, TA1 value1);
+
+        public event UIEventAction<UIElement>? OnTick;
+        public event UIEventAction<UIElement, SceneGraphState>? OnProcess;
+        public event UIEventAction<UIElement, InputEvent>? OnInput;
+        public event UIEventAction<UIElement, InputEvent>? OnUnhandledInput;
 
         #endregion
     }

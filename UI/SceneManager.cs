@@ -6,12 +6,15 @@ using Forge.S4.Types;
 using Forge.UX.Debug;
 using Forge.UX.Input;
 using Forge.UX.Native;
+using Forge.UX.Plugin;
 using Forge.UX.Rendering;
 using Forge.UX.S4;
 using Forge.UX.UI.Components;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
 using Forge.UX.UI.Elements.Grouping.Display;
+using Forge.UX.UI.Elements.Interaction;
+using Forge.UX.UI.Prefabs;
 
 using System;
 using System.Collections.Generic;
@@ -31,14 +34,27 @@ namespace Forge.UX.UI {
             this._renderer = renderer;
             this.inputManager = inputManager;
 
-            this.inputManager.AddInputBlockingMiddleware(new InputBlockMiddleware(true, InputBlockingMiddleware, 1000));
+            this.inputManager.InputEventHandler += HandleInput;
 
             rootSceneNode = new RootNode();
             rootSceneNode.Attach(this);
         }
 
         private EventBlockFlags InputBlockingMiddleware(EventBlockFlags input) {
-            return EventBlockFlags.None;
+            if (hoverStack.Count(element => element.Visible) == 0)
+                return input;
+
+            //TODO: add "reset" of mouse position to maybe -1,-1 to allow game to remove hover state of native elements
+
+            //input |= EventBlockFlags.Mouse;
+            input |= EventBlockFlags.MouseClickDown;
+            input |= EventBlockFlags.MouseWheel;
+
+            bool stackHasFocus = hoverStack.Any(e => e is IUIFocusable { Focused: true });
+            if (stackHasFocus)
+                input |= EventBlockFlags.Keyboard;
+
+            return input;
         }
 
         public void Init() {
@@ -71,7 +87,44 @@ namespace Forge.UX.UI {
         }
 
         public void AddRootElement(UIElement e) {
+            if (e is not UIGroup) {
+                throw new ArgumentException("Root elements must be of type UIGroup");
+            }
+
+            e.Attach(this);
             rootSceneNode.Elements.Add(e);
+        }
+
+        /// <summary>
+        /// Stack of elements that are currently hovered over
+        /// </summary>
+        private readonly Stack<UIElement> hoverStack = new Stack<UIElement>();
+
+        private void HandleInput(ref InputEvent e) {
+            IEnumerable<UIElement> elementStack = hoverStack;
+
+            if (e.Type == InputType.Windows) {
+                // Only process windows input events for elements that are interested in them
+                elementStack = hoverStack.Where(element => element.ProcessWindowsInputEvents);
+            }
+
+            foreach (UIElement element in elementStack) {
+                element.Input(ref e);
+
+                if (e.IsHandled)
+                    break;
+            }
+
+            if (e.IsHandled) return;
+            //TODO: find out if this is processing intensive if (e.Type == InputType.Windows) return;
+
+            // Unhandled input events:
+            foreach (UIElement element in GetAllElements().Where(element => element.ProcessUnhandledInputEvents)) {
+                element.UnhandledInput(e);
+
+                if (e.IsHandled)
+                    break;
+            }
         }
 
         public void DoFrame() {
@@ -86,48 +139,84 @@ namespace Forge.UX.UI {
 
                 inputManager.Update();
             } catch (Exception e) {
-                Logger.LogError(e, "Error in scene manager");
+                Logger.LogError(e, "Error during frame calculation in scene manager");
             }
         }
 
+        public void DoTick() {
+            try {
+                ProcessTick();
+            } catch (Exception e) {
+                Logger.LogError(e, "Error during tick calculation in scene manager");
+            }
+        }
+
+        void ProcessTick() {
+            TraverseScene(null, (e, _) => { e.Tick(); });
+        }
+
         void ProcessScene() {
+            #region Mouse
+
             UIElement? currentHoverElement = null;
             int currentHoverDepth = int.MinValue;
 
             void HandleMouseHover(UIElement element, SceneGraphState state) {
-                if (element.IgnoresMouse)
-                    return;
+                bool isHigherThanCurrent = currentHoverElement == null || element.ZIndex + state.Depth >= currentHoverElement.ZIndex + currentHoverDepth;
 
-                bool newHoverState = element.IsMouseHover;
-                bool prevHoverState = element.IsMouseHover;
-
-                if (currentHoverElement == null || element.ZIndex + state.Depth >= currentHoverElement.ZIndex + currentHoverDepth) {
+                if (isHigherThanCurrent && element.ProcessInputEvents) {
                     (Vector2 elementPosition, Vector2 elementSize) = state.TranslateElement(element);
-                    element.IsMouseHover = newHoverState = inputManager.IsMouseInRectangle(new Vector4(elementPosition, elementSize.X, elementSize.Y));
 
-                    if (newHoverState) {
-                        currentHoverElement = element;
-                        currentHoverDepth = state.Depth;
+                    bool mouseIsInElement = inputManager.IsMouseInRectangle(new Vector4(elementPosition, elementSize.X, elementSize.Y));
+                    if (!mouseIsInElement) {
+                        element.IsMouseHover = false;
+                        return;
                     }
-                }
 
-                if (prevHoverState != newHoverState) {
-                    if (prevHoverState)
-                        element.OnMouseLeave();
-                    else
-                        element.OnMouseEnter();
+                    element.IsMouseHover = true;
+                    hoverStack.Push(element);
+
+                    currentHoverElement = element;
+                    currentHoverDepth = state.Depth;
+                } else {
+                    element.IsMouseHover = false;
                 }
             }
 
-            TraverseScene(null, HandleMouseHover, (g) => g.IgnoresMouse);
+            var previousHoverStack = new Stack<UIElement>(hoverStack);
+            hoverStack.Clear();
+            TraverseScene(null, HandleMouseHover);
+
+            // MouseLeave on all elements that are no longer hovered
+            foreach (UIElement element in previousHoverStack.Except(hoverStack)) {
+                if (!element.IsMouseHover) {
+                    InputEvent inputEvent = new InputEvent() {
+                        Type = InputType.MouseLeave
+                    };
+                    element.Input(ref inputEvent);
+                }
+            }
+
+            // MouseEnter on all elements that are newly hovered
+            foreach (UIElement element in hoverStack.Except(previousHoverStack)) {
+                if (element.IsMouseHover) {
+                    InputEvent inputEvent = new InputEvent() {
+                        Type = InputType.MouseEnter
+                    };
+
+                    element.Input(ref inputEvent);
+                    if (inputEvent.IsHandled)
+                        break;
+                }
+            }
+
+            #endregion
 
             void HandleProcessing(UIElement element, SceneGraphState state) {
-                element.Input(state);
+                element.Process(state);
             }
 
             void HandleGroupProcessing(UIGroup group, SceneGraphState state) {
-                //group.Input(state);
-
                 foreach (UIElement child in group.Elements) {
                     if (!child.IsDirty) continue;
 
@@ -153,22 +242,14 @@ namespace Forge.UX.UI {
             int k = 0;
             foreach (Keys key in keys) {
                 if (inputManager.IsKeyDown(key)) {
-                    currentHoverElement?.OnMouseClickDown(k);
-
                     foreach (UIElement element in GetAllElements()) {
-                        if (!element.IgnoresMouse) {
-                            element.OnMouseGlobalClickDown(k);
-                        }
+                        element.OnMouseGlobalClickDown(k);
                     }
                 }
 
                 if (inputManager.IsKeyUp(key)) {
-                    currentHoverElement?.OnMouseClickUp(k);
-
                     foreach (UIElement element in GetAllElements()) {
-                        if (!element.IgnoresMouse) {
-                            element.OnMouseGlobalClickUp(k);
-                        }
+                        element.OnMouseGlobalClickUp(k);
                     }
                 }
 
@@ -192,14 +273,13 @@ namespace Forge.UX.UI {
             if (!parent.Visible)
                 return;
 
-
             foreach (IUIComponent component in parent.Components) {
                 Renderer.RenderUIComponent(component, parent, state);
             }
         }
 
         void RenderGroup(UIGroup group, SceneGraphState state) {
-            if (!group.Visible)
+            if (group is { Visible: false, IsDirty: false })
                 return;
 
             Renderer.RenderGroup(group, state);
@@ -225,7 +305,8 @@ namespace Forge.UX.UI {
             }
 
             void TraverseGroup(UIGroup group, SceneGraphState state) {
-                OnElement(group, state);
+                if (group != rootSceneNode)
+                    OnElement(group, state);
 
                 SceneGraphState newState = state.ApplyGroup(group);
 
@@ -233,7 +314,8 @@ namespace Forge.UX.UI {
                     TraverseElement(el, newState);
                 }
 
-                OnGroup?.Invoke(group, state);
+                if (group != rootSceneNode)
+                    OnGroup?.Invoke(group, state);
             }
 
             SceneGraphState baseState = SceneGraphState.Default(rootSceneNode);
@@ -241,7 +323,20 @@ namespace Forge.UX.UI {
         }
 
         class RootNode : UIGroup {
-            public override Vector2 Size => DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
+            public override Vector2 Size {
+                get => DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
+            }
+
+            public override void Process(SceneGraphState state) {
+                base.Process(state);
+                IsDirty = true;
+            }
+
+            public RootNode() : base() {
+                ProcessInputEvents = false;
+                ProcessUnhandledInputEvents = false;
+                ProcessWindowsInputEvents = false;
+            }
         }
     }
 }

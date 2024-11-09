@@ -1,4 +1,5 @@
-﻿using Forge.UX.Rendering;
+﻿using Forge.UX.Input;
+using Forge.UX.Rendering;
 
 using System;
 using System.Collections.Generic;
@@ -18,12 +19,18 @@ namespace Forge.UX.UI.Elements.Interaction {
             IsChecked = BindingGetValue?.Invoke(this) ?? false;
         }
 
-        public override void OnMouseClickDown(int mb) { }
+        public override void Input(ref InputEvent @event) {
+            base.Input(ref @event);
+            if (!Visible) return;
+            if (!Enabled) return;
 
-        public override void OnMouseClickUp(int mb) {
+            if (@event is not { Key: Keys.LButton, Type: InputType.KeyUp }) return;
+
             IsChecked = !IsChecked;
             Interact();
+            @event.IsHandled = true;
         }
+
 
         /// <summary>
         /// Binding for the value of the checkbox. Get's called during initialization

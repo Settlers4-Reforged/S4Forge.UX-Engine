@@ -1,6 +1,7 @@
 ﻿using DryIoc;
 
 using Forge.Config;
+using Forge.UX.Input;
 using Forge.UX.Rendering;
 using Forge.UX.Rendering.Texture;
 using Forge.UX.UI.Components;
@@ -108,7 +109,7 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         public bool IsHolding => holdStatus == State.Down;
 
-        public event UIEvent<UIElement>? OnInteract;
+        public event UIEventAction<UIElement>? OnInteract;
         #endregion
 
         public void DefaultTextures() {
@@ -124,6 +125,8 @@ namespace Forge.UX.UI.Elements.Interaction {
 
         public UIButton() {
             DefaultTextures();
+
+            ProcessUnhandledInputEvents = true;
 
             TextureComponent = new TextureComponent(ButtonTexture!);
             components = new List<IUIComponent>() {
@@ -142,48 +145,65 @@ namespace Forge.UX.UI.Elements.Interaction {
 
             holdStatus = newState;
 
-            Hover(holdStatus == State.Down);
+            //Hover(holdStatus == State.Down);
+        }
+
+        public override void Input(ref InputEvent @event) {
+            base.Input(ref @event);
+
+            if (!Visible) return;
+            if (!Enabled) return;
+
+            if (@event.Key == Keys.LButton) {
+                switch (@event.Type) {
+                    case InputType.KeyDown:
+                        interactionStarted = true;
+                        SetState(State.Down);
+                        break;
+                    case InputType.KeyUp when !interactionStarted:
+                        @event.IsHandled = false;
+                        return;
+                    case InputType.KeyUp:
+                        interactionStarted = false;
+
+                        if (enabled)
+                            Interact();
+
+                        SetState(State.Up);
+                        break;
+                }
+
+                @event.IsHandled = true;
+                return;
+            }
+
+            switch (@event.Type) {
+                case InputType.MouseEnter:
+                    TextureComponent.Effects |= Effects.Highlight;
+                    IsDirty = true;
+
+                    if (interactionStarted) {
+                        SetState(State.Down);
+                    }
+
+                    @event.IsHandled = true;
+                    return;
+                case InputType.MouseLeave:
+                    TextureComponent.Effects &= ~Effects.Highlight;
+                    IsDirty = true;
+                    SetState(State.Up);
+
+                    @event.IsHandled = true;
+                    return;
+            }
         }
 
         protected virtual void Interact() {
             OnInteract?.Invoke(this);
         }
 
-        public override void OnMouseClickDown(int mb) {
-            interactionStarted = true;
-            SetState(State.Down);
-        }
-
-        public override void OnMouseClickUp(int mb) {
-            if (!interactionStarted)
-                return;
-
-            interactionStarted = false;
-
-            if (enabled)
-                Interact();
-
-            SetState(State.Up);
-        }
-
         public override void OnMouseGlobalClickUp(int mb) {
             interactionStarted = false;
-        }
-
-        public override void OnMouseEnter() {
-            TextureComponent.Effects |= Effects.Highlight;
-            IsDirty = true;
-
-            if (interactionStarted) {
-                SetState(State.Down);
-            }
-
-        }
-
-        public override void OnMouseLeave() {
-            TextureComponent.Effects &= ~Effects.Highlight;
-            IsDirty = true;
-            SetState(State.Up);
         }
     }
 }

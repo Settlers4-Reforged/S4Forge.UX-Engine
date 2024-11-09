@@ -25,8 +25,8 @@ namespace Forge.UX.UI.Elements.Grouping.Interaction {
         /// </remarks>
         public bool ManualScrolling { get; set; } = false;
 
-        public override void Input(SceneGraphState state) {
-            base.Input(state);
+        public override void Process(SceneGraphState state) {
+            base.Process(state);
 
             //TODO: Implement scrolling
         }

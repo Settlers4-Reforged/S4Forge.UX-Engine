@@ -5,6 +5,8 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
+using static Forge.UX.Input.IInputManager;
+
 namespace Forge.UX.Input {
     public class TestInputManager : IInputManager {
         public float MouseScroll { get; set; }
@@ -12,7 +14,8 @@ namespace Forge.UX.Input {
         public bool ChatInputActive { get; set; }
         public Vector2 MousePosition { get; set; }
         public Vector2 MouseDelta { get; set; }
-        public Action<string>? TextInput { get; set; }
+        public event InputEventHandlerCallback InputEventHandler;
+
         public void Init() {
             return;
         }

@@ -27,8 +27,6 @@ namespace Forge.UX.UI.Prefabs {
 
         public Property<bool> Visible { get; set; } = new(nameof(Visible), "Whether the element is visible", true);
 
-        public Property<bool> IgnoreMouse { get; set; } = new(nameof(IgnoreMouse), "Whether to ignore mouse inputs - affects children", false);
-
         public Property<int> ZIndex { get; set; } = new(nameof(ZIndex), "Z-Index of element", 0);
 
         protected virtual void ApplyPropertyValues(UIElement element) {
@@ -48,7 +46,6 @@ namespace Forge.UX.UI.Prefabs {
             element.Size = Size;
 
             element.Visible = Visible;
-            element.IgnoresMouse = IgnoreMouse;
 
             element.ZIndex = ZIndex;
 
