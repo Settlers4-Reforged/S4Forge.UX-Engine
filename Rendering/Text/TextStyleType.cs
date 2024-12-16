@@ -8,7 +8,6 @@ namespace Forge.UX.Rendering.Text {
     public enum TextStyleType {
         Normal,
         Bold,
-        Thin,
         Italic
     }
 
