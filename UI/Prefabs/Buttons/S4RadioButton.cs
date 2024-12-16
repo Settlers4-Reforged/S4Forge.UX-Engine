@@ -21,8 +21,8 @@ namespace Forge.UX.UI.Prefabs.Buttons {
             ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
 
             return new UIRadioButton<string>(LinkId!, Value!) {
-                ButtonTexture = tcm.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.RadiobuttonUnchecked),
-                ButtonHeldTexture = tcm.Get((int)TextureCollectionMap.ForgeUI, (int)ForgeTextureMap.RadiobuttonUnchecked),
+                ButtonTexture = tcm.Get(TextureCollectionMap.ForgeUI, ForgeTextureMap.RadiobuttonUnchecked),
+                ButtonHeldTexture = tcm.Get(TextureCollectionMap.ForgeUI, ForgeTextureMap.RadiobuttonUnchecked),
                 Text = Text!,
                 Enabled = IsEnabled!,
             };

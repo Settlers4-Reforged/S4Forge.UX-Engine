@@ -31,7 +31,7 @@ namespace Forge.UX.UI.Components {
             Texture = texture ?? throw new ArgumentNullException(nameof(texture));
         }
 
-        public static TextureComponent FromCollection(int collection, int id) {
+        public static TextureComponent FromCollection(string collection, string id) {
             ITextureCollectionManager tcm = DI.Resolve<ITextureCollectionManager>();
             return new TextureComponent(tcm.GetCollection(collection).GetTexture(id));
         }

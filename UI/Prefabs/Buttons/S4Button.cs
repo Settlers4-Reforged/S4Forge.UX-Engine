@@ -39,8 +39,8 @@ namespace Forge.UX.UI.Prefabs.Buttons {
             ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
 
             UIButton button = new UIButton {
-                ButtonTexture = tcm.Get(0, 194),
-                ButtonHeldTexture = tcm.Get(0, 195),
+                ButtonTexture = tcm.Get(TextureCollectionMap.MainUI, "194"),
+                ButtonHeldTexture = tcm.Get(TextureCollectionMap.MainUI, "195"),
                 Text = Text!,
                 Enabled = IsEnabled!,
                 TextOffset = new Vector2(15 / DefaultWidth, 13 / DefaultHeight), // 15, 10

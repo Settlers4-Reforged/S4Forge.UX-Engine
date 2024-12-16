@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Forge.UX.Rendering.Texture {
     public interface ITextureCollection {
-        ITexture GetTexture(int id);
+        ITexture GetTexture(string id);
 
         ITexture GetTexture(ForgeTextureMap id) {
-            return GetTexture((int)id);
+            return GetTexture(id.ToString());
         }
     }
 }

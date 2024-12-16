@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Forge.UX.Testing {
     public class TextureCollectionManagerMock : ITextureCollectionManager {
-        public ITextureCollection GetCollection(int id) {
+        public ITextureCollection GetCollection(string id) {
             return new TextureCollectionMock();
         }
 
-        public ITexture Get(int col, int id) {
+        public ITexture Get(string col, string id) {
             return new TextureMock();
         }
 
@@ -22,7 +22,7 @@ namespace Forge.UX.Testing {
         }
 
         public class TextureCollectionMock : ITextureCollection {
-            public ITexture GetTexture(int id) {
+            public ITexture GetTexture(string id) {
                 return new TextureMock();
             }
         }
