@@ -212,29 +212,31 @@ namespace Forge.UX.UI {
 
             #endregion
 
-            void HandleProcessing(UIElement element, SceneGraphState state) {
-                element.Process(state);
-            }
+            foreach (UIElement rootElement in GetRootElements()) {
+                bool isGroupDirty = true;
 
-            void HandleGroupProcessing(UIGroup group, SceneGraphState state) {
-                foreach (UIElement child in group.Elements) {
+                if (rootElement is not UIGroup rootGroup) continue;
+
+                foreach (UIElement child in rootGroup.Elements.GetAllElementsInTree()) {
                     if (!child.IsDirty) continue;
 
-                    group.IsDirty = true;
+                    isGroupDirty = true;
                     break;
                 }
 
-                if (!group.IsDirty)
-                    return;
+                if (!isGroupDirty) continue;
 
-                // Propagate dirty state down the tree
-                // TODO: maybe add a method to only re-render parts of the group - possibly add a "has alpha" check, to see if we can just render the group as a whole
-                foreach (UIElement child in group.Elements.GetAllElementsInTree()) {
+                rootGroup.IsDirty = true;
+                foreach (UIElement child in rootGroup.Elements.GetAllElementsInTree()) {
                     child.IsDirty = true;
                 }
             }
 
-            TraverseScene(HandleGroupProcessing, HandleProcessing);
+            void HandleProcessing(UIElement element, SceneGraphState state) {
+                element.Process(state);
+            }
+
+            TraverseScene(null, HandleProcessing);
 
             // Handle Mouse click events:
             Keys[] keys = { Keys.LButton, Keys.MButton, Keys.RButton };
@@ -267,8 +269,6 @@ namespace Forge.UX.UI {
         void RenderComponents(UIElement parent, SceneGraphState state) {
             if (!parent.IsDirty)
                 return;
-
-            parent.IsDirty = false;
 
             if (!parent.Visible)
                 return;
