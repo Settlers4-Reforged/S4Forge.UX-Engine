@@ -37,7 +37,7 @@ namespace Forge.UX.UI {
             this.inputManager.InputEventHandler += HandleInput;
 
             rootSceneNode = new RootNode();
-            rootSceneNode.Attach(this);
+            rootSceneNode.Attach(this, null!);
         }
 
         private EventBlockFlags InputBlockingMiddleware(EventBlockFlags input) {
@@ -91,7 +91,7 @@ namespace Forge.UX.UI {
                 throw new ArgumentException("Root elements must be of type UIGroup");
             }
 
-            e.Attach(this);
+            e.Attach(this, rootSceneNode);
             rootSceneNode.Elements.Add(e);
         }
 
@@ -212,26 +212,6 @@ namespace Forge.UX.UI {
 
             #endregion
 
-            foreach (UIElement rootElement in GetRootElements()) {
-                bool isGroupDirty = true;
-
-                if (rootElement is not UIGroup rootGroup) continue;
-
-                foreach (UIElement child in rootGroup.Elements.GetAllElementsInTree()) {
-                    if (!child.IsDirty) continue;
-
-                    isGroupDirty = true;
-                    break;
-                }
-
-                if (!isGroupDirty) continue;
-
-                rootGroup.IsDirty = true;
-                foreach (UIElement child in rootGroup.Elements.GetAllElementsInTree()) {
-                    child.IsDirty = true;
-                }
-            }
-
             void HandleProcessing(UIElement element, SceneGraphState state) {
                 element.Process(state);
             }
@@ -264,13 +244,14 @@ namespace Forge.UX.UI {
         void RenderScene() {
             Renderer.ClearScreen();
             TraverseScene(RenderGroup, RenderComponents, true);
+
+            foreach (UIElement element in GetAllElements()) {
+                element.IsDirty = false;
+            }
         }
 
         void RenderComponents(UIElement parent, SceneGraphState state) {
-            if (!parent.IsDirty)
-                return;
-
-            if (!parent.Visible)
+            if (!parent.IsDirty || !parent.Visible)
                 return;
 
             foreach (IUIComponent component in parent.Components) {

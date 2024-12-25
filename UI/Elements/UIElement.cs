@@ -1,6 +1,7 @@
 ﻿using Forge.UX.Input;
 using Forge.UX.Rendering;
 using Forge.UX.UI.Components;
+using Forge.UX.UI.Elements.Grouping;
 
 using System;
 using System.Collections.Generic;
@@ -63,11 +64,15 @@ namespace Forge.UX.UI.Elements {
 
         /// <summary> Whether the element is dirty and needs to be re-rendered </summary>
         private bool isDirty = true;
-        public bool IsDirty {
+        public virtual bool IsDirty {
             get {
                 return isDirty;
             }
             set {
+                if (isDirty != value && Parent != null) {
+                    isDirty = value;
+                    Parent.IsDirty = value;
+                }
                 isDirty = value;
             }
         }
@@ -120,8 +125,14 @@ namespace Forge.UX.UI.Elements {
         /// </summary>
         public SceneManager? AttachedManager { get; protected set; }
 
-        public virtual void Attach(SceneManager manager) {
+        /// <summary>
+        /// The parent group of this element
+        /// </summary>
+        public UIGroup? Parent { get; protected set; }
+
+        public virtual void Attach(SceneManager manager, UIGroup? parent) {
             AttachedManager = manager;
+            Parent = parent;
             IsDirty = true;
         }
 

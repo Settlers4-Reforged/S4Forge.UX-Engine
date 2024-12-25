@@ -23,6 +23,22 @@ namespace Forge.UX.UI.Elements.Grouping {
 
         public bool ClipContent { get; set; } = false;
 
+        public override bool IsDirty {
+            get => base.IsDirty;
+            set {
+                if (value) {
+                    foreach (UIElement element in Elements.GetAllElementsInTree()) {
+                        if (element is UIGroup)
+                            continue;
+
+                        element.IsDirty = value;
+                    }
+                }
+
+                base.IsDirty = value;
+            }
+        }
+
         public Vector4 Padding { get; set; } = Vector4.Zero;
 
         /// <summary>
@@ -69,9 +85,9 @@ namespace Forge.UX.UI.Elements.Grouping {
             return null;
         }
 
-        public override void Attach(SceneManager manager) {
-            base.Attach(manager);
-            Elements.Attach(manager);
+        public override void Attach(SceneManager manager, UIGroup? owner) {
+            base.Attach(manager, owner);
+            Elements.Attach(manager, this);
         }
 
         public virtual void Relayout() {

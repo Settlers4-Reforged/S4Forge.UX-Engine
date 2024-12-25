@@ -10,20 +10,23 @@ using System.Text;
 namespace Forge.UX.UI {
     public class SceneTree : ObservableCollection<UIElement> {
         SceneManager? attachedManager;
+        UIGroup? owner;
 
-        public void Attach(SceneManager manager) {
+        public void Attach(SceneManager manager, UIGroup? owner) {
             if (attachedManager != null) {
                 CollectionChanged += (sender, e) => {
                     RefreshAttachment();
                 };
             }
 
-            attachedManager = manager;
+            this.attachedManager = manager;
+            this.owner = owner;
+            RefreshAttachment();
         }
 
         private void RefreshAttachment() {
             foreach (UIElement element in this) {
-                element.Attach(attachedManager!);
+                element.Attach(attachedManager!, owner!);
             }
         }
 
