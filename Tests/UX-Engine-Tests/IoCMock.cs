@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 namespace UX_Engine_Tests {
     public class IoCMock {
         public Mock<IEventApi> eventApi = new Mock<IEventApi>();
+        public Mock<IEntityApi> entityApi = new Mock<IEntityApi>();
         public Mock<IPlayerApi> playerApi = new Mock<IPlayerApi>();
         public Mock<ISoundApi> soundApi = new Mock<ISoundApi>();
 
@@ -34,6 +35,7 @@ namespace UX_Engine_Tests {
 
         private void MockNativeApi() {
             DI.Dependencies.RegisterInstance<IEventApi>(eventApi.Object);
+            DI.Dependencies.RegisterInstance<IEntityApi>(entityApi.Object);
             DI.Dependencies.RegisterInstance<IPlayerApi>(playerApi.Object);
             DI.Dependencies.RegisterInstance<ISoundApi>(soundApi.Object);
 
@@ -52,6 +54,7 @@ namespace UX_Engine_Tests {
 
         public void Reset() {
             eventApi.Reset();
+            entityApi.Reset();
             playerApi.Reset();
             soundApi.Reset();
             uiManager.Reset();
