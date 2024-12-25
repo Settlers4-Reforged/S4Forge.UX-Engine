@@ -6,6 +6,8 @@ using Forge.UX.UI.Prefabs.Properties;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Numerics;
 using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Text {
@@ -23,10 +25,28 @@ namespace Forge.UX.UI.Prefabs.Text {
 
         protected void ApplyTextPropertyValues(TextComponent targetTextComponent) {
             targetTextComponent.Text = Text!;
+
+            // Convert the hex color input to a Vector4
+            if (Color.Value?.StartsWith('#') != true)
+                throw new ArgumentException("Color must be a hex value");
+
+            ReadOnlySpan<char> hex = Color.Value.AsSpan()[1..];
+            if (hex.Length is not (6 or 8))
+                throw new ArgumentException("Color must be 6 or 8 characters long");
+
+            Vector4 color = new Vector4(
+                int.Parse(hex[0..2], NumberStyles.AllowHexSpecifier),
+                int.Parse(hex[2..4], NumberStyles.AllowHexSpecifier),
+                int.Parse(hex[4..6], NumberStyles.AllowHexSpecifier),
+                hex.Length == 8 ? int.Parse(hex[6..8], NumberStyles.AllowHexSpecifier) : 255
+            );
+
+
             targetTextComponent.Style = new TextStyle() {
                 Size = TextSize,
                 Type = TextType,
-                Alignment = TextAlignment
+                Alignment = TextAlignment,
+                Color = color
             };
         }
 
@@ -35,5 +55,6 @@ namespace Forge.UX.UI.Prefabs.Text {
         public EnumProperty<TextStyleAlignment> TextAlignment { get; set; } = new EnumProperty<TextStyleAlignment>(nameof(TextAlignment), "The alignment of the text") { Default = TextStyleAlignment.Center };
         public EnumProperty<TextStyleType> TextType { get; set; } = new EnumProperty<TextStyleType>(nameof(TextType), "The type of text to display") { Default = TextStyleType.Normal };
         public EnumProperty<TextStyleSize> TextSize { get; set; } = new EnumProperty<TextStyleSize>(nameof(TextSize), "The size of the text") { Default = TextStyleSize.Regular };
+        public Property<string> Color { get; set; } = new Property<string>(nameof(Color), "The color of the text") { Default = "#FFFFFFFF" };
     }
 }

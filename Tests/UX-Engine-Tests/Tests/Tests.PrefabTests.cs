@@ -57,5 +57,24 @@ namespace UX_Engine_Tests {
                 Assert.That(button.Size, Is.EqualTo(new Vector2(100, 75)));
             });
         }
+
+        [Test]
+        public void Test_TextPrefab_Color() {
+            IoCSetup();
+
+            S4Button buttonNoAlphaPrefab = new S4ButtonBuilder().WithText("Test").WithColor("#FF00FF").Build();
+            UIButton buttonNoAlpha = buttonNoAlphaPrefab.Instantiate<UIButton>();
+
+            S4Button buttonAlphaPrefab = new S4ButtonBuilder().WithText("Test").WithColor("#FF00FFAA").Build();
+            UIButton buttonAlpha = buttonAlphaPrefab.Instantiate<UIButton>();
+
+            Assert.Multiple(() => {
+                Assert.That(buttonNoAlphaPrefab.Color.Value, Is.EqualTo("#FF00FF"));
+                Assert.That(buttonNoAlpha.TextComponent.Style.Color, Is.EqualTo(new Vector4(255, 0, 255, 255)));
+
+                Assert.That(buttonAlphaPrefab.Color.Value, Is.EqualTo("#FF00FFAA"));
+                Assert.That(buttonAlpha.TextComponent.Style.Color, Is.EqualTo(new Vector4(255, 0, 255, 170)));
+            });
+        }
     }
 }
