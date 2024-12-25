@@ -26,6 +26,12 @@
     <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
         <!-- See https://github.com/dotnet/sdk/issues/34775 for why...-->
         <Delete Files="$(TargetDir)$(TargetName).deps.json" />
+        <WriteLinesToFile File="$(TargetDir)$(TargetName).deps.json" Overwrite="true" Lines='{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  }
+}' />
     </Target>
 
 
