@@ -1,5 +1,7 @@
 ﻿using DasMulli.DataBuilderGenerator;
 
+using Forge.UX.Rendering.Text;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +14,11 @@ namespace Forge.UX.UI.Prefabs.Text {
     public class S4Text : TextPrefab {
         public override string Name => "S4Text";
         public override string Description => "A generic text element";
+
+        protected override void OverrideDefaults() {
+            base.OverrideDefaults();
+
+            TextVerticalAlignment.Default = TextStyleAlignment.Start;
+        }
     }
 }

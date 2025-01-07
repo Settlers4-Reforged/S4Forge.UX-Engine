@@ -91,6 +91,8 @@ namespace Forge.UX {
 
                 Logger.LogInfo($"UXEngine is ready to render with {DI.Dependencies.Resolve<IRenderer>().Name}");
 
+                DI.Resolve<ITextureCollectionManager>().RegisterDefaults();
+
                 IsReady = true;
 
                 SceneManager sceneManager = DI.Resolve<SceneManager>();

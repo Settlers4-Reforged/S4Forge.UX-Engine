@@ -2,6 +2,7 @@
 
 using Forge.Config;
 using Forge.UX.Input;
+using Forge.UX.Rendering.Texture;
 using Forge.UX.UI;
 
 using System;
@@ -17,7 +18,7 @@ namespace Forge.UX.Testing {
             DI.Dependencies.RegisterInstance(new UIEngine());
 
             DI.Dependencies.RegisterMany<TextureCollectionManagerMock>();
-            DI.Dependencies.RegisterMany<TextureCollectionManagerMock.TextureCollectionMock>();
+            DI.Dependencies.RegisterMany<TextureCollectionManagerMock.TextureCollectionMock<ForgeTextureMap>>();
 
             DI.Resolve<SceneManager>().Init();
         }

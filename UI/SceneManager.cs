@@ -3,7 +3,6 @@
 using Forge.Config;
 using Forge.Logging;
 using Forge.S4.Types;
-using Forge.UX.Debug;
 using Forge.UX.Input;
 using Forge.UX.Native;
 using Forge.UX.Plugin;
@@ -58,15 +57,17 @@ namespace Forge.UX.UI {
         }
 
         public void Init() {
-#if DEBUG
-            DI.Dependencies.Resolve<UIDebugWindow>();
-#endif
-
             PrefabManager prefabManager = DI.Resolve<PrefabManager>();
 
+            // In case PluginScenes are not registered as PluginPrefabs, pull both and union for those that actually behave
             var pluginPrefabs = DI.Dependencies.ResolveMany<IPluginPrefab>();
-            foreach (IPluginPrefab pluginPrefab in pluginPrefabs) {
+            var pluginScenes = DI.Dependencies.ResolveMany<IPluginScene>();
+            foreach (IPluginPrefab pluginPrefab in pluginPrefabs.Union(pluginScenes)) {
                 pluginPrefab.Build(DI.Dependencies.Resolve<SceneBuilder>());
+                if (pluginPrefab.Prefab == null) {
+                    Logger.LogError(null, "PluginPrefab {0} was built but produced no prefab!", pluginPrefab.GetType().Name);
+                    continue;
+                }
 
                 if (!pluginPrefab.AutoRegister) continue;
                 prefabManager.RegisterPrefab(pluginPrefab.Prefab!);
@@ -74,7 +75,6 @@ namespace Forge.UX.UI {
                 if (pluginPrefab is not IPluginScene pluginScene) continue;
 
                 AddRootElement(pluginScene.Group.Instantiate());
-                pluginScene.AfterSceneTreeAdd();
             }
         }
 

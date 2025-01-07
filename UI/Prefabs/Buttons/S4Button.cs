@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
+using static System.Net.Mime.MediaTypeNames;
+
 namespace Forge.UX.UI.Prefabs.Buttons {
 
     [GenerateDataBuilder]
@@ -30,17 +32,17 @@ namespace Forge.UX.UI.Prefabs.Buttons {
         protected override void OverrideDefaults() {
             // Default size of a S4 button:
             Size.Default = new Vector2(DefaultWidth, DefaultHeight);
-            TextAlignment.Default = TextStyleAlignment.Center;
+            TextHorizontalAlignment.Default = TextStyleAlignment.Center;
             TextSize.Default = TextStyleSize.Large;
             TextType.Default = TextStyleType.Bold;
         }
 
         public override UIElement Instantiate() {
-            ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
+            ITextureCollection<S4MainUITextureMap> tc = DI.Dependencies.Resolve<ITextureCollection<S4MainUITextureMap>>();
 
             UIButton button = new UIButton {
-                ButtonTexture = tcm.Get(TextureCollectionMap.MainUI, "194"),
-                ButtonHeldTexture = tcm.Get(TextureCollectionMap.MainUI, "195"),
+                ButtonTexture = tc.GetTexture(S4MainUITextureMap._194),
+                ButtonHeldTexture = tc.GetTexture(S4MainUITextureMap._195),
                 Text = Text!,
                 Enabled = IsEnabled!,
                 TextOffset = new Vector2(15 / DefaultWidth, 13 / DefaultHeight), // 15, 10
@@ -75,6 +77,7 @@ namespace Forge.UX.UI.Prefabs.Buttons {
             this.ApplyTextPropertyValues(button.TextComponent);
             button.TextComponent.PositionMode = (PositioningMode.Relative, PositioningMode.Relative);
 
+            OnInstantiated(button);
             return button;
         }
 

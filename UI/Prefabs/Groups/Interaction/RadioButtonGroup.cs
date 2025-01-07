@@ -20,6 +20,7 @@ namespace Forge.UX.UI.Prefabs.Groups.Interaction {
 
             InstantiateChildren(group);
 
+            OnInstantiated(group);
             return group;
         }
 

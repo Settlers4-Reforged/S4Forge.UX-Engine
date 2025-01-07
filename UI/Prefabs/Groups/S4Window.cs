@@ -25,12 +25,13 @@ namespace Forge.UX.UI.Prefabs.Groups {
         }
 
         public override UIElement Instantiate() {
-            ITextureCollectionManager tcm = DI.Dependencies.Resolve<ITextureCollectionManager>();
-            UIWindow element = new UIWindow(new NineSliceTextureComponent(tcm.Get(TextureCollectionMap.ForgeUI, ForgeTextureMap.S4Window), 35));
+            ITextureCollection<ForgeTextureMap> tc = DI.Dependencies.Resolve<ITextureCollection<ForgeTextureMap>>();
+            UIWindow element = new UIWindow(new NineSliceTextureComponent(tc.GetTexture(ForgeTextureMap.S4Window), 35));
             this.ApplyPropertyValues(element);
 
             InstantiateChildren(element);
 
+            OnInstantiated(element);
             return element;
         }
     }

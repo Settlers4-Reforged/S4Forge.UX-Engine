@@ -16,6 +16,11 @@ namespace Forge.UX.UI.Prefabs {
             return (T)Instantiate();
         }
 
+        public event Action<UIElement>? Instantiated;
+        protected void OnInstantiated(UIElement element) {
+            Instantiated?.Invoke(element);
+        }
+
         protected virtual void OverrideDefaults() { }
 
         #region Properties

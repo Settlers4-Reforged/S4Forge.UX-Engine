@@ -21,6 +21,7 @@ namespace Forge.UX.UI.Prefabs.Groups.Layout {
             InstantiateChildren(element);
             element.Relayout();
 
+            OnInstantiated(element);
             return element;
         }
 

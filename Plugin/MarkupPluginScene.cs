@@ -1,4 +1,6 @@
-﻿using Forge.UX.UI;
+﻿using Forge.Config;
+using Forge.Engine;
+using Forge.UX.UI;
 using Forge.UX.UI.Prefabs;
 
 using System;
@@ -19,27 +21,27 @@ namespace Forge.UX.Plugin {
         /// <summary>
         /// Load markup from a file. Can be used to directly load markup from a file.
         /// </summary>
-        /// <param name="path">Either a relative path, or an absolute path. The path is by default relative to the owned plugin assembly</param>
+        /// <param name="path">Either a relative path, or an absolute path. On a relative path, the base is determined by the PluginEnvironment&lt;TPlugin&gt;</param>
         /// <returns>The file contents</returns>
-        protected string FromFile(string path) {
+        protected string FromFile<TPlugin>(string path) where TPlugin : IPlugin {
             string absolutePath;
             if (Path.IsPathFullyQualified(path)) {
                 absolutePath = path;
             } else {
-                Assembly assembly = this.GetType().Assembly;
-                string basePath = Path.GetDirectoryName(assembly.Location) ?? Environment.CurrentDirectory;
-                absolutePath = Path.Combine(basePath, path);
+                string pluginBasePath = DI.Resolve<PluginEnvironment<TPlugin>>().Path;
+                absolutePath = Path.Combine(pluginBasePath, path);
             }
 
             return File.ReadAllText(absolutePath);
         }
 
-        public void Build(SceneBuilder builder) {
+        public bool Build(SceneBuilder builder) {
             if (!builder.CreateScene(Markup, out GroupPrefab? scene) || scene == null) {
                 throw new InvalidOperationException("Failed to create scene from markup");
             }
 
             Prefab = scene;
+            return true;
         }
     }
 }

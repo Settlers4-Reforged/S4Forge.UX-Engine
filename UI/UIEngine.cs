@@ -3,7 +3,6 @@
 using Forge.Config;
 using Forge.S4;
 using Forge.S4.Types;
-using Forge.UX.Debug;
 using Forge.UX.S4;
 using Forge.UX.S4.Types.Native;
 using Forge.UX.UI.Prefabs;
@@ -24,10 +23,6 @@ namespace Forge.UX.UI {
             PrefabManager prefabManager = new PrefabManager();
             prefabManager.RegisterDefaultPrefabs();
             DI.Dependencies.RegisterInstance<PrefabManager>(prefabManager);
-
-#if DEBUG
-            DI.Dependencies.Register<UIDebugWindow>();
-#endif
         }
 
     }

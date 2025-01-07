@@ -19,21 +19,23 @@ namespace Forge.UX.Rendering.Text {
     }
 
     public enum TextStyleAlignment {
-        Left,
+        Start,
         Center,
-        Right
+        End
     }
 
     public struct TextStyle {
         public TextStyleType Type;
         public TextStyleSize Size;
-        public TextStyleAlignment Alignment;
+        public TextStyleAlignment HorizontalAlignment;
+        public TextStyleAlignment VerticalAlignment;
         public Vector4 Color = new Vector4(255, 255, 255, 255);
 
-        public TextStyle(TextStyleType type = TextStyleType.Normal, TextStyleSize size = TextStyleSize.Regular, TextStyleAlignment alignment = TextStyleAlignment.Left, Vector4? color = null) {
+        public TextStyle(TextStyleType type = TextStyleType.Normal, TextStyleSize size = TextStyleSize.Regular, TextStyleAlignment horizontalAlignment = TextStyleAlignment.Start, TextStyleAlignment verticalAlignment = TextStyleAlignment.Start, Vector4? color = null) {
             Type = type;
             Size = size;
-            Alignment = alignment;
+            HorizontalAlignment = horizontalAlignment;
+            VerticalAlignment = verticalAlignment;
             Color = color ?? new Vector4(255, 255, 255, 255);
         }
     }

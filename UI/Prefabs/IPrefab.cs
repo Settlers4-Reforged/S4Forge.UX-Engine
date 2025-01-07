@@ -21,6 +21,9 @@ namespace Forge.UX.UI.Prefabs {
         /// Instantiates this prefab instance with default properties
         /// </summary>
         public UIElement Instantiate();
+        public T Instantiate<T>() where T : UIElement;
+
+        public event Action<UIElement>? Instantiated;
 
         public IEnumerable<IProperty> GetProperties();
 

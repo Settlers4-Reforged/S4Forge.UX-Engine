@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Forge.UX.Testing {
     public class TextureCollectionManagerMock : ITextureCollectionManager {
-        public ITextureCollection GetCollection(string id) {
-            return new TextureCollectionMock();
+        public ITextureCollection<TMap> Register<TMap>(string path) where TMap : Enum {
+            throw new NotImplementedException();
         }
 
-        public ITexture Get(string col, string id) {
-            return new TextureMock();
+        public void RegisterDefaults() {
+            throw new NotImplementedException();
         }
 
         public class TextureMock : ITexture {
@@ -21,7 +21,9 @@ namespace Forge.UX.Testing {
             public int Height { get; }
         }
 
-        public class TextureCollectionMock : ITextureCollection {
+        public class TextureCollectionMock<TMap> : ITextureCollection<TMap> where TMap : Enum {
+            public string Path { get; } = "";
+
             public ITexture GetTexture(string id) {
                 return new TextureMock();
             }

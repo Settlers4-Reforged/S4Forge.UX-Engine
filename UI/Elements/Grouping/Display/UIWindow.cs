@@ -22,8 +22,8 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
         public UIWindow() {
             PositionMode = (PositioningMode.Absolute, PositioningMode.Absolute);
 
-            ITextureCollectionManager tcm = DI.Resolve<ITextureCollectionManager>();
-            ITexture windowTexture = tcm.GetCollection(TextureCollectionMap.ForgeUI).GetTexture(ForgeTextureMap.S4Window);
+            ITextureCollection<ForgeTextureMap> tc = DI.Resolve<ITextureCollection<ForgeTextureMap>>();
+            ITexture windowTexture = tc.GetTexture(ForgeTextureMap.S4Window);
             Components = new List<IUIComponent>() { new NineSliceTextureComponent(windowTexture, Vector4.Zero, Vector4.Zero) };
         }
 

@@ -20,6 +20,7 @@ namespace Forge.UX.UI.Prefabs.Text {
 
             ApplyTextPropertyValues(text.TextComponent);
 
+            OnInstantiated(text);
             return text;
         }
 
@@ -45,14 +46,15 @@ namespace Forge.UX.UI.Prefabs.Text {
             targetTextComponent.Style = new TextStyle() {
                 Size = TextSize,
                 Type = TextType,
-                Alignment = TextAlignment,
+                HorizontalAlignment = TextHorizontalAlignment,
                 Color = color
             };
         }
 
         public ValueProperty Text { get; set; } = new ValueProperty(nameof(Text), "The text to display");
         public Property<bool> FitText { get; set; } = new Property<bool>(nameof(FitText), "If true, the text will be scaled to fit the element") { Default = false };
-        public EnumProperty<TextStyleAlignment> TextAlignment { get; set; } = new EnumProperty<TextStyleAlignment>(nameof(TextAlignment), "The alignment of the text") { Default = TextStyleAlignment.Center };
+        public EnumProperty<TextStyleAlignment> TextHorizontalAlignment { get; set; } = new EnumProperty<TextStyleAlignment>(nameof(TextHorizontalAlignment), "The horizontal alignment of the text") { Default = TextStyleAlignment.Center };
+        public EnumProperty<TextStyleAlignment> TextVerticalAlignment { get; set; } = new EnumProperty<TextStyleAlignment>(nameof(TextVerticalAlignment), "The vertical alignment of the text") { Default = TextStyleAlignment.Center };
         public EnumProperty<TextStyleType> TextType { get; set; } = new EnumProperty<TextStyleType>(nameof(TextType), "The type of text to display") { Default = TextStyleType.Normal };
         public EnumProperty<TextStyleSize> TextSize { get; set; } = new EnumProperty<TextStyleSize>(nameof(TextSize), "The size of the text") { Default = TextStyleSize.Regular };
         public Property<string> Color { get; set; } = new Property<string>(nameof(Color), "The color of the text") { Default = "#FFFFFFFF" };
