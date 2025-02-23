@@ -318,6 +318,9 @@ namespace Forge.UX.UI {
                 ProcessUnhandledInputEvents = false;
                 ProcessWindowsInputEvents = false;
             }
+
+            // Override the default UIGroup behavior to prevent all child groups from being marked as dirty involuntarily
+            public override bool IsDirty { get; set; }
         }
     }
 }

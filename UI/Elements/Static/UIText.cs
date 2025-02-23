@@ -10,6 +10,7 @@ namespace Forge.UX.UI.Elements.Static {
         public string Text {
             get => TextComponent.Text;
             set {
+                if (TextComponent.Text == value) return;
                 IsDirty = true;
                 TextComponent.Text = value;
             }

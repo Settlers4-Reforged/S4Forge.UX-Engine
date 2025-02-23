@@ -94,6 +94,7 @@ namespace Forge.UX.UI.Elements {
         /// Hides the element from rendering and disables input handling
         /// </summary>
         public void Hide() {
+            if (!Visible) return;
             Visible = false;
             IsDirty = true;
         }
@@ -102,6 +103,7 @@ namespace Forge.UX.UI.Elements {
         /// Shows the element for rendering and enables input handling
         /// </summary>
         public void Show() {
+            if (Visible) return;
             Visible = true;
             IsDirty = true;
         }
