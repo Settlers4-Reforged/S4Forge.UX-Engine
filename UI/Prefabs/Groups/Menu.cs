@@ -1,8 +1,10 @@
 ﻿using DasMulli.DataBuilderGenerator;
 
+using Forge.S4.Types;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
 using Forge.UX.UI.Elements.Grouping.Display;
+using Forge.UX.UI.Prefabs.Properties;
 
 using System;
 using System.Collections.Generic;
@@ -21,10 +23,18 @@ namespace Forge.UX.UI.Prefabs.Groups {
             UIMenu group = new UIMenu();
             this.ApplyPropertyValues(group);
 
+            group.AttachedMenu = AttachedMenu == S4UIMenu.Unknown ? null : AttachedMenu.Value;
+            group.AttachedSubmenu = AttachedSubmenu == S4UISubmenu.Unknown ? null : AttachedSubmenu.Value;
+            group.AttachedScreen = AttachedScreen == S4UIScreen.Unknown ? null : AttachedScreen.Value;
+
             InstantiateChildren(group);
 
             OnInstantiated(group);
             return group;
         }
+
+        public EnumProperty<S4UIMenu> AttachedMenu = new EnumProperty<S4UIMenu>(nameof(AttachedMenu), "What S4 menu this is attached to") { Default = S4UIMenu.Unknown };
+        public EnumProperty<S4UISubmenu> AttachedSubmenu = new EnumProperty<S4UISubmenu>(nameof(AttachedSubmenu), "What S4 submenu this is attached to") { Default = S4UISubmenu.Unknown };
+        public EnumProperty<S4UIScreen> AttachedScreen = new EnumProperty<S4UIScreen>(nameof(AttachedScreen), "What S4 screen this is attached to") { Default = S4UIScreen.Unknown };
     }
 }
