@@ -5,7 +5,7 @@
         <ProjectType>Engine</ProjectType>
     </PropertyGroup>
 
-    <!--Forge Update System: -->
+    <!--Forge Manifest System: -->
     <PropertyGroup>
         <ManifestId>UXEngine</ManifestId>
         <ManifestName>UX-Engine</ManifestName>
@@ -17,7 +17,6 @@
 
     <ItemGroup>
         <ManifestRelationships Include="Forge">
-            <Manifest>Url to the newest manifest (e.g. latest release on gitlab)</Manifest>
             <Optional>false</Optional>
             <Minimum>1.*</Minimum>
             <Maximum>2.0.0</Maximum>

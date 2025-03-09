@@ -11,7 +11,7 @@
     {
       "id": "Forge",
       "optional": false,
-      "manifest": "Url to the newest manifest (e.g. latest release on gitlab)",
+      "manifest": "",
       "compatibility": {
         "minimum": "1.*",
         "verified": "1.1.0",
