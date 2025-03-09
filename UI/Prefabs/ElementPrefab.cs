@@ -11,6 +11,11 @@ namespace Forge.UX.UI.Prefabs {
     public abstract class ElementPrefab : IPrefab {
         public abstract string Name { get; }
         public abstract string Description { get; }
+
+        public override string ToString() {
+            return $"[Prefab] {Name}: {Description}";
+        }
+
         public abstract UIElement Instantiate();
         public T Instantiate<T>() where T : UIElement {
             return (T)Instantiate();

@@ -1,6 +1,8 @@
 ﻿using Forge.Config;
 using Forge.Engine;
 using Forge.UX.UI;
+using Forge.UX.UI.Elements;
+using Forge.UX.UI.Elements.Grouping;
 using Forge.UX.UI.Prefabs;
 
 using System;
@@ -13,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace Forge.UX.Plugin {
     public abstract class MarkupPluginScene : IPluginScene {
+        public abstract string TagName { get; }
         public IPrefab? Prefab { get; private set; }
         public abstract bool AutoRegister { get; }
 
@@ -41,8 +44,12 @@ namespace Forge.UX.Plugin {
             }
 
             Prefab = scene;
+            Prefab.Instantiated += OnInstantiated;
+
             return true;
         }
+
+        public virtual void OnInstantiated(UIElement element) { }
     }
 }
 

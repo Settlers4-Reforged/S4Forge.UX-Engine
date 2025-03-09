@@ -21,6 +21,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Forge.UX.UI.Prefabs.Buttons {
 
+    [Prefab("s4-button")]
     [GenerateDataBuilder]
     public class S4Button : TextPrefab {
         public override string Name => "S4Button";

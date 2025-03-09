@@ -15,6 +15,7 @@ using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Groups {
 
+    [Prefab("s4-window")]
     [GenerateDataBuilder]
     public class S4Window : GroupPrefab {
         public override string Name => "S4Window";

@@ -63,18 +63,24 @@ namespace Forge.UX.UI {
             var pluginPrefabs = DI.Dependencies.ResolveMany<IPluginPrefab>();
             var pluginScenes = DI.Dependencies.ResolveMany<IPluginScene>();
             foreach (IPluginPrefab pluginPrefab in pluginPrefabs.Union(pluginScenes)) {
-                pluginPrefab.Build(DI.Dependencies.Resolve<SceneBuilder>());
-                if (pluginPrefab.Prefab == null) {
-                    Logger.LogError(null, "PluginPrefab {0} was built but produced no prefab!", pluginPrefab.GetType().Name);
-                    continue;
+                try {
+
+                    pluginPrefab.Build(DI.Dependencies.Resolve<SceneBuilder>());
+                    if (pluginPrefab.Prefab == null) {
+                        Logger.LogError(null, "PluginPrefab {0} was built but produced no prefab!",
+                            pluginPrefab.GetType().Name);
+                        continue;
+                    }
+
+                    if (!pluginPrefab.AutoRegister) continue;
+                    prefabManager.RegisterPrefab(pluginPrefab.Prefab!, pluginPrefab.TagName);
+
+                    if (pluginPrefab is not IPluginScene pluginScene) continue;
+
+                    AddRootElement(pluginScene.Group.Instantiate());
+                } catch (Exception e) {
+                    Logger.LogError(e, "Error while building plugin prefab {0}", pluginPrefab.GetType().Name);
                 }
-
-                if (!pluginPrefab.AutoRegister) continue;
-                prefabManager.RegisterPrefab(pluginPrefab.Prefab!);
-
-                if (pluginPrefab is not IPluginScene pluginScene) continue;
-
-                AddRootElement(pluginScene.Group.Instantiate());
             }
         }
 

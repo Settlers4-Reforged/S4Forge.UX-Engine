@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Forge.UX.UI.Prefabs.Groups {
 
+    [Prefab("menu")]
     [GenerateDataBuilder]
     public class Menu : GroupPrefab {
         public override string Name => "Menu";

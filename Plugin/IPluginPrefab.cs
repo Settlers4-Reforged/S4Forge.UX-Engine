@@ -14,6 +14,11 @@ namespace Forge.UX.Plugin {
     /// </summary>
     public interface IPluginPrefab {
         /// <summary>
+        /// The tag name of the built prefab.
+        /// </summary>
+        public string TagName { get; }
+
+        /// <summary>
         /// The cached prefab when the prefab is built.
         /// Set to the builder output when successfully built in <see cref="Build"/>.
         /// </summary>

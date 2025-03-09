@@ -23,9 +23,9 @@ namespace Forge.UX.UI.Prefabs {
         }
         #endregion
 
-        private readonly List<IPrefab> prefabs = new List<IPrefab>();
+        private readonly Dictionary<string, IPrefab> prefabs = new Dictionary<string, IPrefab>();
 
-        public bool RegisterPrefab(IPrefab prefab) {
+        public bool RegisterPrefab(IPrefab prefab, string tagName) {
             char[] forbiddenChars = "<>,.;:|!§$%&/()=? *+#-´`\"'^°".ToCharArray();
             if (forbiddenChars.Any(c => prefab.Name.Contains(c))) {
                 lastError = InvalidNameError;
@@ -37,12 +37,12 @@ namespace Forge.UX.UI.Prefabs {
                 return false;
             }
 
-            if (prefabs.Find(i => i.Name.Equals(prefab.Name, StringComparison.OrdinalIgnoreCase)) != null) {
+            if (prefabs.Keys.Contains(prefab.Name)) {
                 lastError = PrefabAlreadyExistsError;
                 return false;
             }
 
-            prefabs.Add(prefab);
+            prefabs.Add(tagName, prefab);
             return true;
         }
 
@@ -50,7 +50,7 @@ namespace Forge.UX.UI.Prefabs {
 
             Logger.LogInfo($"Registering default prefabs from UX-Engine...");
 
-            Assembly prefabAssembly = Assembly.GetAssembly(typeof(IPrefab));
+            Assembly prefabAssembly = Assembly.GetAssembly(typeof(IPrefab))!;
 
 
             Type[] types = prefabAssembly.GetExportedTypes();
@@ -60,8 +60,24 @@ namespace Forge.UX.UI.Prefabs {
                                  select t).ToArray();
 
             foreach (Type prefab in prefabList) {
-                IPrefab prefabInstance = (IPrefab)Activator.CreateInstance(prefab);
-                bool success = RegisterPrefab(prefabInstance);
+                IPrefab? prefabInstance;
+                try {
+                    prefabInstance = (IPrefab?)Activator.CreateInstance(prefab);
+
+                    if (prefabInstance == null) {
+                        Logger.LogError(null, $"Failed to create instance of prefab \"{prefab.Name}\"");
+                        continue;
+                    }
+                } catch (Exception e) {
+                    Logger.LogError(e, $"Failed to create instance of prefab \"{prefab.Name}\"");
+                    continue;
+                }
+
+                PrefabAttribute? prefabConfig = prefab.GetCustomAttributes<PrefabAttribute>(false).FirstOrDefault();
+                if (prefabConfig == null)
+                    continue;
+
+                bool success = RegisterPrefab(prefabInstance, prefabConfig.TagName);
                 if (!success) {
                     throw new ArgumentException($"Failed to register prefab \"{prefabInstance.Name}\" - Error: \"{GetLastError()}\"");
                 }
@@ -70,8 +86,13 @@ namespace Forge.UX.UI.Prefabs {
             Logger.LogInfo($"Registered {prefabList.Length} default prefabs from UX-Engine");
         }
 
+        /// <summary>
+        /// Returns a new instance of a prefab by its tag name
+        /// </summary>
+        /// <param name="name">The name of the tag, e.g. "s4-text"</param>
         public IPrefab? GetPrefabByName(string name) {
-            return prefabs.Find(prefab => prefab.Name == name)?.Clone();
+            prefabs.TryGetValue(name, out IPrefab? foundPrefab);
+            return foundPrefab?.Clone();
         }
 
     }

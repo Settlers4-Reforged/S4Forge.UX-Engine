@@ -10,6 +10,7 @@ using System.Xml.Linq;
 
 namespace Forge.UX.UI.Prefabs.Groups {
 
+    [Prefab("group")]
     [GenerateDataBuilder]
     public class Group : GroupPrefab {
         public override string Name => "Group";

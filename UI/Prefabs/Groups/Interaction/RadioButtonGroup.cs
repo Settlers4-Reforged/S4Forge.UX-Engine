@@ -10,6 +10,7 @@ using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Groups.Interaction {
 
+    [Prefab("radio-button-group")]
     [GenerateDataBuilder]
     public class RadioButtonGroup : GroupPrefab {
         public override string Name => "RadioButtonGroup";

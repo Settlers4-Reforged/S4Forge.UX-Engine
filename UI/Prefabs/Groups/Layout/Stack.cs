@@ -10,6 +10,8 @@ using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Groups.Layout {
 
+
+    [Prefab("stack")]
     [GenerateDataBuilder]
     public class Stack : GroupPrefab {
         public override string Name => "Stack";

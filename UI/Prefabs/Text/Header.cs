@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Text {
+
+    [Prefab("header")]
     [GenerateDataBuilder]
     public class Header : TextPrefab {
         public override string Name => "Header";

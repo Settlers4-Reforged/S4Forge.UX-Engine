@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Forge.UX.UI.Prefabs.Buttons {
+
+    [Prefab("s4-radio-button")]
     [GenerateDataBuilder]
     public class S4RadioButton : ElementPrefab {
         public override string Name => "S4RadioButton";
