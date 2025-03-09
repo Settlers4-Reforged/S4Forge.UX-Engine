@@ -30,8 +30,8 @@ namespace Forge.UX.UI {
             }
         }
 
-        public UIElement? GetById(string id) {
-            return GetAllElementsInTree().First(e => e.Id == id);
+        public UIElement GetById(string id) {
+            return GetAllElementsInTree().FirstOrDefault(e => e.Id == id) ?? throw new KeyNotFoundException($"Element with id {id} not found");
         }
         public UIElement? GetByIdOrNull(string id) {
             return GetAllElementsInTree().FirstOrDefault(e => e.Id == id);
