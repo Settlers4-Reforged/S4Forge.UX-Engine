@@ -23,6 +23,7 @@ namespace Forge.UX.UI.Prefabs.Groups {
 
         protected override void OverrideDefaults() {
             Padding.Default = new Vector4(35);
+            ClipContent.Default = true;
         }
 
         public override UIElement Instantiate() {
