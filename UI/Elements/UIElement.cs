@@ -77,6 +77,18 @@ namespace Forge.UX.UI.Elements {
             }
         }
 
+        /// <summary>
+        /// Marks the element as dirty and in need of re-rendering
+        /// </summary>
+        /// <param name="force">
+        ///   Normally dirty handling is skipped when this component is disabled/not visible.
+        ///   When forced will force dirty check even when disabled.
+        /// </param>
+        public virtual void Dirty(bool force = false) {
+            if (!force && !Visible) return;
+            this.IsDirty = true;
+        }
+
         ///<summary>The lower the further behind: 0 &lt; 100 &lt; 1000</summary>
         public int ZIndex = 0;
 

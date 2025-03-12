@@ -39,10 +39,6 @@ namespace Forge.UX.UI.Elements.Grouping {
             }
         }
 
-        public void Dirty() {
-            this.IsDirty = true;
-        }
-
         public Vector4 Padding { get; set; } = Vector4.Zero;
 
         /// <summary>

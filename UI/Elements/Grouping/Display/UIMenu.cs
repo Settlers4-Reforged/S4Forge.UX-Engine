@@ -59,14 +59,14 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
             if (Visible) return;
 
             Visible = true;
-            Dirty();
+            Dirty(true);
         }
 
         public void OnClose() {
             if (!Visible) return;
 
             Visible = false;
-            Dirty();
+            Dirty(true);
         }
     }
 }
