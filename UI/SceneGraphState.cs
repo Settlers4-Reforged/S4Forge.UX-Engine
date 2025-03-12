@@ -6,6 +6,7 @@ using Forge.UX.UI.Components;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
 
+using System;
 using System.Numerics;
 
 namespace Forge.UX.UI;
@@ -47,18 +48,30 @@ public struct SceneGraphState {
         next.CurrentPosition = ApplyRelativeModeToPosition(group.Position, group.PositionMode);
         next.CurrentContainerSize = ApplyRelativeModeToSize(group.Size, group.SizeMode);
 
+
         // Apply clipping:
-        // For consideration... Clipping inside or outside of padding?
+        // A intersection of current rectangle with new rectangle
+        // NOTE:For consideration... Clipping inside or outside of padding?
         if (group.ClipContent) {
-            next.ClippingRect = new Vector4(group.Position, group.Size.X, group.Size.Y);
+            Vector4 newRect = new Vector4(next.CurrentPosition, next.CurrentContainerSize.X, next.CurrentContainerSize.Y);
+
+            float x1 = Math.Max(ClippingRect.X, newRect.X);
+            float x2 = Math.Min(ClippingRect.X + ClippingRect.Z, newRect.X + newRect.Z);
+            float y1 = Math.Max(ClippingRect.Y, newRect.Y);
+            float y2 = Math.Min(ClippingRect.Y + ClippingRect.W, newRect.Y + newRect.W);
+
+            next.ClippingRect = new Vector4(x1, y1, x2 - x1, y2 - y1);
         }
 
+        // Apply offset after clipping to not "scroll" the clip as well
+        next.CurrentPosition += group.Offset;
+
         // Apply padding:
+        // Also after clipping to prevent container component clipping
         Vector2 positionPadding = new Vector2(group.Padding.X, group.Padding.Y);
         Vector2 sizePadding = new Vector2(group.Padding.Z, group.Padding.W);
         next.CurrentPosition += positionPadding;
         next.CurrentContainerSize -= sizePadding + positionPadding;
-
 
         return next;
     }

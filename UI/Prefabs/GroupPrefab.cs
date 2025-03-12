@@ -21,7 +21,9 @@ namespace Forge.UX.UI.Prefabs {
 
         protected void InstantiateChildren(UIGroup group) {
             foreach (IPrefab prefab in ChildPrefabs) {
-                group.Elements.Add(prefab.Instantiate());
+                UIElement child = prefab.Instantiate();
+                child.Attach(null!, group);
+                group.Elements.Add(child);
             }
         }
 

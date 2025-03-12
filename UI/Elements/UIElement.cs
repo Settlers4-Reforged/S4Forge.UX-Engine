@@ -52,8 +52,20 @@ namespace Forge.UX.UI.Elements {
         /// </summary>
         public virtual (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
 
+        private bool _visible = true;
         /// <summary> Whether the element is visible during rendering phase </summary>
-        public virtual bool Visible { get; set; } = true;
+        public virtual bool Visible {
+            get {
+                if (Parent != null) {
+                    return Parent.Visible && _visible;
+                }
+
+                return _visible;
+            }
+            set {
+                _visible = value;
+            }
+        }
 
         /// <summary> Whether the element should process input events </summary>
         public bool ProcessInputEvents { get; set; } = true;

@@ -41,6 +41,8 @@ namespace Forge.UX.UI.Elements.Grouping {
 
         public Vector4 Padding { get; set; } = Vector4.Zero;
 
+        public Vector2 Offset { get; set; } = Vector2.Zero;
+
         /// <summary>
         /// Gets or sets a value indicating whether the group is transparent in layout behavior.
         /// </summary>
