@@ -90,25 +90,25 @@ namespace UX_Engine_Tests {
         }
 
         private const string CorrectScene = @"
-<S4Window id=""forge_ux_demo"" size=""500,500"" x=""50"" y=""50"" draggable=""true"">
-	<Stack>
-		<Header>Forge UX Demo</Header>
-		<Group height=""200"" width=""100%"">
-			<RadioButtonGroup Id=""radio_group"" LinkId=""TestGroup"">
-				<Header variant=""small"">Radio Buttons</Header>
-				<Stack width=""50%"">
-					<S4RadioButton LinkId=""TestGroup"">Test 1</S4RadioButton>
-					<S4RadioButton LinkId=""TestGroup"">Test 2</S4RadioButton>
-				</Stack>
-				<Stack x=""50%"" width=""50%"">
-					<S4RadioButton LinkId=""TestGroup"">Test 3</S4RadioButton>
-					<S4RadioButton LinkId=""TestGroup"">Test 4</S4RadioButton>
-				</Stack>
-			</RadioButtonGroup>
-		</Group>
-		<S4Button id=""accept_button"">Accept</S4Button>
-	</Stack>
-</S4Window>
+<s4-window id=""forge_ux_demo"" size=""500,500"" x=""50"" y=""50"" draggable=""true"">
+	<stack>
+		<header>Forge UX Demo</header>
+		<group height=""200"" width=""100%"">
+			<radio-button-group Id=""radio_group"" LinkId=""TestGroup"">
+				<header variant=""small"">Radio Buttons</header>
+				<stack width=""50%"">
+					<s4-radio-button LinkId=""TestGroup"">Test 1</s4-radio-button>
+					<s4-radio-button LinkId=""TestGroup"">Test 2</s4-radio-button>
+				</stack>
+				<stack x=""50%"" width=""50%"">
+					<s4-radio-button LinkId=""TestGroup"">Test 3</s4-radio-button>
+					<s4-radio-button LinkId=""TestGroup"">Test 4</s4-radio-button>
+				</stack>
+			</radio-button-group>
+		</group>
+		<s4-button id=""accept_button"">Accept</s4-button>
+	</stack>
+</s4-window>
 ";
     }
 }

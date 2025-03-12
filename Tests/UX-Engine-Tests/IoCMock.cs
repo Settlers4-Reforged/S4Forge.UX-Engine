@@ -4,6 +4,7 @@ using Forge.Config;
 using Forge.S4.Game;
 using Forge.UX;
 using Forge.UX.Rendering;
+using Forge.UX.Rendering.Texture;
 using Forge.UX.S4;
 using Forge.UX.Testing;
 
@@ -49,6 +50,7 @@ namespace UX_Engine_Tests {
             UXEngine.IsInitialized = true;
 
             DI.Dependencies.RegisterMany(new[] { typeof(TextureCollectionManagerMock) }, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+            DI.Dependencies.Register(typeof(ITextureCollection<>), typeof(TextureCollectionManagerMock.TextureCollectionMock<>));
             DI.Dependencies.RegisterInstance<IRenderer>(renderer.Object, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
         }
 
