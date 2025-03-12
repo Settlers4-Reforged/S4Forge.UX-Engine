@@ -9,7 +9,7 @@ using static Forge.UX.Input.IInputManager;
 
 namespace Forge.UX.Input {
     public class TestInputManager : IInputManager {
-        public float MouseScroll { get; set; }
+        public Vector2 MouseScroll { get; set; }
         public bool TextInputActive { get; set; }
         public bool ChatInputActive { get; set; }
         public Vector2 MousePosition { get; set; }

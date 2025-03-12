@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,10 @@ namespace Forge.UX.Input {
         /// The character representation of the key that was pressed, when applicable
         /// </summary>
         public char? Character { get; init; }
+        /// <summary>
+        /// The mouse wheel scroll amount, when it's a MouseWheel event
+        /// </summary>
+        public Vector2 Scroll { get; init; }
 
         public WndProcMsg? WindowsMessage { get; init; }
 

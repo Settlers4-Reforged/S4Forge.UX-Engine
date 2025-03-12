@@ -11,7 +11,7 @@ using static Forge.UX.Input.IInputManager;
 
 namespace Forge.UX.Input {
     public interface IInputManager {
-        float MouseScroll { get; }
+        Vector2 MouseScroll { get; }
 
         bool TextInputActive {
             get;
@@ -82,7 +82,7 @@ namespace Forge.UX.Input {
 
     public class InputManager : IInputManager {
         private HashSet<Keys> downKeys, heldKeys, upKeys;
-        private int mouseScroll;
+        private Vector2 mouseScroll = Vector2.Zero;
 
         public InputManager() {
             downKeys = new HashSet<Keys>();
@@ -199,10 +199,16 @@ namespace Forge.UX.Input {
             bool up = false;
 
             int wp = (int)wParam;
+            Vector2 scroll = Vector2.Zero;
 
             switch (msg) {
                 case WndProcMsg.WM_MOUSEWHEEL: //Scroll:
-                    mouseScroll = (wp) >> 0x10;
+                    scroll = new Vector2(0, (wp) >> 0x10);
+                    mouseScroll += scroll;
+                    break;
+                case WndProcMsg.WM_MOUSEHWHEEL: //Scroll:
+                    scroll = new Vector2((wp) >> 0x10, 0) * 0.05f;
+                    mouseScroll += scroll;
                     break;
 
                 case WndProcMsg.WM_MOUSEMOVE:
@@ -273,12 +279,12 @@ namespace Forge.UX.Input {
                     Type = up ? InputType.KeyUp : InputType.KeyDown,
                     Key = key,
                 };
-            } else if (msg == WndProcMsg.WM_MOUSEWHEEL) {
+            } else if (msg is WndProcMsg.WM_MOUSEWHEEL or WndProcMsg.WM_MOUSEHWHEEL) {
                 inputEvent = new InputEvent() {
                     Type = InputType.MouseWheel,
+                    Scroll = scroll,
                 };
             } else {
-
                 inputEvent = new InputEvent() {
                     Type = InputType.Windows,
                     WindowsMessage = msg,
@@ -302,7 +308,7 @@ namespace Forge.UX.Input {
         public void Update() {
             downKeys.Clear();
             upKeys.Clear();
-            mouseScroll = 0;
+            mouseScroll = Vector2.Zero;
 
             foreach (Keys key in heldKeys) {
                 InputEvent inputEvent = new InputEvent() {
@@ -343,7 +349,7 @@ namespace Forge.UX.Input {
 
         public Vector2 MouseDelta => MousePosition - prevMousePosition;
 
-        public float MouseScroll => mouseScroll;
+        public Vector2 MouseScroll => mouseScroll;
 
 
         #endregion
