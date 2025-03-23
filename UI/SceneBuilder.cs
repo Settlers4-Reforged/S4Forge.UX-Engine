@@ -83,6 +83,9 @@ namespace Forge.UX.UI {
             if (nodeElement is not GroupPrefab g) return nodeElement;
 
             foreach (XmlNode childNode in node.ChildNodes) {
+                if (childNode.NodeType == XmlNodeType.Comment)
+                    continue;
+
                 IPrefab? childElement = ParseNode(childNode);
                 if (childElement != null) {
                     g.ChildPrefabs.Add(childElement);
