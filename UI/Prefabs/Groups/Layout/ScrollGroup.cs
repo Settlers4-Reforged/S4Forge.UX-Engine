@@ -28,5 +28,10 @@ namespace Forge.UX.UI.Prefabs.Groups.Layout {
             return element;
         }
 
+        protected override void OverrideDefaults() {
+            base.OverrideDefaults();
+
+            ClipContent.Default = true;
+        }
     }
 }
