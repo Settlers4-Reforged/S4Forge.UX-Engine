@@ -4,29 +4,31 @@ using Forge.UX.UI.Elements.Grouping;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 
 namespace Forge.UX.UI {
     public class SceneTree : ObservableCollection<UIElement> {
-        SceneManager? attachedManager;
         UIGroup? owner;
 
-        public void Attach(SceneManager manager, UIGroup? owner) {
-            if (attachedManager != null) {
-                CollectionChanged += (sender, e) => {
-                    RefreshAttachment();
-                };
+        public void Attach(UIGroup? owner) {
+            if (owner != null) {
+                CollectionChanged -= OnNotifyCollectionChangedEventHandler;
+                CollectionChanged += OnNotifyCollectionChangedEventHandler;
             }
 
-            this.attachedManager = manager;
             this.owner = owner;
+            RefreshAttachment();
+        }
+
+        private void OnNotifyCollectionChangedEventHandler(object? sender, NotifyCollectionChangedEventArgs e) {
             RefreshAttachment();
         }
 
         private void RefreshAttachment() {
             foreach (UIElement element in this) {
-                element.Attach(attachedManager!, owner!);
+                element.Attach(owner!);
             }
         }
 

@@ -22,7 +22,7 @@ namespace Forge.UX.UI.Prefabs {
         protected void InstantiateChildren(UIGroup group) {
             foreach (IPrefab prefab in ChildPrefabs) {
                 UIElement child = prefab.Instantiate();
-                child.Attach(null!, group);
+                child.Attach(group);
                 group.Elements.Add(child);
             }
         }
@@ -33,9 +33,9 @@ namespace Forge.UX.UI.Prefabs {
         protected override void ApplyPropertyValues(UIElement element) {
             base.ApplyPropertyValues(element);
 
-            if (element is UIGroup g) {
-                g.ClipContent = ClipContent;
-                g.Padding = Padding;
+            if (element is UIGroup group) {
+                group.ClipContent = ClipContent;
+                group.Padding = Padding;
             } else {
                 throw new InvalidOperationException($"Tried to apply group prefab properties from '{Name}' to non UI group element '{element.Id}'!");
             }

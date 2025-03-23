@@ -36,7 +36,7 @@ namespace Forge.UX.UI {
             this.inputManager.InputEventHandler += HandleInput;
 
             rootSceneNode = new RootNode();
-            rootSceneNode.Attach(this, null!);
+            rootSceneNode.Attach(null!);
         }
 
         private EventBlockFlags InputBlockingMiddleware(EventBlockFlags input) {
@@ -97,7 +97,7 @@ namespace Forge.UX.UI {
                 throw new ArgumentException("Root elements must be of type UIGroup");
             }
 
-            e.Attach(this, rootSceneNode);
+            e.Attach(rootSceneNode);
             rootSceneNode.Elements.Add(e);
         }
 
@@ -158,7 +158,7 @@ namespace Forge.UX.UI {
         }
 
         void ProcessTick() {
-            TraverseScene(null, (e, _) => { e.Tick(); });
+            rootSceneNode.TraverseScene(null, (e, _) => { e.Tick(); });
         }
 
         void ProcessScene() {
@@ -191,7 +191,7 @@ namespace Forge.UX.UI {
 
             var previousHoverStack = new Stack<UIElement>(hoverStack);
             hoverStack.Clear();
-            TraverseScene(null, HandleMouseHover);
+            rootSceneNode.TraverseScene(null, HandleMouseHover);
 
             // MouseLeave on all elements that are no longer hovered
             foreach (UIElement element in previousHoverStack.Except(hoverStack)) {
@@ -222,7 +222,7 @@ namespace Forge.UX.UI {
                 element.Process(state);
             }
 
-            TraverseScene(null, HandleProcessing);
+            rootSceneNode.TraverseScene(null, HandleProcessing);
 
             // Handle Mouse click events:
             Keys[] keys = { Keys.LButton, Keys.MButton, Keys.RButton };
@@ -249,7 +249,7 @@ namespace Forge.UX.UI {
 
         void RenderScene() {
             Renderer.ClearScreen();
-            TraverseScene(RenderGroup, RenderComponents, true);
+            rootSceneNode.TraverseScene(RenderGroup, RenderComponents, true);
 
             foreach (UIElement element in GetAllElements()) {
                 element.IsDirty = false;
@@ -272,43 +272,6 @@ namespace Forge.UX.UI {
             Renderer.RenderGroup(group, state);
         }
 
-        void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement) {
-            TraverseScene(OnGroup, OnElement, (g) => false);
-        }
-
-        void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement, bool skipInvisible) {
-            TraverseScene(OnGroup, OnElement, (g) => skipInvisible && !g.Visible);
-        }
-
-        void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement, Func<UIGroup, bool> ShouldSkipGroup) {
-            void TraverseElement(UIElement element, SceneGraphState state) {
-                if (element is UIGroup g) {
-                    if (!ShouldSkipGroup(g)) {
-                        TraverseGroup(g, state);
-                    }
-                } else {
-                    OnElement(element, state);
-                }
-            }
-
-            void TraverseGroup(UIGroup group, SceneGraphState state) {
-                if (group != rootSceneNode)
-                    OnElement(group, state);
-
-                SceneGraphState newState = state.ApplyGroup(group);
-
-                foreach (UIElement el in group.GetSortedElements()) {
-                    TraverseElement(el, newState);
-                }
-
-                if (group != rootSceneNode)
-                    OnGroup?.Invoke(group, state);
-            }
-
-            SceneGraphState baseState = SceneGraphState.Default(rootSceneNode);
-            TraverseGroup(rootSceneNode, baseState);
-        }
-
         class RootNode : UIGroup {
             public override Vector2 Size {
                 get => DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
@@ -323,6 +286,8 @@ namespace Forge.UX.UI {
                 ProcessInputEvents = false;
                 ProcessUnhandledInputEvents = false;
                 ProcessWindowsInputEvents = false;
+
+                Elements.CollectionChanged += (sender, args) => InvalidateLayout();
             }
 
             // Override the default UIGroup behavior to prevent all child groups from being marked as dirty involuntarily

@@ -29,7 +29,7 @@ namespace Forge.UX.UI.Elements.Interaction {
         public string Text {
             get => TextComponent?.Text ?? "";
             set {
-                IsDirty = true;
+                Dirty();
                 TextComponent.Text = value;
             }
         }
@@ -40,7 +40,7 @@ namespace Forge.UX.UI.Elements.Interaction {
         public Vector2 TextOffset {
             get => TextComponent.Position;
             set {
-                IsDirty = true;
+                Dirty();
                 TextComponent.Position = value;
             }
         }
@@ -51,7 +51,7 @@ namespace Forge.UX.UI.Elements.Interaction {
         public Vector2 TextSize {
             get => TextComponent.Size;
             set {
-                IsDirty = true;
+                Dirty();
                 TextComponent.Size = value;
             }
         }
@@ -94,7 +94,7 @@ namespace Forge.UX.UI.Elements.Interaction {
                     interactionStarted = false;
                 }
 
-                IsDirty = true;
+                Dirty();
                 enabled = value;
             }
         }

@@ -70,9 +70,10 @@ public struct SceneGraphState {
         return next;
     }
 
-    public static SceneGraphState Default(UIGroup container) {
+    public static SceneGraphState Default(UIGroup? container = null) {
         Vector2 screenSize = DI.Dependencies.Resolve<IRenderer>().GetScreenSize();
 
+        //TODO: change container to screen size
         return new SceneGraphState(Vector2.Zero, Vector2.Zero, Vector2.One, new Vector4(0, 0, screenSize.X, screenSize.Y), 0, container);
     }
 

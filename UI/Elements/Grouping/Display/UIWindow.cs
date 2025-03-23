@@ -40,7 +40,6 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
 
             if (dragging && im.IsMouseOnScreen() && im.MouseDelta.LengthSquared() > 0) {
                 Position += im.MouseDelta;
-                IsDirty = true;
 
                 bool clipToContainer = true;
                 // Clip to container:
@@ -51,6 +50,8 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
                         Math.Clamp(Position.Y, 0, containerSize.Y - Size.Y)
                     );
                 }
+
+                Dirty();
             }
         }
 
@@ -68,6 +69,10 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
 
                 @event.IsHandled = true;
             }
+
+            if (@event.Key is Keys.LButton or Keys.RButton or Keys.MButton || @event.Type == InputType.MouseEnter) {
+                @event.IsHandled = true;
+            }
         }
 
 
@@ -78,14 +83,14 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
 
         public void Open() {
             Visible = true;
-            IsDirty = true;
+            Dirty();
 
             Opened?.Invoke(this);
         }
 
         public void Close() {
             Visible = false;
-            IsDirty = true;
+            Dirty();
 
             Closed?.Invoke(this);
         }

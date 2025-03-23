@@ -15,12 +15,14 @@ namespace Forge.UX.UI.Elements {
         public virtual List<IUIComponent> Components { get; protected set; } = new List<IUIComponent>();
 
         private Vector2 size;
-
         public virtual Vector2 Size {
             get => size;
             set {
-                IsDirty = true;
+                bool changed = size != value;
                 size = value;
+                if (!changed) return;
+                Dirty();
+                InvalidateLayout();
             }
         }
 
@@ -29,8 +31,11 @@ namespace Forge.UX.UI.Elements {
         public virtual Vector2 Position {
             get => position;
             set {
-                IsDirty = true;
+                bool changed = position != value;
                 position = value;
+                if (!changed) return;
+                Dirty();
+                InvalidateLayout();
             }
         }
 
@@ -42,15 +47,35 @@ namespace Forge.UX.UI.Elements {
         /// </remarks>
         public IElementData? Data { get; set; }
 
+        private (PositioningMode x, PositioningMode y) _positionMode = (PositioningMode.Normal, PositioningMode.Normal);
         /// <summary>
         /// Whether the element is positioned in screen space coordinates, or relative to its group parent or relative to the screen size
         /// </summary>
-        public virtual (PositioningMode x, PositioningMode y) PositionMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
+        public virtual (PositioningMode x, PositioningMode y) PositionMode {
+            get => _positionMode;
+            set {
+                bool changed = _positionMode != value;
+                _positionMode = value;
+                if (!changed) return;
+                Dirty();
+                InvalidateLayout();
+            }
+        }
 
+        private (PositioningMode width, PositioningMode height) _sizeMode = (PositioningMode.Normal, PositioningMode.Normal);
         /// <summary>
         /// Whether the element is sized in screen space coordinates, or relative to its group parent or relative to the screen size
         /// </summary>
-        public virtual (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
+        public virtual (PositioningMode width, PositioningMode height) SizeMode {
+            get => _sizeMode;
+            set {
+                bool changed = _sizeMode != value;
+                _sizeMode = value;
+                if (!changed) return;
+                Dirty();
+                InvalidateLayout();
+            }
+        }
 
         private bool _visible = true;
         /// <summary> Whether the element is visible during rendering phase </summary>
@@ -101,8 +126,18 @@ namespace Forge.UX.UI.Elements {
             this.IsDirty = true;
         }
 
+        private int _zIndex = 0;
         ///<summary>The lower the further behind: 0 &lt; 100 &lt; 1000</summary>
-        public int ZIndex = 0;
+        public int ZIndex {
+            get => _zIndex;
+            set {
+                bool changed = _zIndex != value;
+                _zIndex = value;
+                if (!changed) return;
+                Dirty();
+                InvalidateLayout();
+            }
+        }
 
         /// <summary>
         /// Whether the element is currently being hovered by the mouse.
@@ -120,7 +155,7 @@ namespace Forge.UX.UI.Elements {
         public void Hide() {
             if (!Visible) return;
             Visible = false;
-            IsDirty = true;
+            Dirty();
         }
 
         /// <summary>
@@ -129,7 +164,7 @@ namespace Forge.UX.UI.Elements {
         public void Show() {
             if (Visible) return;
             Visible = true;
-            IsDirty = true;
+            Dirty();
         }
 
         #region Mouse Events
@@ -146,20 +181,35 @@ namespace Forge.UX.UI.Elements {
         public virtual void OnMouseGlobalClickUp(int mb) { }
         #endregion
 
-        /// <summary>
-        /// The manager of the scene tree that this element is attached to
-        /// </summary>
-        public SceneManager? AttachedManager { get; protected set; }
+        public virtual void InvalidateLayout() {
+            _graphState = null;
+        }
+
+        protected SceneGraphState? _graphState;
+
+        public virtual SceneGraphState GraphState {
+            get {
+                // On demand creation of the graph state
+                if (Parent != null) {
+                    _graphState ??= Parent.GraphState;
+                } else {
+                    _graphState ??= SceneGraphState.Default();
+                }
+
+                return _graphState.Value;
+            }
+            set => _graphState = value;
+        }
 
         /// <summary>
         /// The parent group of this element
         /// </summary>
         public UIGroup? Parent { get; protected set; }
 
-        public virtual void Attach(SceneManager manager, UIGroup? parent) {
-            AttachedManager = manager;
+        public virtual void Attach(UIGroup? parent) {
             Parent = parent;
             IsDirty = true;
+            InvalidateLayout();
         }
 
         /// <summary>

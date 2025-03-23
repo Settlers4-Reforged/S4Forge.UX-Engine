@@ -23,6 +23,23 @@ namespace Forge.UX.UI.Elements.Grouping {
 
         public bool ClipContent { get; set; } = false;
 
+
+        public override void InvalidateLayout() {
+            base.InvalidateLayout();
+            foreach (UIElement element in Elements.GetAllElementsInTree()) {
+                element.InvalidateLayout();
+            }
+        }
+
+        public override SceneGraphState GraphState {
+            get {
+                // On demand creation of the graph state
+                _graphState ??= Parent?.GraphState.ApplyGroup(this) ?? SceneGraphState.Default(this).ApplyGroup(this);
+                return _graphState.Value;
+            }
+            set => _graphState = value;
+        }
+
         public override bool IsDirty {
             get => base.IsDirty;
             set {
@@ -39,9 +56,29 @@ namespace Forge.UX.UI.Elements.Grouping {
             }
         }
 
-        public Vector4 Padding { get; set; } = Vector4.Zero;
+        private Vector4 _padding = Vector4.Zero;
+        public Vector4 Padding {
+            get => _padding;
+            set {
+                bool changed = _padding != value;
+                _padding = value;
+                if (!changed) return;
+                InvalidateLayout();
+                Dirty();
+            }
+        }
 
-        public Vector2 Offset { get; set; } = Vector2.Zero;
+        private Vector2 _offset = Vector2.Zero;
+        public Vector2 Offset {
+            get => _offset;
+            set {
+                bool changed = _offset != value;
+                _offset = value;
+                if (!changed) return;
+                InvalidateLayout();
+                Dirty();
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether the group is transparent in layout behavior.
@@ -70,6 +107,7 @@ namespace Forge.UX.UI.Elements.Grouping {
         }
 
         public IEnumerable<UIElement> GetSortedElements() {
+            //TODO: cache ordering (or make it order on insert)
             return Elements.OrderBy(element => element.ZIndex);
         }
 
@@ -87,15 +125,54 @@ namespace Forge.UX.UI.Elements.Grouping {
             return null;
         }
 
-        public override void Attach(SceneManager manager, UIGroup? owner) {
-            base.Attach(manager, owner);
-            Elements.Attach(manager, this);
+        public override void Attach(UIGroup? owner) {
+            base.Attach(owner);
+            Elements.Attach(this);
         }
 
         public virtual void Relayout() {
+            InvalidateLayout();
+
             foreach (IUILayout element in Elements.OfType<IUILayout>()) {
                 element.Relayout();
             }
+        }
+
+
+        public void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement) {
+            TraverseScene(OnGroup, OnElement, (g) => false);
+        }
+
+        public void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement, bool skipInvisible) {
+            TraverseScene(OnGroup, OnElement, (g) => skipInvisible && !g.Visible);
+        }
+
+        public void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement, Func<UIGroup, bool> ShouldSkipGroup) {
+            void TraverseElement(UIElement element, SceneGraphState state) {
+                if (element is UIGroup g) {
+                    if (!ShouldSkipGroup(g)) {
+                        TraverseGroup(g, state);
+                    }
+                } else {
+                    OnElement(element, state);
+                }
+            }
+
+            void TraverseGroup(UIGroup group, SceneGraphState state) {
+                if (group != this)
+                    OnElement(group, state);
+
+                SceneGraphState newState = group.GraphState;
+
+                foreach (UIElement el in group.GetSortedElements()) {
+                    TraverseElement(el, newState);
+                }
+
+                if (group != this)
+                    OnGroup?.Invoke(group, state);
+            }
+
+            TraverseGroup(this, GraphState);
         }
     }
 }
