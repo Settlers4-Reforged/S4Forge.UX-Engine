@@ -17,6 +17,7 @@ namespace Forge.UX.UI.Components {
         public string Text { get; set; }
 
         public bool FitText { get; set; } = true;
+        public Vector2 CalculatedSize { get; set; } = Vector2.Zero;
 
         public TextStyle Style { get; set; }
 

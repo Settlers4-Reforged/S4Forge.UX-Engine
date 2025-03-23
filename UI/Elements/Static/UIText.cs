@@ -27,6 +27,9 @@ namespace Forge.UX.UI.Elements.Static {
             if (BindingGetValue != null) {
                 Text = BindingGetValue(this);
             }
+
+            Size = TextComponent.CalculatedSize;
+            SizeMode = (PositioningMode.Normal, PositioningMode.Normal);
         }
 
         /// <summary>
