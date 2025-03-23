@@ -44,6 +44,7 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
             S4UIScreen activeScreen = AttachedScreen == null ? S4UIScreen.Unknown : uiManager.GetActiveScreen();
 
             if (
+                (AttachedMenu == null && AttachedSubmenu == null && AttachedScreen == null) ||
                 AttachedMenu?.HasFlag(activeMenu) == true ||
                 AttachedSubmenu?.HasFlag(activeSubmenu) == true ||
                 AttachedScreen?.HasFlag(activeScreen) == true
@@ -52,6 +53,8 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
             } else {
                 OnClose();
             }
+
+            //TODO: add unmounting of child elements to prevent Process calls on UI that's not shown
         }
 
 
