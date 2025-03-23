@@ -54,13 +54,7 @@ public struct SceneGraphState {
         // NOTE:For consideration... Clipping inside or outside of padding?
         if (group.ClipContent) {
             Vector4 newRect = new Vector4(next.CurrentPosition, next.CurrentContainerSize.X, next.CurrentContainerSize.Y);
-
-            float x1 = Math.Max(ClippingRect.X, newRect.X);
-            float x2 = Math.Min(ClippingRect.X + ClippingRect.Z, newRect.X + newRect.Z);
-            float y1 = Math.Max(ClippingRect.Y, newRect.Y);
-            float y2 = Math.Min(ClippingRect.Y + ClippingRect.W, newRect.Y + newRect.W);
-
-            next.ClippingRect = new Vector4(x1, y1, x2 - x1, y2 - y1);
+            next.ClippingRect = newRect.Intersection(ClippingRect);
         }
 
         // Apply offset after clipping to not "scroll" the clip as well
