@@ -89,6 +89,13 @@ namespace Forge.UX {
                     return;
                 }
 
+                IRendererConfig config = DI.Resolve<IRendererConfig>();
+                unsafe {
+                    config.SetConfig<IntPtr>("forge.d3d9.direct3d", (IntPtr)surface.Direct3D);
+                    config.SetConfig<IntPtr>("forge.d3d9.device", (IntPtr)surface.Device);
+                    config.SetConfig<Surface>("forge.d3d9.surface", surface);
+                }
+
                 Logger.LogInfo($"UXEngine is ready to render with {DI.Dependencies.Resolve<IRenderer>().Name}");
 
                 DI.Resolve<ITextureCollectionManager>().RegisterDefaults();
