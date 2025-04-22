@@ -51,13 +51,13 @@
         <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
             <ItemGroup>
                 <ProjectReference Include="..\..\..\..\Forge\S4Forge.csproj" />
-                <ProjectReference Include="..\..\..\..\APIWrapper\S4APIWrapper.vcxproj" />
+                <ProjectReference Include="..\..\..\..\APIWrapper\S4ForgeBootstrapper.vcxproj" />
             </ItemGroup>
         </When>
         <Otherwise>
             <ItemGroup>
                 <PackageReference Include="S4Forge" Version="*" />
-                <PackageReference Include="S4APIWrapper" Version="*" />
+                <PackageReference Include="S4Forge.Bootstrapper" Version="*" />
             </ItemGroup>
         </Otherwise>
     </Choose>

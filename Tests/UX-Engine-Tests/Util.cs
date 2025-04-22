@@ -12,7 +12,7 @@ namespace UX_Engine_Tests {
                 string assemblyName = new AssemblyName(args.Name).Name;
                 return assemblyName switch {
                     "S4Forge" => Assembly.LoadFile(Environment.CurrentDirectory + "\\S4Forge.dll"),
-                    "S4APIWrapper" => Assembly.LoadFile(Environment.CurrentDirectory + "\\S4APIWrapper.asi"),
+                    "S4ForgeBootstrapper" => Assembly.LoadFile(Environment.CurrentDirectory + "\\S4ForgeBootstrapper.asi"),
                     _ => null
                 };
             };

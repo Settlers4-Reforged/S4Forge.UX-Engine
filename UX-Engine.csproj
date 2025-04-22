@@ -17,19 +17,26 @@
 
     <PropertyGroup>
         <!--NuGet Package settings:-->
-        <Title>UX-Engine</Title>
+        <Title>S4Forge UX-Engine</Title>
+        <PackageId>S4Forge.UX-Engine</PackageId>
         <Authors>WizzardMaker</Authors>
         <Description>
             Forge UX-Engine for Settlers 4
         </Description>
-        <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <PackageOutputPath>$(SolutionDir)BUILD\NuGet\</PackageOutputPath>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <FileVersion>$(AssemblyVersion)</FileVersion>
         <Version>$(AssemblyVersion)</Version>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+
+        <RepositoryUrl>https://github.com/Settlers-4-Reforged/S4Forge.UX-Engine</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    </PropertyGroup>
+        <IncludeSymbols>true</IncludeSymbols>
+    
+</PropertyGroup>
 
     <Choose>
         <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
@@ -40,7 +47,7 @@
         <Otherwise>
             <ItemGroup>
                 <PackageReference Include="S4Forge" Version="0.8.*" />
-                <PackageReference Include="S4APIWrapper" Version="*" />
+                <PackageReference Include="S4Forge.Bootstrapper" Version="*" PrivateAssets="All"/>
             </ItemGroup>
         </Otherwise>
     </Choose>
@@ -50,18 +57,16 @@
         <Compile Remove="Tests\**" />
         <EmbeddedResource Remove="Tests\**" />
         <None Remove="Tests\**" />
+        
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 
     <ItemGroup>
         <PackageReference Include="System.Numerics.Vectors" Version="4.4.0" />
-        <PackageReference Include="DasMulli.DataBuilderGenerator" Version="2.0.0" ReferenceOutputAssembly="false">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.SourceLink.GitLab" Version="1.1.1" PrivateAssets="All" />
-        <PackageReference Include="ForgeSDK" Version="0.4.0">
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
+        <PackageReference Include="DasMulli.DataBuilderGenerator" Version="2.0.0" ReferenceOutputAssembly="false"  PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+        <PackageReference Include="S4Forge.SDK" Version="*" PrivateAssets="All"/>
     </ItemGroup>
 
     <Import Project="$(ProjectDir)ForgeBuild.props" />
