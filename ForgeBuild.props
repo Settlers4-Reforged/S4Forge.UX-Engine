@@ -10,7 +10,6 @@
         <ManifestId>UXEngine</ManifestId>
         <ManifestName>UX-Engine</ManifestName>
         <ManifestType>$(ProjectType)</ManifestType>
-        <ManifestAssetUrl>https://</ManifestAssetUrl>
         <ManifestClearResidualFiles>false</ManifestClearResidualFiles>
         <ManifestEmbedded>true</ManifestEmbedded>
     </PropertyGroup>

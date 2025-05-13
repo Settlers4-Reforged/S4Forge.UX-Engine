@@ -15,7 +15,7 @@ using Microsoft.DirectX.DirectDraw;
 using System;
 
 namespace Forge.UX {
-    public class UXEngine : IEngine, IAfterPluginsLoaded {
+    public class UXEngine : IEngine, IAfterModulesLoaded {
         public string Name => "UXEngine";
 
         private readonly S4Forge forge;
@@ -80,7 +80,7 @@ namespace Forge.UX {
             latestImplementationPriority = implementationPriority;
         }
 
-        public void AfterPluginsLoaded() {
+        public void AfterModulesLoaded() {
             void PrepareOnFirstFrame(Surface? surface, int frameCount) {
                 if (DI.Dependencies.IsRegistered<IRenderer>() == false) {
                     //TODO: Add dummy renderer or throw exception

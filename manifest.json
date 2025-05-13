@@ -2,11 +2,11 @@
   "name": "UX-Engine",
   "id": "UXEngine",
   "assets": {
-    "uri": "https://"
+    "uri": "https://github.com/Settlers-4-Reforged/S4Forge.UX-Engine/releases/download/latest/UX-Engine.1.0.0.zip"
   },
   "clearResidualFiles": false,
   "version": "1.0.0",
-  "type": "Engine",
+  "type": "engine",
   "relationships": [
     {
       "id": "Forge",

@@ -26,12 +26,12 @@ namespace Forge.UX.Plugin {
         /// </summary>
         /// <param name="path">Either a relative path, or an absolute path. On a relative path, the base is determined by the PluginEnvironment&lt;TPlugin&gt;</param>
         /// <returns>The file contents</returns>
-        protected string FromFile<TPlugin>(string path) where TPlugin : IPlugin {
+        protected string FromFile<TModule>(string path) where TModule : IModule {
             string absolutePath;
             if (Path.IsPathFullyQualified(path)) {
                 absolutePath = path;
             } else {
-                string pluginBasePath = DI.Resolve<PluginEnvironment<TPlugin>>().Path;
+                string pluginBasePath = DI.Resolve<ModuleEnvironment<TModule>>().Path;
                 absolutePath = Path.Combine(pluginBasePath, path);
             }
 
