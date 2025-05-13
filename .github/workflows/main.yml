@@ -11,3 +11,6 @@ jobs:
     with:
       package_name: S4Forge.UX-Engine
     secrets: inherit
+  release-package:
+    uses: Settlers4-Reforged/S4Forge.SDK/.github/workflows/release-workflow.yml@main
+    secrets: inherit
