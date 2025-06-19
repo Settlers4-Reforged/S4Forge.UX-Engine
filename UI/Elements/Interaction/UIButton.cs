@@ -151,7 +151,7 @@ namespace Forge.UX.UI.Elements.Interaction {
         public override void Input(ref InputEvent @event) {
             base.Input(ref @event);
 
-            if (!Visible) return;
+            if (!Visible && @event.Type != InputType.MouseLeave) return;
             if (!Enabled) return;
 
             if (@event.Key == Keys.LButton) {
@@ -189,9 +189,9 @@ namespace Forge.UX.UI.Elements.Interaction {
                     @event.IsHandled = true;
                     return;
                 case InputType.MouseLeave:
-                    TextureComponent.Effects &= ~Effects.Highlight;
-                    Dirty();
-                    SetState(State.Up);
+            TextureComponent.Effects &= ~Effects.Highlight;
+            Dirty();
+            SetState(State.Up);
 
                     @event.IsHandled = true;
                     return;
