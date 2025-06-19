@@ -179,8 +179,10 @@ namespace Forge.UX.UI.Elements.Interaction {
 
             switch (@event.Type) {
                 case InputType.MouseEnter:
-                    TextureComponent.Effects |= Effects.Highlight;
-                    Dirty();
+                    if (!TextureComponent.Effects.HasFlag(Effects.Highlight)) {
+                        TextureComponent.Effects |= Effects.Highlight;
+                        Dirty();
+                    }
 
                     if (interactionStarted) {
                         SetState(State.Down);
@@ -189,9 +191,9 @@ namespace Forge.UX.UI.Elements.Interaction {
                     @event.IsHandled = true;
                     return;
                 case InputType.MouseLeave:
-            TextureComponent.Effects &= ~Effects.Highlight;
-            Dirty();
-            SetState(State.Up);
+                    TextureComponent.Effects &= ~Effects.Highlight;
+                    Dirty();
+                    SetState(State.Up);
 
                     @event.IsHandled = true;
                     return;
