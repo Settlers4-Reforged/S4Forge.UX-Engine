@@ -11,12 +11,12 @@ using Forge.UX.S4;
 using Forge.UX.UI.Components;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
-using Forge.UX.UI.Elements.Grouping.Display;
 using Forge.UX.UI.Elements.Interaction;
 using Forge.UX.UI.Prefabs;
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Numerics;
 
@@ -101,10 +101,22 @@ namespace Forge.UX.UI {
             rootSceneNode.Elements.Add(e);
         }
 
+
+        UIElement HighestParent(UIElement element) {
+            UIElement? parent = element;
+            while (parent?.Parent != null && parent.Parent is not RootNode) {
+                parent = parent.Parent;
+            }
+            return parent ?? element;
+        }
+
         /// <summary>
         /// Stack of elements that are currently hovered over
         /// </summary>
-        private readonly Stack<UIElement> hoverStack = new Stack<UIElement>();
+        public Stack<UIElement> hoverStack = new Stack<UIElement>();
+        Stack<UIElement> previousHoverStack = new Stack<UIElement>();
+        Stack<UIElement> sortedHoverStack = new Stack<UIElement>();
+        Stack<UIElement> intermediateHoverStack = new Stack<UIElement>();
 
         private void HandleInput(ref InputEvent e) {
             IEnumerable<UIElement> elementStack = hoverStack;
@@ -161,59 +173,88 @@ namespace Forge.UX.UI {
             rootSceneNode.TraverseScene(null, (e, _) => { e.Tick(); });
         }
 
+        UIElement? activeHoverElement = null;
         void ProcessScene() {
             #region Mouse
 
-            UIElement? currentHoverElement = null;
-            int currentHoverDepth = int.MinValue;
-
             void HandleMouseHover(UIElement element, SceneGraphState state) {
-                bool isHigherThanCurrent = currentHoverElement == null || element.ZIndex + state.Depth >= currentHoverElement.ZIndex + currentHoverDepth;
-
-                if (isHigherThanCurrent && element.ProcessInputEvents) {
+                if (element.ProcessInputEvents) {
                     (Vector2 elementPosition, Vector2 elementSize) = state.TranslateElement(element);
 
-                    bool mouseIsInElement = inputManager.IsMouseInRectangle(new Vector4(elementPosition, elementSize.X, elementSize.Y));
+                    Vector2 positionPadding = new Vector2(state.ContainerGroup?.Padding.X ?? 0, state.ContainerGroup?.Padding.Y ?? 0);
+                    Vector2 sizePadding = new Vector2(state.ContainerGroup?.Padding.Z ?? 0, state.ContainerGroup?.Padding.W ?? 0);
+                    elementPosition -= positionPadding;
+                    elementSize += sizePadding + positionPadding;
+
+                    Vector4 elementRect = new Vector4(elementPosition, elementSize.X, elementSize.Y);
+                    bool mouseIsInElement = inputManager.IsMouseInRectangle(elementRect.Intersection(state.ClippingRect));
                     if (!mouseIsInElement) {
-                        element.IsMouseHover = false;
                         return;
                     }
 
-                    element.IsMouseHover = true;
                     hoverStack.Push(element);
-
-                    currentHoverElement = element;
-                    currentHoverDepth = state.Depth;
                 } else {
                     element.IsMouseHover = false;
                 }
             }
 
-            var previousHoverStack = new Stack<UIElement>(hoverStack);
+            (hoverStack, previousHoverStack) = (previousHoverStack, hoverStack);
             hoverStack.Clear();
             rootSceneNode.TraverseScene(null, HandleMouseHover);
 
-            // MouseLeave on all elements that are no longer hovered
-            foreach (UIElement element in previousHoverStack.Except(hoverStack)) {
-                if (!element.IsMouseHover) {
-                    InputEvent inputEvent = new InputEvent() {
-                        Type = InputType.MouseLeave
-                    };
-                    element.Input(ref inputEvent);
+            // Reverse the hoverStack to conform to the rendering order
+            // This has to keep groups together
+            sortedHoverStack.Clear();
+            UIElement? highestParent = null;
+            foreach (var element in hoverStack) {
+                UIElement parent = HighestParent(element);
+
+                if (highestParent != parent) {
+                    foreach (var queued in intermediateHoverStack) {
+                        sortedHoverStack.Push(queued);
+                    }
+
+                    intermediateHoverStack.Clear();
+                    highestParent = parent;
                 }
+                intermediateHoverStack.Push(element);
             }
 
-            // MouseEnter on all elements that are newly hovered
-            foreach (UIElement element in hoverStack.Except(previousHoverStack)) {
-                if (element.IsMouseHover) {
-                    InputEvent inputEvent = new InputEvent() {
-                        Type = InputType.MouseEnter
-                    };
+            // Push any remaining elements in the intermediate stack
+            foreach (var queued in intermediateHoverStack) {
+                sortedHoverStack.Push(queued);
+            }
+            (hoverStack, sortedHoverStack) = (sortedHoverStack, hoverStack);
 
-                    element.Input(ref inputEvent);
-                    if (inputEvent.IsHandled)
-                        break;
+            UIElement prevActiveHoverElement = activeHoverElement;
+
+            InputEvent leaveEvent = new InputEvent() {
+                Type = InputType.MouseLeave
+            };
+            // MouseLeave on all elements that are no longer hovered
+            foreach (UIElement element in previousHoverStack.Except(hoverStack)) {
+                if (element.IsMouseHover) continue;
+
+                element.Input(ref leaveEvent);
+                if (activeHoverElement == element) {
+                    activeHoverElement = null;
                 }
+            }
+            InputEvent enterEvent = new InputEvent() {
+                Type = InputType.MouseEnter
+            };
+            // MouseEnter on all elements that are newly hovered
+            // Stop when an element handled the event
+            foreach (UIElement element in hoverStack) {
+                element.Input(ref enterEvent);
+
+                if (!enterEvent.IsHandled) continue;
+                activeHoverElement = element;
+                break;
+            }
+
+            if (prevActiveHoverElement != activeHoverElement) {
+                prevActiveHoverElement?.Input(ref leaveEvent);
             }
 
             #endregion
