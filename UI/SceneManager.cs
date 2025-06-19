@@ -289,7 +289,6 @@ namespace Forge.UX.UI {
 
 
         void RenderScene() {
-            Renderer.ClearScreen();
             rootSceneNode.TraverseScene(RenderGroup, RenderComponents, true);
 
             foreach (UIElement element in GetAllElements()) {
