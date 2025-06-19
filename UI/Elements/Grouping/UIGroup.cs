@@ -118,7 +118,9 @@ namespace Forge.UX.UI.Elements.Grouping {
                 }
 
                 if (element is UIGroup g) {
-                    return g.GetElement(id);
+                    UIElement? found = g.GetElement(id);
+                    if (found != null)
+                        return found;
                 }
             }
 
