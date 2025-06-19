@@ -140,17 +140,19 @@ namespace Forge.UX.UI.Elements.Grouping {
             }
         }
 
+        public delegate void GroupAction(UIGroup group, in SceneGraphState state);
+        public delegate void ElementAction(UIElement element, in SceneGraphState state);
 
-        public void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement) {
+        public void TraverseScene(GroupAction? OnGroup, ElementAction OnElement) {
             TraverseScene(OnGroup, OnElement, (g) => false);
         }
 
-        public void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement, bool skipInvisible) {
+        public void TraverseScene(GroupAction? OnGroup, ElementAction OnElement, bool skipInvisible) {
             TraverseScene(OnGroup, OnElement, (g) => skipInvisible && !g.Visible);
         }
 
-        public void TraverseScene(Action<UIGroup, SceneGraphState>? OnGroup, Action<UIElement, SceneGraphState> OnElement, Func<UIGroup, bool> ShouldSkipGroup) {
-            void TraverseElement(UIElement element, SceneGraphState state) {
+        public void TraverseScene(GroupAction? OnGroup, ElementAction OnElement, Func<UIGroup, bool> ShouldSkipGroup) {
+            void TraverseElement(UIElement element, in SceneGraphState state) {
                 if (element is UIGroup g) {
                     if (!ShouldSkipGroup(g)) {
                         TraverseGroup(g, state);
@@ -160,7 +162,7 @@ namespace Forge.UX.UI.Elements.Grouping {
                 }
             }
 
-            void TraverseGroup(UIGroup group, SceneGraphState state) {
+            void TraverseGroup(UIGroup group, in SceneGraphState state) {
                 if (group != this)
                     OnElement(group, state);
 

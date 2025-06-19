@@ -170,14 +170,17 @@ namespace Forge.UX.UI {
         }
 
         void ProcessTick() {
-            rootSceneNode.TraverseScene(null, (e, _) => { e.Tick(); });
+            static void TickElement(UIElement element, in SceneGraphState state) {
+                element.Tick();
+            }
+            rootSceneNode.TraverseScene(null, TickElement);
         }
 
         UIElement? activeHoverElement = null;
         void ProcessScene() {
             #region Mouse
 
-            void HandleMouseHover(UIElement element, SceneGraphState state) {
+            void HandleMouseHover(UIElement element, in SceneGraphState state) {
                 if (element.ProcessInputEvents) {
                     (Vector2 elementPosition, Vector2 elementSize) = state.TranslateElement(element);
 
@@ -259,7 +262,7 @@ namespace Forge.UX.UI {
 
             #endregion
 
-            void HandleProcessing(UIElement element, SceneGraphState state) {
+            void HandleProcessing(UIElement element, in SceneGraphState state) {
                 element.Process(state);
             }
 
@@ -296,7 +299,7 @@ namespace Forge.UX.UI {
             }
         }
 
-        void RenderComponents(UIElement parent, SceneGraphState state) {
+        void RenderComponents(UIElement parent, in SceneGraphState state) {
             if (!parent.IsDirty || !parent.Visible)
                 return;
 
@@ -305,7 +308,7 @@ namespace Forge.UX.UI {
             }
         }
 
-        void RenderGroup(UIGroup group, SceneGraphState state) {
+        void RenderGroup(UIGroup group, in SceneGraphState state) {
             if (group is { Visible: false, IsDirty: false })
                 return;
 

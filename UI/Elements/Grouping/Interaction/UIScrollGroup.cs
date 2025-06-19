@@ -59,10 +59,12 @@ namespace Forge.UX.UI.Elements.Grouping.Interaction {
         private void UpdateChildSize() {
             childSize = Vector2.Zero;
 
-            this.TraverseScene(null, (element, state) => {
+            void UpdateSize(UIElement element, in SceneGraphState state) {
                 Vector2 size = state.TranslateElement(element).size;
                 childSize = Vector2.Max(childSize, size);
-            });
+            }
+
+            this.TraverseScene(null, UpdateSize);
         }
     }
 }
