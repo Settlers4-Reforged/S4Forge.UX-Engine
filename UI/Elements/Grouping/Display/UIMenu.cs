@@ -54,6 +54,8 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
                 OnClose();
             }
 
+            base.Process(state);
+
             //TODO: add unmounting of child elements to prevent Process calls on UI that's not shown
         }
 
