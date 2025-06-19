@@ -28,8 +28,10 @@ namespace Forge.UX.UI.Elements.Static {
                 Text = BindingGetValue(this);
             }
 
-            Size = TextComponent.CalculatedSize;
-            SizeMode = (PositioningMode.Normal, PositioningMode.Normal);
+            if (!TextComponent.Style.Wrapped) {
+                Size = TextComponent.CalculatedSize;
+                SizeMode = (PositioningMode.Normal, PositioningMode.Normal);
+            }
         }
 
         /// <summary>

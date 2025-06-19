@@ -19,6 +19,7 @@ namespace Forge.UX.UI.Prefabs.Text {
         protected override void OverrideDefaults() {
             base.OverrideDefaults();
 
+            TextType.Default = TextStyleType.Bold;
             TextVerticalAlignment.Default = TextStyleAlignment.Start;
         }
     }
