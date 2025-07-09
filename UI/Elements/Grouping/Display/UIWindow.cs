@@ -46,8 +46,8 @@ namespace Forge.UX.UI.Elements.Grouping.Display {
                 if (clipToContainer) {
                     Vector2 containerSize = state.CurrentContainerSize;
                     Position = new Vector2(
-                        Math.Clamp(Position.X, 0, containerSize.X - Size.X),
-                        Math.Clamp(Position.Y, 0, containerSize.Y - Size.Y)
+                        Math.Clamp(Position.X, 0, Math.Max(0, containerSize.X - Size.X)),
+                        Math.Clamp(Position.Y, 0, Math.Max(0, containerSize.Y - Size.Y))
                     );
                 }
 
