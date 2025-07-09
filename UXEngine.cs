@@ -82,9 +82,12 @@ namespace Forge.UX {
 
         public void AfterModulesLoaded() {
             void PrepareOnFirstFrame(Surface? surface, int frameCount) {
+                DI.Resolve<IInputManager>().Init();
+
+                // Custom UI related systems init begins here:
                 if (DI.Dependencies.IsRegistered<IRenderer>() == false) {
                     //TODO: Add dummy renderer or throw exception
-                    Logger.LogWarn("UX Engine is missing a renderer implementation! Disabling all UX-Engine related systems");
+                    Logger.LogWarn("UX Engine is missing a renderer implementation! Disabling all custom UI related systems");
                     callbacks.OnFrame -= PrepareOnFirstFrame;
                     return;
                 }
@@ -104,7 +107,6 @@ namespace Forge.UX {
 
                 SceneManager sceneManager = DI.Resolve<SceneManager>();
                 sceneManager.Init();
-                DI.Resolve<IInputManager>().Init();
 
 
                 callbacks.OnTick += (uint tick, bool hasEvent, bool isDelayed) => {
