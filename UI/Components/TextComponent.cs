@@ -11,6 +11,7 @@ namespace Forge.UX.UI.Components {
         public Vector2 Position { get; set; } = Vector2.Zero;
         public (PositioningMode x, PositioningMode y) PositionMode { get; set; } = (PositioningMode.Normal, PositioningMode.Normal);
         public (PositioningMode width, PositioningMode height) SizeMode { get; set; } = (PositioningMode.Relative, PositioningMode.Relative);
+        public (PositioningAlignment x, PositioningAlignment y) Alignment { get; set; } = (PositioningAlignment.Start, PositioningAlignment.Start);
         public Effects Effects { get; set; }
         public IElementData? Data { get; set; }
 

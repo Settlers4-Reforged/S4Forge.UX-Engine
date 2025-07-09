@@ -44,6 +44,8 @@ namespace UX_Engine_Tests {
         }
 
         private void ImplementDI() {
+            DI.Dependencies.RegisterInstance<IRenderer>(renderer.Object, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+
             MockNativeApi();
 
             UXTestDependencies.AddTestDependencies();
@@ -51,7 +53,6 @@ namespace UX_Engine_Tests {
 
             DI.Dependencies.RegisterMany(new[] { typeof(TextureCollectionManagerMock) }, Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
             DI.Dependencies.Register(typeof(ITextureCollection<>), typeof(TextureCollectionManagerMock.TextureCollectionMock<>));
-            DI.Dependencies.RegisterInstance<IRenderer>(renderer.Object, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
         }
 
         public void Reset() {

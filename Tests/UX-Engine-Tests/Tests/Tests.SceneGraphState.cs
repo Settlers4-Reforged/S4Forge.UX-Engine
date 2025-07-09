@@ -36,7 +36,7 @@ namespace UX_Engine_Tests {
                         .WithId("header")
                         .WithSize(("100%", 10))
                         .WithPosition(("50%",0))
-                        .Build()
+                        .Build(),
                 })
                 .Build().Instantiate<UIGroup>();
 
@@ -55,7 +55,33 @@ namespace UX_Engine_Tests {
             Assert.That(header, Is.Not.Null);
             SceneGraphState headerState = header.GraphState;
             Assert.That(headerState.ContainerGroup, Is.EqualTo(stack));
+        }
 
+        [Test]
+        public void Test_SceneGraphState_Alignment() {
+            // Prepare
+            IoCSetup();
+            mocks.renderer.Setup(x => x.GetScreenSize()).Returns(new Vector2(1000, 1000));
+
+            SceneManager manager = DI.Resolve<SceneManager>();
+            SceneBuilder builder = DI.Resolve<SceneBuilder>();
+
+            manager.GetRootElements().Clear();
+
+            // Run
+            UIGroup stack = new GroupBuilder()
+                .WithSize((100, 100))
+                .WithPosition(("50%", "50%"))
+                .WithHorizontalAlignment(PositioningAlignment.Center)
+                .WithVerticalAlignment(PositioningAlignment.End)
+                .Build().Instantiate<UIGroup>();
+
+            manager.AddRootElement(stack);
+
+            Assert.That(manager.GetRootElements().Count, Is.EqualTo(1));
+
+            SceneGraphState stackState = stack.GraphState;
+            Assert.That(stackState.CurrentPosition, Is.EqualTo(new Vector2(500 - 50, 500 - 100)));
         }
     }
 }

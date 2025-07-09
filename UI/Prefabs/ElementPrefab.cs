@@ -33,6 +33,9 @@ namespace Forge.UX.UI.Prefabs {
         public Property<string> Id { get; set; } = new(nameof(Id), "Unique identifier for the element", () => Guid.NewGuid().ToString());
 
         public RelativeVector2Property Position { get; set; } = new(nameof(Position), "Position of the element", "X", "Y");
+        public EnumProperty<PositioningAlignment> HorizontalAlignment { get; set; } = new EnumProperty<PositioningAlignment>(nameof(HorizontalAlignment), "Horizontal alignment of the element, when relatively positioned");
+        public EnumProperty<PositioningAlignment> VerticalAlignment { get; set; } = new EnumProperty<PositioningAlignment>(nameof(VerticalAlignment), "Vertical alignment of the element, when relatively positioned");
+
         public RelativeVector2Property Size { get; set; } = new(nameof(Size), "Size of the element", "Width", "Height");
 
         public Property<bool> Visible { get; set; } = new(nameof(Visible), "Whether the element is visible", true);
@@ -45,6 +48,11 @@ namespace Forge.UX.UI.Prefabs {
             element.PositionMode = (
                 Position.X,
                 Position.Y
+            );
+
+            element.Alignment = (
+                HorizontalAlignment.Value,
+                VerticalAlignment.Value
             );
 
             element.SizeMode = (

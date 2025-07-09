@@ -45,7 +45,7 @@ public struct SceneGraphState {
 
         next.Depth++;
 
-        next.CurrentPosition = ApplyRelativeModeToPosition(group.Position, group.PositionMode);
+        next.CurrentPosition = ApplyRelativeModeToPosition(group.Position, group.Size, group.PositionMode, group.Alignment);
         next.CurrentContainerSize = ApplyRelativeModeToSize(group.Size, group.SizeMode);
 
 
@@ -85,7 +85,7 @@ public struct SceneGraphState {
         Vector2 relativePosition = element.Position;
 
         elementSize = ApplyRelativeModeToSize(elementSize, element.SizeMode);
-        relativePosition = ApplyRelativeModeToPosition(relativePosition, element.PositionMode, skipGroupOffset ? Vector2.Zero : null);
+        relativePosition = ApplyRelativeModeToPosition(relativePosition, elementSize, element.PositionMode, element.Alignment, skipGroupOffset ? Vector2.Zero : null);
 
         return (relativePosition, elementSize);
     }
@@ -100,7 +100,7 @@ public struct SceneGraphState {
         Vector2 componentPos = component.Position;
 
         componentSize = ApplyRelativeModeToSize(componentSize, component.SizeMode, transElement.size);
-        componentPos = ApplyRelativeModeToPosition(componentPos, component.PositionMode, transElement.size, transElement.position);
+        componentPos = ApplyRelativeModeToPosition(componentPos, componentSize, component.PositionMode, component.Alignment, transElement.size, transElement.position);
 
         return (componentPos, componentSize);
     }
@@ -130,7 +130,7 @@ public struct SceneGraphState {
         return output;
     }
 
-    private Vector2 ApplyRelativeModeToPosition(Vector2 target, (PositioningMode x, PositioningMode y) mode, Vector2? currentContainerSize = null, Vector2? currentPosition = null) {
+    private Vector2 ApplyRelativeModeToPosition(Vector2 target, Vector2 size, (PositioningMode x, PositioningMode y) mode, (PositioningAlignment x, PositioningAlignment y) alignment, Vector2? currentContainerSize = null, Vector2? currentPosition = null) {
         currentContainerSize ??= CurrentContainerSize;
         currentPosition ??= CurrentPosition;
 
@@ -147,11 +147,21 @@ public struct SceneGraphState {
             return output;
         }
 
+        Vector2 GetAlignedOffset(PositioningAlignment axisAlignment, Vector2 dir) {
+            Vector2 output = Vector2.Zero;
+            if (axisAlignment == PositioningAlignment.Center) {
+                output = -1 * dir * 0.5f * size;
+            } else if (axisAlignment == PositioningAlignment.End) {
+                output = -1 * dir * size;
+            }
+            return output;
+        }
+
         // First apply the relative mode to the position according to the current container size
         Vector2 output = ApplyRelativeModeToSize(target, mode, currentContainerSize);
-        // Then adjust the position by the current position of the group/container
-        output += GetAdjustedOffset(mode.x, Vector2.UnitX);
-        output += GetAdjustedOffset(mode.y, Vector2.UnitY);
+        // Then adjust the position by the current position of the group/container and their alignment
+        output += GetAdjustedOffset(mode.x, Vector2.UnitX) + (mode.x.HasFlag(PositioningMode.Relative) ? GetAlignedOffset(alignment.x, Vector2.UnitX) : Vector2.Zero);
+        output += GetAdjustedOffset(mode.y, Vector2.UnitY) + (mode.y.HasFlag(PositioningMode.Relative) ? GetAlignedOffset(alignment.y, Vector2.UnitY) : Vector2.Zero);
 
         return output;
     }

@@ -16,4 +16,10 @@ namespace Forge.UX.UI.Elements {
         /// <summary>relative to the screen - all values should be between 0..1</summary>
         AbsoluteRelative = Absolute | Relative,
     }
+
+    public enum PositioningAlignment {
+        Start = 0,
+        Center = 1,
+        End = 2,
+    }
 }

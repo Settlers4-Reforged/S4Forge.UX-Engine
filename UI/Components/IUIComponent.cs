@@ -17,6 +17,8 @@ namespace Forge.UX.UI.Components {
         /// </summary>
         public (PositioningMode width, PositioningMode height) SizeMode { get; set; }
 
+        public (PositioningAlignment x, PositioningAlignment y) Alignment { get; set; }
+
         public Effects Effects { get; set; }
 
         /// <summary>

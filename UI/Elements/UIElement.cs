@@ -62,6 +62,22 @@ namespace Forge.UX.UI.Elements {
             }
         }
 
+        private (PositioningAlignment x, PositioningAlignment y) _alignment = (PositioningAlignment.Start, PositioningAlignment.Start);
+
+        /// <summary>
+        /// Whether the element is aligned to the start, center or end of it's size when positioned relative to its parent or screen size
+        /// </summary>
+        public virtual (PositioningAlignment x, PositioningAlignment y) Alignment {
+            get => _alignment;
+            set {
+                bool changed = _alignment != value;
+                _alignment = value;
+                if (!changed) return;
+                Dirty();
+                InvalidateLayout();
+            }
+        }
+
         private (PositioningMode width, PositioningMode height) _sizeMode = (PositioningMode.Normal, PositioningMode.Normal);
         /// <summary>
         /// Whether the element is sized in screen space coordinates, or relative to its group parent or relative to the screen size
