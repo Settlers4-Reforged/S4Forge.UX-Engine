@@ -27,6 +27,10 @@ namespace Forge.UX.Testing {
             public ITexture GetTexture(string id) {
                 return new TextureMock();
             }
+
+            public ITexture[] GetTextures() {
+                throw new NotImplementedException();
+            }
         }
     }
 }
