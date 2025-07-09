@@ -12,8 +12,5 @@ namespace Forge.UX.Native {
 
         [DllImport("user32.dll")]
         public static extern bool ScreenToClient(IntPtr hWnd, ref Vector2 lpPoint);
-
-        [DllImport("user32.dll")]
-        public static extern bool GetClientRect(IntPtr hWnd, out Vector4 lpRect);
     }
 }
