@@ -82,6 +82,13 @@ namespace Forge.UX.UI {
                     Logger.LogError(e, "Error while building plugin prefab {0}", pluginPrefab.GetType().Name);
                 }
             }
+
+            DI.Dependencies.Resolve<IRenderer>().OnUpdateRenderer += () => {
+                rootSceneNode.InvalidateLayout();
+                foreach (var element in GetRootElements()) {
+                    element.Dirty();
+                }
+            };
         }
 
         public IEnumerable<UIElement> GetAllElements() {
