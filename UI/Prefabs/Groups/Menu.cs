@@ -1,6 +1,6 @@
 ﻿using DasMulli.DataBuilderGenerator;
 
-using Forge.S4.Types;
+using Forge.Game.UI;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
 using Forge.UX.UI.Elements.Grouping.Display;

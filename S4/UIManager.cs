@@ -1,7 +1,7 @@
-﻿using Forge.Logging;
+﻿using Forge.Config;
+using Forge.Game.UI;
+using Forge.Logging;
 using Forge.Native;
-using Forge.S4;
-using Forge.S4.Types;
 using Forge.UX.Interfaces;
 using Forge.UX.S4.Types.Native;
 
@@ -22,6 +22,14 @@ namespace Forge.UX.S4 {
     }
 
     public class UIManager : IUIManager {
+        private readonly CLogger Logger;
+        private readonly IGameValues gameValues;
+
+        public UIManager(CLogger logger, IGameValues gameValues) {
+            Logger = logger.WithEnumCategory(ForgeLogCategory.UI);
+            this.gameValues = gameValues;
+        }
+
         /// <summary>
         /// A list of all known menu state class vtables and their corresponding screen IDs.
         /// </summary>
@@ -71,16 +79,16 @@ namespace Forge.UX.S4 {
 
         public S4UIScreen GetActiveScreen() {
             unsafe {
-                Int32* GameStateManager = (Int32*)GameValues.ReadValue<Int32>(0xE94804);
+                Int32* GameStateManager = (Int32*)gameValues.ReadValue<Int32>(0xE94804);
                 if (GameStateManager == null) {
                     return S4UIScreen.Unknown;
                 }
 
                 // The GameStateManager is defined by implementations of the various State classes (e.g. CStateMainMenu, CStateTutorial, etc.)
                 // Identification is done by the vtable pointer of the class instance.
-                Int32 currentScreen = *GameStateManager - GameValues.S4_Main;
+                Int32 currentScreen = *GameStateManager - gameValues.S4_Main;
                 if (!menuVTables.ContainsKey(currentScreen)) {
-                    Logger.LogWarn($"New screen detected: {currentScreen:X}!");
+                    Logger.LogF(LogLevel.Warning, "New screen detected: {0:X}!", currentScreen);
                 }
 
                 return menuVTables.GetValueOrDefault(currentScreen, S4UIScreen.Unknown);
@@ -146,7 +154,7 @@ namespace Forge.UX.S4 {
 
                 int menuSceneSurfaceId = UIScenes[2];
                 if (menuSceneSurfaceId != 0 && !menuTranslation.ContainsKey(menuSceneSurfaceId)) {
-                    Logger.LogWarn($"New menu detected: {menuSceneSurfaceId:X}!");
+                    Logger.LogF(LogLevel.Warning, "New menu detected: {0:X}!", menuSceneSurfaceId);
                     return (S4UIMenu)menuSceneSurfaceId;
                 }
 
@@ -162,7 +170,7 @@ namespace Forge.UX.S4 {
 
                 int submenuSceneSurfaceId = UIScenes[3];
                 if (submenuSceneSurfaceId != 0 && !submenuTranslation.ContainsKey(submenuSceneSurfaceId)) {
-                    Logger.LogWarn($"New sub-menu detected: {submenuSceneSurfaceId:X}!");
+                    Logger.LogF(LogLevel.Warning, "New sub-menu detected: {0:X}!", submenuSceneSurfaceId);
                     return (S4UISubmenu)submenuSceneSurfaceId;
                 }
 
@@ -183,12 +191,12 @@ namespace Forge.UX.S4 {
         // [11] is probably the "you have won/lost" window proc
         // [12] is the timer in the top right corner (use f7 for example)
         // [13] maybe exists ? 
-        public unsafe Int32* UIScenes => GameValues.GetPointer<Int32>(0x1064C98);
+        public unsafe Int32* UIScenes => gameValues.GetPointer<Int32>(0x1064C98);
 
         public GUIEventHandler? GUIEventHandler {
             get {
                 unsafe {
-                    var handler = (GUIEventHandler*)new IntPtr(GameValues.ReadValue<Int32>(0x10540CC)).ToPointer();
+                    var handler = (GUIEventHandler*)new IntPtr(gameValues.ReadValue<Int32>(0x10540CC)).ToPointer();
 
                     if (handler == null) {
                         return null;

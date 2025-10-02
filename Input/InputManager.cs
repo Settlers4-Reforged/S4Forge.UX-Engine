@@ -1,5 +1,4 @@
 ﻿using Forge.Native;
-using Forge.S4;
 using Forge.UX.Native;
 
 using System;
@@ -81,10 +80,13 @@ namespace Forge.UX.Input {
     }
 
     public class InputManager : IInputManager {
+        private readonly IGameValues gameValues;
         private HashSet<Keys> downKeys, heldKeys, upKeys;
         private Vector2 mouseScroll = Vector2.Zero;
 
-        public InputManager() {
+        public InputManager(IGameValues gameValues) {
+            this.gameValues = gameValues;
+
             downKeys = new HashSet<Keys>();
             heldKeys = new HashSet<Keys>();
             upKeys = new HashSet<Keys>();
@@ -299,7 +301,7 @@ namespace Forge.UX.Input {
 
         private void HandleMouseDrag(bool start) {
             if (start) {
-                User32.SetCapture(GameValues.Hwnd);
+                User32.SetCapture(gameValues.Hwnd);
             } else {
                 User32.ReleaseCapture();
             }
@@ -323,7 +325,7 @@ namespace Forge.UX.Input {
 
             prevMousePosition = currentMousePosition;
             User32.GetCursorPos(out User32.Pos point);
-            User32.ScreenToClient(GameValues.Hwnd, ref point);
+            User32.ScreenToClient(gameValues.Hwnd, ref point);
             currentMousePosition = new Vector2(point.X, point.Y);
         }
 
@@ -335,7 +337,7 @@ namespace Forge.UX.Input {
 
         public bool IsMouseOnScreen() {
             User32.Rect rect = new User32.Rect();
-            User32.GetWindowRect(GameValues.Hwnd, ref rect);
+            User32.GetWindowRect(gameValues.Hwnd, ref rect);
 
             float width = rect.Z - rect.X;
             float height = rect.W - rect.Y;

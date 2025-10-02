@@ -1,5 +1,6 @@
 ﻿using Forge.Config;
-using Forge.S4.Types;
+using Forge.Game.Core;
+using Forge.Native;
 using Forge.UX.Rendering;
 using Forge.UX.Rendering.Texture;
 using Forge.UX.UI.Elements;

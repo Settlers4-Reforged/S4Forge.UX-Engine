@@ -22,6 +22,7 @@ using System.Numerics;
 
 namespace Forge.UX.UI {
     public class SceneManager {
+        private readonly CLogger Logger;
         private readonly RootNode rootSceneNode;
 
         private readonly Lazy<IRenderer> _renderer;
@@ -29,9 +30,10 @@ namespace Forge.UX.UI {
 
         private readonly IInputManager inputManager;
 
-        public SceneManager(Lazy<IRenderer> renderer, IInputManager inputManager) {
+        public SceneManager(Lazy<IRenderer> renderer, IInputManager inputManager, CLogger logger) {
             this._renderer = renderer;
             this.inputManager = inputManager;
+            Logger = logger.WithEnumCategory(ForgeLogCategory.UI);
 
             this.inputManager.InputEventHandler += HandleInput;
 
@@ -67,8 +69,7 @@ namespace Forge.UX.UI {
 
                     pluginPrefab.Build(DI.Dependencies.Resolve<SceneBuilder>());
                     if (pluginPrefab.Prefab == null) {
-                        Logger.LogError(null, "PluginPrefab {0} was built but produced no prefab!",
-                            pluginPrefab.GetType().Name);
+                        Logger.LogF(LogLevel.Error, "PluginPrefab {0} was built but produced no prefab!", pluginPrefab.GetType().Name);
                         continue;
                     }
 
@@ -79,7 +80,7 @@ namespace Forge.UX.UI {
 
                     AddRootElement(pluginScene.Group.Instantiate());
                 } catch (Exception e) {
-                    Logger.LogError(e, "Error while building plugin prefab {0}", pluginPrefab.GetType().Name);
+                    Logger.TraceExceptionF(LogLevel.Error, e, "Error while building plugin prefab {0}", pluginPrefab.GetType().Name);
                 }
             }
 
@@ -164,7 +165,7 @@ namespace Forge.UX.UI {
 
                 inputManager.Update();
             } catch (Exception e) {
-                Logger.LogError(e, "Error during frame calculation in scene manager");
+                Logger.TraceExceptionF(LogLevel.Error, e, "Error during frame calculation in scene manager");
             }
         }
 
@@ -172,7 +173,7 @@ namespace Forge.UX.UI {
             try {
                 ProcessTick();
             } catch (Exception e) {
-                Logger.LogError(e, "Error during tick calculation in scene manager");
+                Logger.TraceExceptionF(LogLevel.Error, e, "Error during tick calculation in scene manager");
             }
         }
 

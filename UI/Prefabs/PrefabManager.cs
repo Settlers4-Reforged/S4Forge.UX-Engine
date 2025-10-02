@@ -1,4 +1,5 @@
-﻿using Forge.Logging;
+﻿using Forge.Config;
+using Forge.Logging;
 using Forge.UX.Interfaces;
 
 using System;
@@ -9,6 +10,8 @@ using System.Text;
 
 namespace Forge.UX.UI.Prefabs {
     public class PrefabManager : IErrorHandler {
+        private readonly CLogger Logger = DI.Resolve<CLogger>().WithCurrentContext().WithEnumCategory(ForgeLogCategory.UI);
+
         #region Error Handling
         private string? lastError = null;
 
@@ -48,7 +51,7 @@ namespace Forge.UX.UI.Prefabs {
 
         public void RegisterDefaultPrefabs() {
 
-            Logger.LogInfo($"Registering default prefabs from UX-Engine...");
+            Logger.Log(LogLevel.Info, "Registering default prefabs from UX-Engine...");
 
             Assembly prefabAssembly = Assembly.GetAssembly(typeof(IPrefab))!;
 
@@ -65,11 +68,11 @@ namespace Forge.UX.UI.Prefabs {
                     prefabInstance = (IPrefab?)Activator.CreateInstance(prefab);
 
                     if (prefabInstance == null) {
-                        Logger.LogError(null, $"Failed to create instance of prefab \"{prefab.Name}\"");
+                        Logger.TraceF(LogLevel.Error, "Failed to create instance of prefab \"{0}\"", prefab.Name);
                         continue;
                     }
                 } catch (Exception e) {
-                    Logger.LogError(e, $"Failed to create instance of prefab \"{prefab.Name}\"");
+                    Logger.TraceExceptionF(LogLevel.Error, e, "Failed to create instance of prefab \"{}\"", prefab.Name);
                     continue;
                 }
 
@@ -83,7 +86,7 @@ namespace Forge.UX.UI.Prefabs {
                 }
             }
 
-            Logger.LogInfo($"Registered {prefabList.Length} default prefabs from UX-Engine");
+            Logger.LogF(LogLevel.Info, "Registered {0} default prefabs from UX-Engine", prefabList.Length);
         }
 
         /// <summary>

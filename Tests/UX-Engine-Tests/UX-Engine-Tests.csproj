@@ -33,12 +33,6 @@
                           Version="17.10.1" />
     </ItemGroup>
 
-    <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
-        <!-- See https://github.com/dotnet/sdk/issues/34775 for why...-->
-        <Delete Files="$(TargetDir)$(TargetName).deps.json" />
-        <WriteLinesToFile File="$(TargetDir)$(TargetName).deps.json" Overwrite="true" Lines="{&#xD;&#xA;  &quot;runtimeTarget&quot;: {&#xD;&#xA;    &quot;name&quot;: &quot;.NETCoreApp,Version=v8.0&quot;,&#xD;&#xA;    &quot;signature&quot;: &quot;&quot;&#xD;&#xA;  }&#xD;&#xA;}" />
-    </Target>
-
     <ItemGroup>
         <Using Include="NUnit.Framework" />
     </ItemGroup>
@@ -51,13 +45,11 @@
         <When Condition="'$(SolutionName)'=='S4ModdingFramework'">
             <ItemGroup>
                 <ProjectReference Include="..\..\..\..\Forge\S4Forge.csproj" />
-                <ProjectReference Include="..\..\..\..\APIWrapper\S4ForgeBootstrapper.vcxproj" />
             </ItemGroup>
         </When>
         <Otherwise>
             <ItemGroup>
                 <PackageReference Include="S4Forge" Version="*" />
-                <PackageReference Include="S4Forge.Bootstrapper" Version="*" />
             </ItemGroup>
         </Otherwise>
     </Choose>

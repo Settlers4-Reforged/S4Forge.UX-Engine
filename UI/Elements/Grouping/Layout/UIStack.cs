@@ -1,9 +1,12 @@
-﻿using Forge.Logging;
+﻿using Forge.Config;
+using Forge.Logging;
 
 using System.Numerics;
 
 namespace Forge.UX.UI.Elements.Grouping.Layout {
     public class UIStack : UIGroup, IUILayout {
+        private static CLogger Logger = DI.Resolve<CLogger>().WithCurrentContext().WithEnumCategory(ForgeLogCategory.UI);
+
         private readonly float rowHeight;
         private int Rows => Elements.Count;
         private readonly bool isHorizontal;
@@ -39,7 +42,7 @@ namespace Forge.UX.UI.Elements.Grouping.Layout {
                 if ((!isHorizontal && element.SizeMode.height != PositioningMode.Normal)
                     ||
                     (isHorizontal && element.SizeMode.width != PositioningMode.Normal)) {
-                    Logger.LogWarn("Non normal sizing is not allowed on the stacking axis in a stack. Element: {0}; Sizing: {1}, {2}", element.Id, element.SizeMode.width.ToString(), element.SizeMode.height.ToString());
+                    Logger.LogF(LogLevel.Warning, "Non normal sizing is not allowed on the stacking axis in a stack. Element: {0}; Sizing: {1}, {2}", element.Id, element.SizeMode.width.ToString(), element.SizeMode.height.ToString());
                 }
 
                 Vector2 elementSize = element.Size * direction;

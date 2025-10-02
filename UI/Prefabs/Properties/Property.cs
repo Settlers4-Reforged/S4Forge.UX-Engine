@@ -1,4 +1,5 @@
-﻿using Forge.Logging;
+﻿using Forge.Config;
+using Forge.Logging;
 using Forge.UX.Interfaces;
 
 using System;
@@ -12,6 +13,8 @@ using System.Xml;
 namespace Forge.UX.UI.Prefabs.Properties {
     [DebuggerDisplay("Property {Name} | Value = {Value}")]
     public class Property<T> : IProperty {
+        private static readonly CLogger Logger = DI.Resolve<CLogger>().WithCurrentContext().WithEnumCategory(ForgeLogCategory.UI);
+
         #region Error Handling
         private string? lastError = null;
 
@@ -52,7 +55,7 @@ namespace Forge.UX.UI.Prefabs.Properties {
                 Value = (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
             } catch (Exception ex) {
                 lastError = string.Format(ParseError, ex.Message);
-                Logger.LogError(null, "Failed to parse value - Error: {0}", ex.Message);
+                Logger.TraceF(LogLevel.Error, "Failed to parse value - Error: {0}", ex.Message);
                 Value = default(T);
                 return false;
             }

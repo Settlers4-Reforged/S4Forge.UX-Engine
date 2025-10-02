@@ -1,4 +1,5 @@
-﻿using Forge.S4.Types;
+﻿using Forge.Game.Events;
+using Forge.Game.UI;
 
 using static Forge.UX.S4.IUICallbacks;
 

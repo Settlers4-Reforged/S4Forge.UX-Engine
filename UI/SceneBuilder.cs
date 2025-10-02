@@ -1,4 +1,5 @@
-﻿using Forge.Logging;
+﻿using Forge.Config;
+using Forge.Logging;
 using Forge.UX.UI.Elements;
 using Forge.UX.UI.Elements.Grouping;
 using Forge.UX.UI.Prefabs;
@@ -17,6 +18,7 @@ namespace Forge.UX.UI {
     /// Helper to create scenes from XML files based on prefabs
     /// </summary>
     public class SceneBuilder {
+        private readonly CLogger Logger = DI.Resolve<CLogger>().WithEnumCategory(ForgeLogCategory.UI);
         public PrefabManager PrefabManager;
         public SceneManager SceneManager;
 
@@ -42,14 +44,14 @@ namespace Forge.UX.UI {
             try {
                 tree.LoadXml(config);
             } catch (Exception e) {
-                Logger.LogError(e, "Failed to parse scene into xml document");
+                Logger.TraceExceptionF(LogLevel.Error, e, "Failed to parse scene into xml document");
                 return false;
             }
 
             try {
                 scene = ParseScene(tree);
             } catch (Exception e) {
-                Logger.LogError(e, "Failed to parse scene");
+                Logger.TraceExceptionF(LogLevel.Error, e, "Failed to parse scene");
                 return false;
             }
 
@@ -58,6 +60,7 @@ namespace Forge.UX.UI {
 
         public GroupPrefab ParseScene(XmlDocument tree) {
             if (tree.FirstChild == null) throw new ArgumentException("Tried to parse scene without a parent node");
+            // TODO: Handle comments
 
             if (ParseNode(tree.FirstChild) is not GroupPrefab g)
                 throw new NotSupportedException("Tried to load scene without a UIGroup as parent");

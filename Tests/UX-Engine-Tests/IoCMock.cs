@@ -1,6 +1,11 @@
 ﻿using DryIoc;
 
 using Forge.Config;
+using Forge.Game.Core;
+using Forge.Game.Events;
+using Forge.Game.World;
+using Forge.Game.World.Entities;
+using Forge.Logging;
 using Forge.S4.Game;
 using Forge.UX;
 using Forge.UX.Rendering;
@@ -44,6 +49,7 @@ namespace UX_Engine_Tests {
         }
 
         private void ImplementDI() {
+            LoggerManager.PrepareLogger();
             DI.Dependencies.RegisterInstance<IRenderer>(renderer.Object, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
 
             MockNativeApi();
