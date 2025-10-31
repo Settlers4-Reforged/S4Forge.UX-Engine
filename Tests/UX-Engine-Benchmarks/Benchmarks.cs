@@ -19,7 +19,7 @@ namespace UX_Engine_Benchmarks {
 
         public void Setup() {
             Console.WriteLine("Setup");
-            Util.AssemblySetup();
+
             mocks = IoCMock.IoCSetup();
 
             manager = DI.Resolve<SceneManager>();

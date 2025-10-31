@@ -191,7 +191,7 @@ namespace Forge.UX.S4 {
         // [11] is probably the "you have won/lost" window proc
         // [12] is the timer in the top right corner (use f7 for example)
         // [13] maybe exists ? 
-        public unsafe Int32* UIScenes => gameValues.GetPointer<Int32>(0x1064C98);
+        public unsafe Int32* UIScenes => gameValues.AddressAsPointer<Int32>(0x1064C98);
 
         public GUIEventHandler? GUIEventHandler {
             get {
